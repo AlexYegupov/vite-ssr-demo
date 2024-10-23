@@ -1,10 +1,12 @@
+My SSR/SSG vite demo
+
 Моя проверка ssg для vite.
 
-по сути это видоизменённый
-https://github.com/vitejs/vite-plugin-react/tree/main/playground/ssr-react
+Content:
 
-изменения:
+ - vite-plugin-react-ssr-demo - the actual copy of https://github.com/vitejs/vite-plugin-react/tree/main/playground/ssr-react this demo is based on
 
-- туда добавныны зависимости как в https://github.com/stormkit-io/monorepo-template-react (просто в качестве примера работающего проекте)
-- каталог сделан независимым от (https://github.com/vitejs/vite-plugin-react/)
-- указана версия vite-react-plugin в package.json
+     Minor changes:
+
+      - added dependencies as in https://github.com/stormkit-io/monorepo-template-react (just as working example - could be chanbged)
+      - set vite-react-plugin version
