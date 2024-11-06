@@ -24,6 +24,8 @@ export async function createServer(
 
   const app = express()
 
+  //let handler = createStaticHandler(routes);
+
   /**
    * @type {import('vite').ViteDevServer}
    */
@@ -75,7 +77,9 @@ export async function createServer(
         render = (await import('./dist/server/entry-server.js')).render
       }
 
-      const appHtml = render(url)
+      const appHtml = await render(req, res)
+
+      console.log(`AH`, appHtml)
 
       const html = template.replace(`<!--app-html-->`, appHtml)
 
