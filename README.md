@@ -15,3 +15,6 @@ Content:
  - mydemo - my demo based on vite-plugin-react-ssr-demo
 
      details inside
+
+
+submodules:
