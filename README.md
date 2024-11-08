@@ -4,6 +4,8 @@ Sources:
 
 
 1. _submodules - repos with official demos
+   (don't forget to init them: git submodule update --init --recursive)
+
 2. lib_demos
 3. lib_demos_local - local copy of lib demos (modified only to make them work)
 4.
