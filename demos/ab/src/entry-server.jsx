@@ -9,7 +9,9 @@ import {
 
 //?import App from './App'
 
-import { routes } from "./routes";
+import { routes } from "./App";
+
+export { routes }; // for SSG
 
 export async function render(
   request,
@@ -18,12 +20,11 @@ export async function render(
   let { query, dataRoutes } = createStaticHandler(routes);
   let remixRequest = createFetchRequest(request, response);
   let context = await query(remixRequest);
-
   if (context instanceof Response) {
     throw context;
   }
-
   let router = createStaticRouter(dataRoutes, context);
+
   return ReactDOMServer.renderToString(
     <React.StrictMode>
       <StaticRouterProvider
@@ -34,6 +35,43 @@ export async function render(
     </React.StrictMode>
   );
 }
+
+export async function renderStatic(url) {
+  // w but without SSG
+  // return ReactDOMServer.renderToString(
+  //   <React.StrictMode>
+  //     <StaticRouter location={url}>
+  //       <div>123</div>
+  //     </StaticRouter>
+  //   </React.StrictMode>
+  // );
+
+  let { query, dataRoutes } = createStaticHandler(routes);
+  let remixRequest = new Request(url)
+  let context = await query(remixRequest)
+  if (context instanceof Response) {
+    if ([301, 302].includes(context?.status)) {
+      return `<!doctype html><html lang="en"><head><meta http-equiv="refresh" content="0;URL=${context?.headers?.get('Location')}" /><head></html>`
+    }
+
+    throw context;
+  }
+
+  let router = createStaticRouter(dataRoutes, context);
+
+  return ReactDOMServer.renderToString(
+    <React.StrictMode>
+       <StaticRouterProvider
+         router={router}
+         context={context}
+         nonce="the-nonce"
+       />
+    </React.StrictMode>
+  );
+
+}
+
+
 
 export function createFetchRequest(req, res) {
   let origin = `${req.protocol}://${req.get("host")}`;

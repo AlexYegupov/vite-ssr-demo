@@ -9,24 +9,29 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const toAbsolute = (p) => path.resolve(__dirname, p)
 
 const template = fs.readFileSync(toAbsolute('dist/static/index.html'), 'utf-8')
-const { render } = await import('./dist/server/entry-server.js')
-
-// determine routes to pre-render from src/pages
-const routesToPrerender = fs
-  .readdirSync(toAbsolute('src/pages'))
-  .map((file) => {
-    const name = file.replace(/\.jsx$/, '').toLowerCase()
-    return name === 'home' ? `/` : `/${name}`
-  })
+const { renderStatic, routes } = await import('./dist/server/entry-server.js')
 
 ;(async () => {
-  // pre-render each route...
-  for (const url of routesToPrerender) {
-    const appHtml = await render(url)
+  for (const route of routes[0].children) {
 
+
+    let url, filename;
+    if (route.index) {
+      url = ''
+      filename = 'index'
+    } else if (route.path === '*' ) {
+      url = '404'
+      filename = '404'
+    } else {
+      url = route.path
+      filename = url
+    }
+
+
+    const appHtml = await renderStatic(`http://localhost:3003/${url}`)
     const html = template.replace(`<!--app-html-->`, appHtml)
 
-    const filePath = `dist/static${url === '/' ? '/index' : url}.html`
+    const filePath = `dist/static/${filename}.html`
     fs.writeFileSync(toAbsolute(filePath), html)
     console.log('pre-rendered:', filePath)
   }

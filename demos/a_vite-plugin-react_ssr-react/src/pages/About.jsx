@@ -9,7 +9,7 @@ export default function About() {
 
   return (
     <>
-      <h1>About5</h1>
+      <h1>About6</h1>
       <div>{addAndMultiply(1, 2, 3)}</div>
       <div>{multiplyAndAdd(1, 2, 3)}</div>
 

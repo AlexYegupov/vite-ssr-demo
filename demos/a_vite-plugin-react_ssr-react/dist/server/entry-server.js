@@ -18,7 +18,7 @@ function addAndMultiply(a, b, c) {
 function About() {
   const [count, setCount] = useState(0);
   return /* @__PURE__ */ jsxs(Fragment, { children: [
-    /* @__PURE__ */ jsx("h1", { children: "About5" }),
+    /* @__PURE__ */ jsx("h1", { children: "About6" }),
     /* @__PURE__ */ jsx("div", { children: addAndMultiply(1, 2, 3) }),
     /* @__PURE__ */ jsx("div", { children: multiplyAndAdd(1, 2, 3) }),
     /* @__PURE__ */ jsxs("p", { children: [

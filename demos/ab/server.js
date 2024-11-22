@@ -79,8 +79,6 @@ export async function createServer(
 
       const appHtml = await render(req, res)
 
-      console.log(`AH`, appHtml)
-
       const html = template.replace(`<!--app-html-->`, appHtml)
 
       res.status(200).set({ 'Content-Type': 'text/html' }).end(html)

@@ -1,78 +1,165 @@
-import { Link, Route, Routes } from 'react-router-dom'
-import React, { useState } from 'react';
+import { Outlet, Link, useLoaderData, redirect } from "react-router-dom";
 
+export const routes = [
+  {
+    path: "/",
+    element: <Layout />,
+    children: [
+      {
+        index: true,
+        loader: homeLoader,
+        element: <Home />,
+      },
+      {
+        path: "about",
+        element: <About />,
+      },
+      {
+        path: "dashboard",
+        loader: dashboardLoader,
+        element: <Dashboard />,
+      },
+      {
+        path: "lazy",
+        lazy: () => import("./lazy"),
+      },
+      {
+        path: "redirect",
+        loader: redirectLoader,
+      },
+      {
+        path: "env",
+        element: <Env />
+      },
+      {
+        path: "*",
+        element: <NoMatch />,
+      },
+    ],
+  },
+];
 
-// Auto generates routes from files under ./pages
-// https://vitejs.dev/guide/features.html#glob-import
-//const pages = import.meta.glob('./pages/*.jsx', { eager: true })
-
-//console.log(`PAGES`, pages)
-/*
- * const routes = Object.keys(pages).map((path) => {
- *   const name = path.match(/\.\/pages\/(.*)\.jsx$/)[1]
- *   return {
- *     name,
- *     path: name === 'Home' ? '/' : `/${name.toLowerCase()}`,
- *     component: pages[path].default,
- *   }
- * })
- *  */
-// pages/my/route/page.js - /my/route/
-
-// function generateRoutes() {
-//   console.log(`P:`, import.meta.glob('./pages/**/*.jsx', { eager: true }))
-//   console.log(`P2:`, import.meta.glob('./pages/**/*.js*', { eager: true }))
-//
-//   const pages = import.meta.glob('./pages/**/*.jsx', { eager: true });
-//   const routes = Object.keys(pages).map((filePath) => {
-//     const Component = pages[filePath].default;
-//     /* const path = filePath
-//      *   .toLowerCase()
-//      *   //.match(/.pages(.*)\(.(js|jsx|ts|tsx)$/)[1]
-//      *   .match(/.*pages\/(.+\/)?(.+)\.(js|jsx|ts|tsx)$/);
-//      */
-//     const match = path.match(/.*pages\/(?<folder>.+\/)?(?<filename>.+)\.(?<extension>js|jsx|ts|tsx)$/);
-//
-//
-//
-//
-//
-//       .replace('page', '')
-//       .replace(/(.+)\/$/, '$1')  // remove trailing slash
-//
-//     return {
-//       path,
-//       element: <Component />,
-//     };
-//   });
-//
-//   return routes;
-// }
-
-
-export default function App() {
-  //const routes = generateRoutes()
+function Layout() {
   return (
-    <>
-      App
+    <div>
+      <h1>Data Router Server Rendering Example</h1>
+
+      <p>
+        If you check out the HTML source of this page, you'll notice that it
+        already contains the HTML markup of the app that was sent from the
+        server, and all the loader data was pre-fetched!
+      </p>
+
+      <p>
+        This is great for search engines that need to index this page. It's also
+        great for users because server-rendered pages tend to load more quickly
+        on mobile devices and over slow networks.
+      </p>
+
+      <p>
+        Another thing to notice is that when you click one of the links below
+        and navigate to a different URL, then hit the refresh button on your
+        browser, the server is able to generate the HTML markup for that page as
+        well because you're using React Router on the server. This creates a
+        seamless experience both for your users navigating around your site and
+        for developers on your team who get to use the same routing library in
+        both places.
+      </p>
+
       <nav>
         <ul>
-          {/* {routes.map(({ name, path }) => {
-              return (
-              <li key={path}>
-              <Link to={path}>{name}</Link>
-              </li>
-              )
-              })}
-            */}
-
+          <li>
+            <Link to="/">Home</Link>
+          </li>
+          <li>
+            <Link to="/about">About</Link>
+          </li>
+          <li>
+            <Link to="/dashboard">Dashboard</Link>
+          </li>
+          <li>
+            <Link to="/lazy">Lazy</Link>
+          </li>
+          <li>
+            <Link to="/redirect">Redirect to Home</Link>
+          </li>
+          <li>
+            <Link to="/env">ENV</Link>
+          </li>
+          <li>
+            <Link to="/nothing-here">Nothing Here</Link>
+          </li>
         </ul>
       </nav>
-      {/* { useRoutes(routes) } */}
+      <hr />
+      <div><Outlet /></div>
+    </div>
+  );
+}
 
-      {/* <Routes>
-          <Route key={path} path={path} element={<RouteComp />}></Route>
-          </Routes> */}
-    </>
-  )
+//const sleep = (n = 500) => new Promise((r) => setTimeout(r, n));
+const sleep = () => {}
+
+const rand = () => Math.round(Math.random() * 100);
+
+async function homeLoader() {
+  await sleep();
+  return { data: `Home loader - random value ${rand()}` };
+}
+
+function Home() {
+  let data = useLoaderData();
+  return (
+    <div>
+      <h2>Home</h2>
+      <p>Loader Data: {data.data}</p>
+    </div>
+  );
+}
+
+function About() {
+  return (
+    <div>
+      <h2>About</h2>
+    </div>
+  );
+}
+
+async function dashboardLoader() {
+  await sleep();
+  return { data: `Dashboard loader - random value ${rand()}` };
+}
+
+function Dashboard() {
+  let data = useLoaderData();
+  return (
+    <div>
+      <h2>Dashboard</h2>
+      <p>Loader Data: {data.data}</p>
+    </div>
+  );
+}
+
+async function redirectLoader() {
+  await sleep();
+  return redirect("/");
+}
+
+function NoMatch() {
+  return (
+    <div>
+      <h2>Nothing to see here!</h2>
+      <p>
+        <Link to="/">Go to the home page</Link>
+      </p>
+    </div>
+  );
+}
+
+export default function Env() {
+  let msg = 'default message here'
+  try {
+    msg = process.env.MY_CUSTOM_SECRET || msg
+  } catch {}
+  return <h1>{msg}</h1>
 }
