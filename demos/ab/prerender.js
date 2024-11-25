@@ -13,8 +13,6 @@ const { renderStatic, routes } = await import('./dist/server/entry-server.js')
 
 ;(async () => {
   for (const route of routes[0].children) {
-
-
     let url, filename;
     if (route.index) {
       url = ''
@@ -27,9 +25,17 @@ const { renderStatic, routes } = await import('./dist/server/entry-server.js')
       filename = url
     }
 
-
-    const appHtml = await renderStatic(`http://localhost:3003/${url}`)
-    const html = template.replace(`<!--app-html-->`, appHtml)
+    let html;
+    try {
+      html = await renderStatic(`http://no-matter/${url}`)  //!!
+      html = template.replace(`<!--app-html-->`, html)
+    } catch (e) {
+      if (e instanceof Response && e.status >= 300 && e.status <= 399) {
+        html = `<!doctype html><html lang="en"><head><meta http-equiv="refresh" content="0;URL=${e?.headers?.get('Location')}" /><head></html>`
+      } else {
+        throw e;
+      }
+    }
 
     const filePath = `dist/static/${filename}.html`
     fs.writeFileSync(toAbsolute(filePath), html)

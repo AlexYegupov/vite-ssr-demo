@@ -77,11 +77,20 @@ export async function createServer(
         render = (await import('./dist/server/entry-server.js')).render
       }
 
-      const appHtml = await render(req, res)
+      try {
+        let appHtml = await render(req, res);
+        let html = template.replace("<!--app-html-->", appHtml);
+        res.setHeader("Content-Type", "text/html");
+        console.log(`H:`, html)
+        return res.status(200).end(html);
+      } catch (e) {
+        if (e instanceof Response && e.status >= 300 && e.status <= 399) {
+          console.log(`H2:`, e.headers)
+          return res.redirect(e.status, e.headers.get("Location"));
+        }
+        throw e;
+      }
 
-      const html = template.replace(`<!--app-html-->`, appHtml)
-
-      res.status(200).set({ 'Content-Type': 'text/html' }).end(html)
     } catch (e) {
       !isProd && vite.ssrFixStacktrace(e)
       console.log(e.stack)

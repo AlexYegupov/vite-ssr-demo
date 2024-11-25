@@ -132,14 +132,10 @@ async function render(request, response) {
   );
 }
 async function renderStatic(url) {
-  var _a;
   let { query, dataRoutes } = createStaticHandler(routes);
   let remixRequest = new Request(url);
   let context = await query(remixRequest);
   if (context instanceof Response) {
-    if ([301, 302].includes(context == null ? void 0 : context.status)) {
-      return `<!doctype html><html lang="en"><head><meta http-equiv="refresh" content="0;URL=${(_a = context == null ? void 0 : context.headers) == null ? void 0 : _a.get("Location")}" /><head></html>`;
-    }
     throw context;
   }
   let router = createStaticRouter(dataRoutes, context);
