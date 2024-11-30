@@ -16,7 +16,7 @@ function LazyPage() {
 
   return (
     <>
-      <h2>Lazy Route</h2>
+      <h2>Lazy Route!</h2>
       <p>Date from loader: {data.date}</p>
     </>
   );

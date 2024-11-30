@@ -7,10 +7,7 @@ import {
   StaticRouterProvider
 } from 'react-router-dom/server'
 
-//?import App from './App'
-
 import { routes } from "./App";
-
 export { routes }; // for SSG
 
 export async function render(

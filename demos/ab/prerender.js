@@ -27,7 +27,7 @@ const { renderStatic, routes } = await import('./dist/server/entry-server.js')
 
     let html;
     try {
-      html = await renderStatic(`http://no-matter/${url}`)  //!!
+      html = await renderStatic(`http://no-matter/${url}`)
       html = template.replace(`<!--app-html-->`, html)
     } catch (e) {
       if (e instanceof Response && e.status >= 300 && e.status <= 399) {
@@ -39,6 +39,5 @@ const { renderStatic, routes } = await import('./dist/server/entry-server.js')
 
     const filePath = `dist/static/${filename}.html`
     fs.writeFileSync(toAbsolute(filePath), html)
-    console.log('pre-rendered:', filePath)
   }
 })()

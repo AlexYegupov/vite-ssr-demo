@@ -8,9 +8,6 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const isTest = process.env.VITEST
 const PORT = process.env.PORT || 5173
 
-
-process.env.MY_CUSTOM_SECRET = 'API_KEY_qwertyuiop'
-
 export async function createServer(
   root = process.cwd(),
   isProd = process.env.NODE_ENV === 'production',
@@ -81,11 +78,9 @@ export async function createServer(
         let appHtml = await render(req, res);
         let html = template.replace("<!--app-html-->", appHtml);
         res.setHeader("Content-Type", "text/html");
-        console.log(`H:`, html)
         return res.status(200).end(html);
       } catch (e) {
         if (e instanceof Response && e.status >= 300 && e.status <= 399) {
-          console.log(`H2:`, e.headers)
           return res.redirect(e.status, e.headers.get("Location"));
         }
         throw e;

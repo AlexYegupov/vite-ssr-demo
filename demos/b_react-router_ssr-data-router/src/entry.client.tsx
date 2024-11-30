@@ -1,7 +1,7 @@
 import * as React from "react";
 import * as ReactDOM from "react-dom/client";
 import {
-  hcreateBrowserRouter,
+  createBrowserRouter,
   matchRoutes,
   RouterProvider,
 } from "react-router-dom";
