@@ -11,13 +11,20 @@ export const loader = async (): Promise<LazyLoaderData> => {
   };
 };
 
+
+async function importTest() {
+  const t = await import('./test')
+  console.log(`t.data`, t.data)
+}
+
 function LazyPage() {
   let data = useLoaderData() as LazyLoaderData;
 
   return (
     <>
-      <h2>Lazy Route!1</h2>
+      <h2>Lazy Route!5</h2>
       <p>Date from loader: {data.name}</p>
+      <button onClick={importTest}>testload</button>
     </>
   );
 }

@@ -5,7 +5,7 @@
 *.local
 *.log
 /.vscode/
-dist
+dist*
 dist-ssr
 explorations
 node_modules

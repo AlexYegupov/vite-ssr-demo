@@ -6,5 +6,22 @@ export default defineConfig({
   plugins: [react()],
   build: {
     minify: false,
+    rollupOptions: {
+      // https://rollupjs.org/configuration-options/
+      output: {
+        // chunking configuration
+        // manualChunks: function(id) {
+        //   console.log(`MC:`, id)
+        //   if (id.includes('src/todos'))
+        //     return 'todos'
+        //   if (id.includes('src/lazy'))
+        //     return 'lazy'
+        // },
+        manualChunks: {
+          //vendor_react: ['react'],
+          vendor_lodash: ['lodash'],
+        }
+      }
+    }
   },
 })
