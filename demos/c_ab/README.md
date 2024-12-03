@@ -7,7 +7,8 @@
  * fix 1 character - rebuild all project?
 
  * favicon
- * dynamic lazy loading
+
+ * (IN PROGRESS - todos->load test module[2]) dynamic lazy loading
  * sourcemap debug
 
  * error handling cli
