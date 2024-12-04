@@ -3,18 +3,21 @@
 * SSG
 * routing
 
-# TODO
+
+# DONE temporarily
+ * (todos->load test module[2]) dynamic lazy loading
  * fix 1 character - rebuild all project?
-
- * favicon
-
- * (IN PROGRESS - todos->load test module[2]) dynamic lazy loading
  * sourcemap debug
+
+
+# TODO
+
+ * recursive subroutes
 
  * error handling cli
  * error handling serv
+ * error handling cli dyn
 
- * recursive subroutes
 
  * fetch data & modify data (todolist probably)
  * client caching data (?tanstack-query))
@@ -22,10 +25,11 @@
  * vitest
 
  * login & url security (Auth.js etc?)
- * helmet
 
  * SSR|SSG + redux toolkit
 
+ * helmet
+ * favicon
  * internationalization
 
  * server caching
