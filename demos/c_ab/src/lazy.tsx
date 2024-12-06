@@ -20,6 +20,8 @@ async function importTest() {
 function LazyPage() {
   let data = useLoaderData() as LazyLoaderData;
 
+  console.log(`DDD:`, data)
+
   return (
     <>
       <h2>Lazy Route!5</h2>

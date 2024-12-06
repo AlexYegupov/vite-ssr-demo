@@ -12,6 +12,8 @@
 
 # TODO
 
+ * generate(?) static routes with params
+
  * recursive subroutes
 
  * error handling cli
@@ -36,3 +38,7 @@
 
  * -> yc_vite_ssr-react
  * -> multidemo
+
+ * internal: organize
+ * internal: organize submodules to see on s
+ * internal: think about make prerender work as caching results that actually return locally-run server (to avoid duplicate server render behavior)

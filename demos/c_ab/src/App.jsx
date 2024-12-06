@@ -1,5 +1,5 @@
 import { Outlet, Link, useLoaderData, redirect } from "react-router-dom";
-import { todosLoader, Todos } from './todos';
+import { todosLoader, todoItemLoader, Todos, TodoItem } from './todos';
 
 export const routes = [
   {
@@ -30,8 +30,18 @@ export const routes = [
       },
       {
         path: 'todos',
-        loader: todosLoader,
-        element: <Todos />
+        children: [
+          {
+            index: true,
+            loader: todosLoader,
+            element: <Todos />,
+          },
+          /* {
+           *   path: ':id',
+           *   loader: todoItemLoader,
+           *   element: <TodoItem />
+           * } */
+        ]
       },
       {
         path: "*",
@@ -93,8 +103,13 @@ function Layout() {
           </li>
         </ul>
       </nav>
+
       <hr />
-      <div><Outlet /></div>
+      <div>
+        $$$$$$$$$$$$$$$$$$$$$$$$
+        <Outlet />
+        $$$$$$$$$$$$$$$$$$$$$$$$
+      </div>
     </div>
   );
 }
@@ -114,8 +129,8 @@ function Home() {
   let data = useLoaderData();
   return (
     <div>
-      <h2>Home</h2>
-      <p>Loader Data: {data.data}</p>
+      <h2>Home!</h2>
+      {/* <p>Loader Data: {data.data}</p> */}
     </div>
   );
 }
@@ -135,6 +150,7 @@ async function dashboardLoader() {
 
 function Dashboard() {
   let data = useLoaderData();
+  console.log(`DATA`, data)
   return (
     <div>
       <h2>Dashboard</h2>

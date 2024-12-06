@@ -21,7 +21,6 @@ export default defineConfig({
           if (id.includes('src/lazy')) return 'lazy'
           if (id.includes('src/test2')) return 'test2'
           if (id.includes('src/test-lazy-component')) return 'test-lazy-component'
-
           if (id.includes('src/test')) return 'test'
 
           const vendorMatch = id.match(/node_modules\/([^/]+)\//);
