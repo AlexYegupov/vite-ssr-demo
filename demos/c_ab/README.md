@@ -14,6 +14,8 @@
 
  * generate(?) static routes with params
 
+*useRouteError (https://dev.to/vikram-boominathan/react-router-routes-loaders-and-errors-1nee)
+
  * recursive subroutes
 
  * error handling cli

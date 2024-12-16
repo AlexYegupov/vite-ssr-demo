@@ -10,13 +10,13 @@ export default defineConfig({
   },
   plugins: [react()],
   build: {
-    //minify: false,
+    minify: false, //!!
     rollupOptions: {
       // https://rollupjs.org/configuration-options/
       output: {
         // chunking configuration
         manualChunks: function(id) {
-          console.log(`MC:`, id)
+          //console.log(`MC:`, id)
           if (id.includes('src/todos')) return 'todos'
           if (id.includes('src/lazy')) return 'lazy'
           if (id.includes('src/test2')) return 'test2'

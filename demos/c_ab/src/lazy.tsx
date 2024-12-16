@@ -5,6 +5,7 @@ interface LazyLoaderData {
 }
 
 export const loader = async (): Promise<LazyLoaderData> => {
+  console.log(`LazyPage loader`)
   await new Promise((r) => setTimeout(r, 500));
   return {
     name: 'test value'
@@ -20,7 +21,7 @@ async function importTest() {
 function LazyPage() {
   let data = useLoaderData() as LazyLoaderData;
 
-  console.log(`DDD:`, data)
+  console.log(`LazyPage:`, data)
 
   return (
     <>

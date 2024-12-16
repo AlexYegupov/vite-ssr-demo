@@ -72,7 +72,7 @@ export async function createServer(
         template = indexProd
         // @ts-ignore
         render = (await import('./dist/server/entry-server.js')).render
-      }
+      }ʼ
 
       try {
         let appHtml = await render(req, res);

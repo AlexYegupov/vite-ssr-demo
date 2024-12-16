@@ -1,10 +1,11 @@
-import { Outlet, Link, useLoaderData, redirect } from "react-router-dom";
+import { Outlet, Link, useLoaderData, redirect, useRouteError, isRouteErrorResponse } from "react-router-dom";
 import { todosLoader, todoItemLoader, Todos, TodoItem } from './todos';
 
 export const routes = [
   {
     path: "/",
     element: <Layout />,
+    errorElement: <ErrorBoundary />,
     children: [
       {
         index: true,
@@ -36,20 +37,44 @@ export const routes = [
             loader: todosLoader,
             element: <Todos />,
           },
-          /* {
-           *   path: ':id',
-           *   loader: todoItemLoader,
-           *   element: <TodoItem />
-           * } */
+          {
+            path: ':id',
+            loader: todoItemLoader,
+            element: <TodoItem />
+          }
         ]
       },
       {
         path: "*",
+        //loader: noMatchLoader,
         element: <NoMatch />,
+        _notFound: true
       },
     ],
   },
 ];
+
+function ErrorBoundary() {
+  const error = useRouteError();
+
+  if (isRouteErrorResponse(error)) {
+    return (
+      <div>
+        <h1>Error {error.status}</h1>
+        <p>{error.statusText}</p>
+        {error.data ?? <pre>{JSON.stringify(error.data, null, 2)}</pre>}
+      </div>
+    )
+  }
+
+  console.error(error)
+  return (
+    <div>
+      <h1>Unexpected Error</h1>
+      <p>{error?.message || "Unknown error"}</p>
+    </div>
+  )
+}
 
 function Layout() {
   return (
@@ -99,6 +124,11 @@ function Layout() {
             <Link to="/todos">Todo list</Link>
           </li>
           <li>
+            <Link to="/todos/:id">Todo list - :id </Link>
+            <Link to="/todos/PPP">Todo list - PPP </Link>
+            <Link to="/todos/1">Todo list - 1 </Link>
+          </li>
+          <li>
             <Link to="/nothing-here">Nothing Here</Link>
           </li>
         </ul>
@@ -106,9 +136,9 @@ function Layout() {
 
       <hr />
       <div>
-        $$$$$$$$$$$$$$$$$$$$$$$$
+        ##########
         <Outlet />
-        $$$$$$$$$$$$$$$$$$$$$$$$
+        ##########
       </div>
     </div>
   );
@@ -164,7 +194,62 @@ async function redirectLoader() {
   return redirect("/");
 }
 
+import { useLocation, useMatches, useNavigate } from "react-router-dom";
+
+async function noMatchLoader({ request }) {
+  const url = new URL(request.url)
+  //const navigate = useNavigate();  // useNavigate to perform redirects
+  //const location = useLocation();  // Get the current location
+  //const matches = useMatches();
+
+  //console.log(`noMatchLoader`, url, location, matches)
+  /*
+   *   // Check if any match was found
+   *   if (matches.length > 0) {
+   *     console.log(`navigating to`, url.pathname)
+   *     // Redirect to the first matched route (you can refine this based on your needs)
+   *     navigate(url.pathname);
+   *   }
+   *  */
+  return null; // Ensure that loader doesn't continue processing
+
+  /*
+   *   console.log(`noMatchLoader`, request)
+   *
+   *   if (typeof window !== "undefined"
+   *       && (window.__noMatchRedirected != request.url)
+   *   ) {
+   *     redirect(request.url);
+   *     window.__noMatchRedirected = request.url
+   *   }
+   *  */
+  /*
+   *   return new Response(null, {
+   *     status: 302,
+   *     headers: { Location: url.pathname + url.search }, // Redirect to the same path and query parameters
+   *   });
+   *  */
+}
+
+
 function NoMatch() {
+  console.log(`NoMatch!`)
+  /* const location = useLocation();
+   * const matches = useMatches();
+   * const navigate = useNavigate();
+   */
+  const data = useLoaderData()
+
+  /* console.log(`NoMatch`, location, matches, data)
+   */
+  /* if (typeof window !== "undefined" && !window.__navigated && location.pathname) {
+   *   console.log(`redirecting to`, location.pathname)
+   *   navigate(location.pathname);
+   *   window.__navigated = 'YES'
+   * } */
+
+  // REDIRECT to ///...:id
+
   return (
     <div>
       <h2>Nothing to see here!</h2>

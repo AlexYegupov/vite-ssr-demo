@@ -1,7 +1,7 @@
 import { useParams } from 'react-router';
 import { useLoaderData, Link } from "react-router-dom";
 import React, { Suspense, useState } from 'react';
-
+import { isRenderStatic, RENDER_TYPE, RENDER_TYPE_STATIC } from './render-utils'
 
 //import l from 'underscore';
 const sleep = (n = 500) => new Promise((r) => setTimeout(r, n));
@@ -13,18 +13,6 @@ const TODO_ITEMS = [
   {id: 3, caption: 'todo item 3', done: false}
 ]
 
-export async function todosLoader() {
-  await sleep(0);
-
-  return TODO_ITEMS
-}
-
-
-export async function todoItemLoader({ params }) {
-  const { id } = params;
-  console.log(`!!`,id)
-  return TODO_ITEMS.find(item => item.id === Number(id) )
-}
 
 async function importTest() {
   const t = await import('./test')
@@ -33,8 +21,18 @@ async function importTest() {
 const LazyComponent = React.lazy(() => import('./test-lazy-component'));
 
 
+export async function todosLoader({ request }) {
+  await sleep(0);
+
+  console.log(`todosLoader`, isRenderStatic(request.headers))
+
+  return TODO_ITEMS
+}
+
 export function Todos() {
   let data = useLoaderData();
+
+  console.log(`Todos`, data)
   const [lazyLoaded, setLazyLoaded] = useState(null);
 
   return (
@@ -61,9 +59,46 @@ export function Todos() {
 }
 
 
+export async function todoItemLoader({ request, params }) {
+  console.log(`TIL0`)
+  const { id } = params;
+
+  const isStaticRender = request.headers.get(RENDER_TYPE) === RENDER_TYPE_STATIC;
+
+  console.log(`TIL`, isStaticRender, params)
+
+  // if (isStaticRender) {
+  //   return 'need reload'
+  // }
+
+  // if (isStaticRender) { //return null
+  //   //throw new Response(null, {status: 302, headers: { Location: "." } });
+  //   throw new Error('Skipped todoItem for static render');
+  // }
+
+  const item = TODO_ITEMS.find(item => item.id === Number(id) )
+  if (!item) {
+    throw new Response("Not found", { status: 404 });
+    //w throw new Error('Failed to fetch home data');
+    //? new Response(null, { status: 302, headers: { Location: "/login" } });
+  }
+
+  console.log(`IIIIIIII`, {...item, AAAAAAAAAAA: 10})
+
+  return item
+}
+
+
 export function TodoItem() {
-  console.log(`TI:`, useLoaderData())
-  const { id, caption } = useLoaderData()
+  const item = useLoaderData()
+
+  //if (!item) {
+  //   redirect(window.location.pathname)
+
+  console.log(`todoItem`, item)
+
+  //if (!item) return; //??
+  const { id, caption } = item
   return (
     <div>
       <h2>Todo item</h2>

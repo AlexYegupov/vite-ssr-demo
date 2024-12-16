@@ -13,40 +13,55 @@ const { renderStatic, routes } = await import('./dist/server/entry-server.js')
 
 async function renderSingleRoute(route, parentPath) {
   let url, filename, html;
+  let notFound = false
   if (route.index) {
     url = parentPath
     filename = path.posix.join(parentPath, 'index')
   } else if (route.path === '*' ) {
     url = path.posix.join(parentPath, '--THIS-URL-NOT-EXISTS--')
-    filename = '404'
+    filename = '404' //path.posix.join(parentPath, '404')
+    notFound = true
   } else {
     url = path.posix.join(parentPath, route.path)
     filename = url
   }
+
+  // todo : includes *
+  if (url.includes(':id')) {  //!!
+    console.log(`SKIP dynamic url:`, url)
+    return;
+  }
+
   // check if route has children index route
   if (route?.children?.some( childRoute => childRoute.index )) {
     // skip if children index route present
     console.log(`SKIP:`, url)
-  } else {
-    try {
-      const _html = await renderStatic(`http://no-matter${url}`)
-      html = template.replace(`<!--app-html-->`, _html)
+    return;
+  }
 
-      if (filename.includes('404')) console.log(`!!`, url , filename, `http://no-matter${url}`, _html) 
-    } catch (e) {
-      console.log(`CATCH`, url, e)
-      if (e instanceof Response && e.status >= 300 && e.status <= 399) {
-        html = `<!doctype html><html lang="en"><head><meta http-equiv="refresh" content="0;URL=${e?.headers?.get('Location')}" /><head></html>`
-      } else {
-        throw e;
-      }
+  try {
+    let _html = await renderStatic(`http://no-matter${url}`)
+
+    if (notFound) {
+      _html += '<script>window.__notFound = true</script>'
     }
 
-    const filePath = path.posix.join('dist/static/', `${filename}.html`)
-    //console.log(`RENDERING`, filePath, '->>', parentPath, url)
-    fs.mkdirSync(path.dirname(filePath), { recursive: true });
-    fs.writeFileSync(toAbsolute(filePath), html)
+    console.log(`HHHHHHH`, url)
+    html = template.replace(`<!--app-html-->`, _html)
+  } catch (e) {
+    console.log(`CATCH`, url, e)
+    if (e instanceof Response && e.status >= 300 && e.status <= 399) {
+      html = `<!doctype html><html lang="en"><head><meta http-equiv="refresh" content="0;URL=${e?.headers?.get('Location')}" /><head></html>`
+    } else {
+      throw e;
+    }
   }
+
+  const filePath = path.posix.join('dist/static/', `${filename}.html`)
+  //console.log(`RENDERING`, filePath, '->>', parentPath, url)
+  fs.mkdirSync(path.dirname(filePath), { recursive: true });
+  fs.writeFileSync(toAbsolute(filePath), html)
+
 }
 
 async function renderRoutes(routes, parentPath = '') {

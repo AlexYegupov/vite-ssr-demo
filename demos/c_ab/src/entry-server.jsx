@@ -6,6 +6,7 @@ import {
   createStaticRouter,
   StaticRouterProvider
 } from 'react-router-dom/server'
+import { RENDER_TYPE, RENDER_TYPE_STATIC } from './render-utils'
 
 import { routes } from "./App";
 export { routes }; // for SSG
@@ -14,9 +15,10 @@ export async function render(
   request,
   response
 ) {
-  let { query, dataRoutes } = createStaticHandler(routes);
+  let { query, dataRoutes } = createStaticHandler(routes);  //?? move globally
   let remixRequest = createFetchRequest(request, response);
   let context = await query(remixRequest);
+  console.log(`render->context:`, context)
   if (context instanceof Response) {
     throw context;
   }
@@ -35,13 +37,16 @@ export async function render(
 
 export async function renderStatic(url) {
   let { query, dataRoutes } = createStaticHandler(routes);
-  let remixRequest = new Request(url)
+  let remixRequest = new Request(
+    url,
+    { headers: { RENDER_TYPE: RENDER_TYPE_STATIC } }
+  )
   let context = await query(remixRequest)
   if (context instanceof Response) {
     throw context;
   }
-
   let router = createStaticRouter(dataRoutes, context);
+
   return ReactDOMServer.renderToString(
     <React.StrictMode>
        <StaticRouterProvider
