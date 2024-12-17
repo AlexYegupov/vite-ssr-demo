@@ -8,6 +8,8 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const toAbsolute = (p) => path.resolve(__dirname, p)
 
 const template = fs.readFileSync(toAbsolute('dist/static/index.html'), 'utf-8')
+//const templateRedirect = fs.readFileSync(toAbsolute('src/assets/redirect.html'), 'utf-8')
+
 const { renderStatic, routes } = await import('./dist/server/entry-server.js')
 
 
@@ -52,6 +54,7 @@ async function renderSingleRoute(route, parentPath) {
     console.log(`CATCH`, url, e)
     if (e instanceof Response && e.status >= 300 && e.status <= 399) {
       html = `<!doctype html><html lang="en"><head><meta http-equiv="refresh" content="0;URL=${e?.headers?.get('Location')}" /><head></html>`
+      //html = templateRedirect
     } else {
       throw e;
     }

@@ -189,9 +189,13 @@ function Dashboard() {
   );
 }
 
-async function redirectLoader() {
-  await sleep();
-  return redirect("/");
+async function redirectLoader({ request }) {
+  const url = new URL(request.url);
+  const to = url.searchParams.get("to") || '/';
+
+  console.log(`redirectLoader`, to)
+
+  return redirect(to);
 }
 
 import { useLocation, useMatches, useNavigate } from "react-router-dom";
