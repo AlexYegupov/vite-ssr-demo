@@ -15,11 +15,13 @@ hydrate();
 
 
 async function hydrate() {
+  const CLIENT_RENDER_URL_PARAM = 'url'
   const url = new URL(window.location.href);
   const params = new URLSearchParams(url.search);
+  console.log(`hydrate()`, url, window.location, params, window.__staticRouterHydrationData)
 
-  console.log(`hydrate`, url, params, window.__staticRouterHydrationData)
-
+  // render on client specific url without hydrating
+  const clientRenderUrl = params.get(CLIENT_RENDER_URL_PARAM)
 
   // Determine if any of the initial routes are lazy
   let lazyMatches = matchRoutes(routes, window.location)?.filter(
@@ -38,39 +40,39 @@ async function hydrate() {
     );
   }
 
-
-  // reload page same url (to fix 404 code) with client-side only rendering
-  if (params.get('__noHydrate')) {
-    console.log(`__noHydrate param`)
-
-
-    // replace url to "to" param but without actually redirecting
-    //const newUrl = '/todos/3' //window.location.pathname;
-    window.history.replaceState(null, '', '/todos/3')
-
-    //nw window.location.replace("/dashboard");
-
-    console.log(`after replaced url:`, window.location.pathname)
-
-    // hack: ignore data for hydrating (because use client render)
-    window.__staticRouterHydrationData = undefined
-
-    let router = createBrowserRouter(routes)   //??
-    //?? createStaticRouter(dataRoutes, context);
-
-    ReactDOM.createRoot(
-      document.getElementById("app")
-    ).render(
-      <React.StrictMode>
-        <RouterProvider router={router} fallbackElement={null} />
-      </React.StrictMode>
-    );
-
-
-    //redirect('/dashboard')
-
-    return
-  }
+  //1
+  // // reload page same url (to fix 404 code) with client-side only rendering
+  // if (params.get('__noHydrate')) {
+  //   console.log(`__noHydrate param`)
+  //
+  //
+  //   // replace url to "to" param but without actually redirecting
+  //   //const newUrl = '/todos/3' //window.location.pathname;
+  //   window.history.replaceState(null, '', '/todos/3')
+  //
+  //   //nw window.location.replace("/dashboard");
+  //
+  //   console.log(`after replaced url:`, window.location.pathname)
+  //
+  //   // hack: ignore data for hydrating (because use client render)
+  //   window.__staticRouterHydrationData = undefined
+  //
+  //   let router = createBrowserRouter(routes)   //??
+  //   //?? createStaticRouter(dataRoutes, context);
+  //
+  //   ReactDOM.createRoot(
+  //     document.getElementById("app")
+  //   ).render(
+  //     <React.StrictMode>
+  //       <RouterProvider router={router} fallbackElement={null} />
+  //     </React.StrictMode>
+  //   );
+  //
+  //
+  //   //redirect('/dashboard')
+  //
+  //   return
+  // }
 
 
 
@@ -82,6 +84,28 @@ async function hydrate() {
   const isRouteMatched = !matches.some(m => m.route._notFound)
   console.log(`isRouteMatched:`, isRouteMatched, window.__notFound)
 
+  if (clientRenderUrl) {
+    // hack: ignore hydrate data
+    window.__staticRouterHydrationData = undefined
+
+    window.history.replaceState(null, '', clientRenderUrl)
+
+    //? let context = await query(remixRequest)
+    let router = createBrowserRouter(routes)   //??
+    //?? createStaticRouter(dataRoutes, context);
+    //console.log(`context:`, context, router)
+
+    ReactDOM.createRoot(
+      document.getElementById("app")
+    ).render(
+      <React.StrictMode>
+        <RouterProvider router={router} fallbackElement={null} />
+      </React.StrictMode>
+    );
+
+    return
+  }
+
   // If url is mathing any route then refresh this page with flag
   if (window.__notFound && isRouteMatched) {
 
@@ -91,23 +115,26 @@ async function hydrate() {
     //console.log(`context:`, context, router)
 
     // ?? no need when redirecting
-    window.__staticRouterHydrationData = undefined
+    //window.__staticRouterHydrationData = undefined
 
-    url.searchParams.set('__noHydrate', '1');
+    //1 url.searchParams.set('__noHydrate', '1');
     // return ;
     // hack to ignore rendered data for hydration
 
-    // const redirectParams = new URLSearchParams({
-    //   to: window.location.href,
-    //   //initRouter: true
-    // })
+    const redirectToClientRenderParams = new URLSearchParams({
+      [CLIENT_RENDER_URL_PARAM]: url.pathname,
+    })
 
-    console.log(`UU`, url.toString())
+
     // redirect same url (to change 404 to 200)
     //url.searchParams.set('__noHydrate', 1)
-    window.location = '/?__noHydrate=1'
-    //window.location = `/redirect?${redirectParams.toString()}`
-    return
+    //1 window.location = '/?__noHydrate=1'
+    window.location = '/?' + redirectToClientRenderParams.toString()
+    return ;
+
+    //window.history.pushState(null, '', '/todos/3')
+    //window.history.replaceState(null, '', '/todos/3')
+    //window.location.replace("/todos/3");
 
     // const url = new URL(window.location.href);
     // const params = new URLSearchParams(url.search);
@@ -155,7 +182,7 @@ async function hydrate() {
     );
 
 
-    redirect('/todos/1')
+    //nw? redirect('/todos/1')
     //nw useNavigate()('/todos/2')
   } else {
     console.log(`hydrate actually`)
