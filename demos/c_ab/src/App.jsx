@@ -77,9 +77,25 @@ function ErrorBoundary() {
 }
 
 function Layout() {
+  return <Outlet />;
+}
+
+//const sleep = (n = 500) => new Promise((r) => setTimeout(r, n));
+const sleep = () => {}
+
+//const rand = () => Math.round(Math.random() * 100);
+
+async function homeLoader() {
+  await sleep();
+  console.log(``)
+  return { data: `Home loader server data` };
+}
+
+function Home() {
+  let data = useLoaderData();
   return (
     <div>
-      <h1>Data Router Server Rendering Example</h1>
+      <h2>Home</h2>
 
       <p>
         If you check out the HTML source of this page, you'll notice that it
@@ -124,7 +140,6 @@ function Layout() {
             <Link to="/todos">Todo list</Link>
           </li>
           <li>
-            <Link to="/todos/:id">Todo list - :id </Link>
             <Link to="/todos/PPP">Todo list - PPP </Link>
             <Link to="/todos/1">Todo list - 1 </Link>
           </li>
@@ -134,32 +149,6 @@ function Layout() {
         </ul>
       </nav>
 
-      <hr />
-      <div>
-        ##########
-        <Outlet />
-        ##########
-      </div>
-    </div>
-  );
-}
-
-//const sleep = (n = 500) => new Promise((r) => setTimeout(r, n));
-const sleep = () => {}
-
-//const rand = () => Math.round(Math.random() * 100);
-
-async function homeLoader() {
-  await sleep();
-  console.log(``)
-  return { data: `Home loader server data` };
-}
-
-function Home() {
-  let data = useLoaderData();
-  return (
-    <div>
-      <h2>Home!</h2>
       {/* <p>Loader Data: {data.data}</p> */}
     </div>
   );

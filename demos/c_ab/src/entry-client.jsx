@@ -10,12 +10,12 @@ import {
 
 import { routes } from "./App"
 
+const CLIENT_RENDER_URL_PARAM = 'url'
 
 hydrate();
 
 
 async function hydrate() {
-  const CLIENT_RENDER_URL_PARAM = 'url'
   const url = new URL(window.location.href);
   const params = new URLSearchParams(url.search);
   console.log(`hydrate()`, url, window.location, params, window.__staticRouterHydrationData)
