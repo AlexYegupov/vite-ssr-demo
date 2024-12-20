@@ -45,22 +45,13 @@ export const routes = [
           {
             path: ':id',
             loader: todoItemLoader,
-            element: <TodoItem />,
-            /* children: [
-             *   {
-             *     path: ':id2',
-             *     loader: todoItemLoader,
-             *     element: <TodoItem />,
-             *   }
-             * ] */
+            element: <TodoItem />
           }
         ]
       },
       {
         path: "*",
-        //loader: noMatchLoader,
         element: <NoMatch />,
-        _notFound: true
       },
     ],
   }
@@ -201,61 +192,10 @@ async function redirectLoader({ request }) {
   return redirect(to);
 }
 
-import { useLocation, useMatches, useNavigate } from "react-router-dom";
-
-async function noMatchLoader({ request }) {
-  const url = new URL(request.url)
-  //const navigate = useNavigate();  // useNavigate to perform redirects
-  //const location = useLocation();  // Get the current location
-  //const matches = useMatches();
-
-  //console.log(`noMatchLoader`, url, location, matches)
-  /*
-   *   // Check if any match was found
-   *   if (matches.length > 0) {
-   *     console.log(`navigating to`, url.pathname)
-   *     // Redirect to the first matched route (you can refine this based on your needs)
-   *     navigate(url.pathname);
-   *   }
-   *  */
-  return null; // Ensure that loader doesn't continue processing
-
-  /*
-   *   console.log(`noMatchLoader`, request)
-   *
-   *   if (typeof window !== "undefined"
-   *       && (window.__noMatchRedirected != request.url)
-   *   ) {
-   *     redirect(request.url);
-   *     window.__noMatchRedirected = request.url
-   *   }
-   *  */
-  /*
-   *   return new Response(null, {
-   *     status: 302,
-   *     headers: { Location: url.pathname + url.search }, // Redirect to the same path and query parameters
-   *   });
-   *  */
-}
-
 
 function NoMatch() {
   console.log(`NoMatch!`)
-  /* const location = useLocation();
-   * const matches = useMatches();
-   * const navigate = useNavigate();
-   */
   const data = useLoaderData()
-
-  /* console.log(`NoMatch`, location, matches, data)
-   */
-  /* if (typeof window !== "undefined" && !window.__navigated && location.pathname) {
-   *   console.log(`redirecting to`, location.pathname)
-   *   navigate(location.pathname);
-   *   window.__navigated = 'YES'
-   * } */
-
-  // REDIRECT to ///...:id
 
   return (
     <div>
