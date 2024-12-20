@@ -36,7 +36,6 @@ async function renderSingleRoute(route, parentPath) {
 
   // skip if route has children index route
   if (route?.children?.some( childRoute => childRoute.index )) {
-    // skip if children index route present
     console.log(`SKIP:`, url)
     return;
   }

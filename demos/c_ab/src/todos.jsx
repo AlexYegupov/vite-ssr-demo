@@ -62,18 +62,7 @@ export function Todos() {
 export async function todoItemLoader({ request, params }) {
   const { id } = params;
 
-  const isStaticRender = request.headers.get(RENDER_TYPE) === RENDER_TYPE_STATIC;
-
-  console.log(`todoItemLoader`, isStaticRender, params)
-
-  // if (isStaticRender) {
-  //   return 'need reload'
-  // }
-
-  // if (isStaticRender) { //return null
-  //   //throw new Response(null, {status: 302, headers: { Location: "." } });
-  //   throw new Error('Skipped todoItem for static render');
-  // }
+  console.log(`todoItemLoader`, params)
 
   const item = TODO_ITEMS.find(item => item.id === Number(id) )
   if (!item) {
@@ -82,8 +71,6 @@ export async function todoItemLoader({ request, params }) {
     //? new Response(null, { status: 302, headers: { Location: "/login" } });
   }
 
-  console.log(`IIIIIIII`, {...item, AAAAAAAAAAA: 10})
-
   return item
 }
 
@@ -91,12 +78,8 @@ export async function todoItemLoader({ request, params }) {
 export function TodoItem() {
   const item = useLoaderData()
 
-  //if (!item) {
-  //   redirect(window.location.pathname)
-
   console.log(`todoItem`, item)
 
-  //if (!item) return; //??
   const { id, caption } = item
   return (
     <div>

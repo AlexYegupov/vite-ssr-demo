@@ -10,7 +10,7 @@
     "generate": "vite build --outDir dist/static && npm run build && node prerender",
     "gen": "node prerender",
     "serve": "NODE_ENV=production node server",
-    "serve:static": "http-server dist/static --proxy 'http://localhost:3002?'",
+    "serve:static": "http-server dist/static --proxy 'http://localhost:3002/catch-all-redirect?'",
     "debug": "node --inspect-brk server"
   },
   "dependencies": {

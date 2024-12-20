@@ -10,18 +10,30 @@ import {
 
 import { routes } from "./App"
 
-const CLIENT_RENDER_URL_PARAM = 'url'
-
 hydrate();
 
+function renderOnClient(url) {
+  console.log(`renderOnClient`, url)
+
+  window.history.replaceState(null, '', url)
+
+  // hack: ignore hydrate data
+  window.__staticRouterHydrationData = undefined
+  let router = createBrowserRouter(routes)   //??
+
+  ReactDOM.createRoot(
+    document.getElementById("app")
+  ).render(
+    <React.StrictMode>
+      <RouterProvider router={router} fallbackElement={null} />
+    </React.StrictMode>
+  );
+}
 
 async function hydrate() {
   const url = new URL(window.location.href);
   const params = new URLSearchParams(url.search);
   console.log(`hydrate()`, url, window.location, params, window.__staticRouterHydrationData)
-
-  // render on client specific url without hydrating
-  const clientRenderUrl = params.get(CLIENT_RENDER_URL_PARAM)
 
   // Determine if any of the initial routes are lazy
   let lazyMatches = matchRoutes(routes, window.location)?.filter(
@@ -47,37 +59,10 @@ async function hydrate() {
 
   const isRouteMatched = !matches.some(m => m.route._notFound)
 
-  console.log(`matches`, matches, isRouteDynamic, isRouteMatched, window.__notFound)
+  console.log(`matches`, matches, 'dyn:', isRouteDynamic,'matched:', isRouteMatched, 'notFound:', window.__notFound)
 
-  if (clientRenderUrl) {
-    console.log(`clientRenderUrl`, clientRenderUrl)
-
-    window.history.replaceState(null, '', clientRenderUrl)
-
-    // hack: ignore hydrate data
-    window.__staticRouterHydrationData = undefined
-    let router = createBrowserRouter(routes)   //??
-
-    ReactDOM.createRoot(
-      document.getElementById("app")
-    ).render(
-      <React.StrictMode>
-        <RouterProvider router={router} fallbackElement={null} />
-      </React.StrictMode>
-    );
-
-    return;
-  }
-
-  if (isRouteMatched && isRouteDynamic) {
-
-    console.log(`404 but route matched. Rendering on client side`)
-
-    const redirectToClientRenderParams = new URLSearchParams({
-      [CLIENT_RENDER_URL_PARAM]: url.pathname,
-    })
-
-    window.location = '/?' + redirectToClientRenderParams.toString()
+  if (isRouteDynamic || !isRouteMatched) {
+    renderOnClient(url.pathname)
     return;
   }
 

@@ -4,7 +4,6 @@ import { todosLoader, todoItemLoader, Todos, TodoItem } from './todos';
 export const routes = [
   {
     path: "/",
-    loader: rootLoader,
     element: <Layout />,
     errorElement: <ErrorBoundary />,
     children: [
@@ -13,10 +12,11 @@ export const routes = [
         loader: homeLoader,
         element: <Home />,
       },
-      /* {  // SSG dynamic url entry point. Example: /init?url=/todos/1
-       *   path: "init",
-       *   loader: initLoader,
-       * }, */
+      {
+        // catch-all redirect route (should be configured on server) for dynamic url entry poins for SSG sites
+        path: "/catch-all-redirect",
+        element: null
+      },
       {
         path: "about",
         element: <About />,
@@ -63,7 +63,7 @@ export const routes = [
         _notFound: true
       },
     ],
-  },
+  }
 ];
 
 function ErrorBoundary() {
@@ -97,33 +97,6 @@ const sleep = () => {}
 
 //const rand = () => Math.round(Math.random() * 100);
 
-async function rootLoader({ request }) {
-  const url = new URL(request.url);
-  //const destinationUrl = url.searchParams.get("to");
-  console.log(`rootLoader`, url)
-
-  /* if (destinationUrl) {
-   *   return redirect(destinationUrl);
-   * }
-  */
-  return {}
-}
-
-/*
- * async function initLoader({ request }) {
- *   const url = new URL(request.url);
- *   const destinationUrl = url.searchParams.get('url');
- *   console.log(`initLoader`, url)
- *
- *   if (destinationUrl) {
- *     return redirect(destinationUrl);
- *   }
- *
-*   return {}
-*
-*
-* }
-*  */
 async function homeLoader() {
   await sleep();
   console.log(``)
