@@ -152,8 +152,10 @@ function Home() {
             <Link to="/todos">Todo list</Link>
           </li>
           <li>
-            <Link to="/todos/PPP">Todo list - PPP </Link>
-            <Link to="/todos/1">Todo list - 1 </Link>
+            <Link to="/todos/1">Todo: 1 </Link>
+          </li>
+          <li>
+            <Link to="/todos/UNKNOWN">Todo: unknown </Link>
           </li>
           <li>
             <Link to="/nothing-here">Nothing Here</Link>
