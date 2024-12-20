@@ -60,12 +60,11 @@ export function Todos() {
 
 
 export async function todoItemLoader({ request, params }) {
-  console.log(`TIL0`)
   const { id } = params;
 
   const isStaticRender = request.headers.get(RENDER_TYPE) === RENDER_TYPE_STATIC;
 
-  console.log(`TIL`, isStaticRender, params)
+  console.log(`todoItemLoader`, isStaticRender, params)
 
   // if (isStaticRender) {
   //   return 'need reload'

@@ -21,20 +21,20 @@ async function renderSingleRoute(route, parentPath) {
     filename = path.posix.join(parentPath, 'index')
   } else if (route.path === '*' ) {
     url = path.posix.join(parentPath, '--THIS-URL-NOT-EXISTS--')
-    filename = '404' //path.posix.join(parentPath, '404')
+    filename = 'notfound' //path.posix.join(parentPath, '404')
     notFound = true
   } else {
     url = path.posix.join(parentPath, route.path)
     filename = url
   }
 
-  // todo : includes *
-  if (url.includes(':id')) {  //!!
-    console.log(`SKIP dynamic url:`, url)
+  // route has dynamic segments
+  if (url.includes(':') || url.includes('*')) {
+    console.log(`Skip url with dynamic segments:`, url)
     return;
   }
 
-  // check if route has children index route
+  // skip if route has children index route
   if (route?.children?.some( childRoute => childRoute.index )) {
     // skip if children index route present
     console.log(`SKIP:`, url)
@@ -48,7 +48,6 @@ async function renderSingleRoute(route, parentPath) {
       _html += '<script>window.__notFound = true</script>'
     }
 
-    console.log(`HHHHHHH`, url)
     html = template.replace(`<!--app-html-->`, _html)
   } catch (e) {
     console.log(`CATCH`, url, e)
@@ -66,6 +65,9 @@ async function renderSingleRoute(route, parentPath) {
   fs.writeFileSync(toAbsolute(filePath), html)
 
 }
+
+
+
 
 async function renderRoutes(routes, parentPath = '') {
   for (const route of routes) {

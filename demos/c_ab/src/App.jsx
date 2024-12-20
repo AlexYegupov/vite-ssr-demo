@@ -4,6 +4,7 @@ import { todosLoader, todoItemLoader, Todos, TodoItem } from './todos';
 export const routes = [
   {
     path: "/",
+    loader: rootLoader,
     element: <Layout />,
     errorElement: <ErrorBoundary />,
     children: [
@@ -12,6 +13,10 @@ export const routes = [
         loader: homeLoader,
         element: <Home />,
       },
+      /* {  // SSG dynamic url entry point. Example: /init?url=/todos/1
+       *   path: "init",
+       *   loader: initLoader,
+       * }, */
       {
         path: "about",
         element: <About />,
@@ -40,7 +45,14 @@ export const routes = [
           {
             path: ':id',
             loader: todoItemLoader,
-            element: <TodoItem />
+            element: <TodoItem />,
+            /* children: [
+             *   {
+             *     path: ':id2',
+             *     loader: todoItemLoader,
+             *     element: <TodoItem />,
+             *   }
+             * ] */
           }
         ]
       },
@@ -85,6 +97,33 @@ const sleep = () => {}
 
 //const rand = () => Math.round(Math.random() * 100);
 
+async function rootLoader({ request }) {
+  const url = new URL(request.url);
+  //const destinationUrl = url.searchParams.get("to");
+  console.log(`rootLoader`, url)
+
+  /* if (destinationUrl) {
+   *   return redirect(destinationUrl);
+   * }
+  */
+  return {}
+}
+
+/*
+ * async function initLoader({ request }) {
+ *   const url = new URL(request.url);
+ *   const destinationUrl = url.searchParams.get('url');
+ *   console.log(`initLoader`, url)
+ *
+ *   if (destinationUrl) {
+ *     return redirect(destinationUrl);
+ *   }
+ *
+*   return {}
+*
+*
+* }
+*  */
 async function homeLoader() {
   await sleep();
   console.log(``)
