@@ -59,7 +59,7 @@ async function hydrate() {
 
   const isRouteMatched = !matches.some(m => m.route._notFound)
 
-  console.log(`matches`, matches, 'dyn:', isRouteDynamic,'matched:', isRouteMatched, 'notFound:', window.__notFound)
+  console.log(`matches`, matches, isRouteDynamic, isRouteMatched)
 
   if (isRouteDynamic || !isRouteMatched) {
     renderOnClient(url.pathname)

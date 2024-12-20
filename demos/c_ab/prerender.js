@@ -43,9 +43,9 @@ async function renderSingleRoute(route, parentPath) {
   try {
     let _html = await renderStatic(`http://no-matter${url}`)
 
-    if (notFound) {
-      _html += '<script>window.__notFound = true</script>'
-    }
+    // if (notFound) {
+    //   _html += '<script>window.__notFound = true</script>'
+    // }
 
     html = template.replace(`<!--app-html-->`, _html)
   } catch (e) {
