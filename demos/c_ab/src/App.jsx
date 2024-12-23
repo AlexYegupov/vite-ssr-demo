@@ -1,5 +1,7 @@
 import { Outlet, Link, useLoaderData, redirect, useRouteError, isRouteErrorResponse } from "react-router-dom";
 import { todosLoader, todoItemLoader, Todos, TodoItem } from './todos';
+import { About } from './about';
+
 
 export const routes = [
   {
@@ -63,7 +65,7 @@ function ErrorBoundary() {
   if (isRouteErrorResponse(error)) {
     return (
       <div>
-        <h1>Error {error.status}</h1>
+        <h1>Error {error.status}</h1> 
         <p>{error.statusText}</p>
         {error.data ?? <pre>{JSON.stringify(error.data, null, 2)}</pre>}
       </div>
@@ -155,14 +157,6 @@ function Home() {
       </nav>
 
       {/* <p>Loader Data: {data.data}</p> */}
-    </div>
-  );
-}
-
-function About() {
-  return (
-    <div>
-      <h2>About</h2>
     </div>
   );
 }
