@@ -18,7 +18,6 @@ export async function render(
   let { query, dataRoutes } = createStaticHandler(routes);  //?? move globally
   let remixRequest = createFetchRequest(request, response);
   let context = await query(remixRequest);
-  console.log(`render->context:`, context)
   if (context instanceof Response) {
     throw context;
   }

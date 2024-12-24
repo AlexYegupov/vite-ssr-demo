@@ -1,10 +1,13 @@
 # IMPLEMENTED
 
-* SSG + multiple entrypoints + dynamical entrypoints support (like "/todos/1") (need server catch-all-redirect support)
+* SSG with:
+ - multiple entrypoints
+ - dynamical routes entrypoints on catch-all-redirect behavior
+
 * routing (react-router 6)
  * hot reload with keeping react state (Vite built-in)
  * sourcemap debug (Vite built-in)
- * assets
+ * assets 
  * basic favicons
 
 
@@ -15,6 +18,16 @@
 
 
 # TODO
+ * splat paths
+
+ * styling (allow several popular libs) & theming
+
+ * fetch api (+react-query?)
+
+ * tables, paginators
+
+ * unlimited loading
+
 
  * generate(?) static routes with params
 
