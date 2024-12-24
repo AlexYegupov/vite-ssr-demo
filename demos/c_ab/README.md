@@ -7,8 +7,9 @@
 * routing (react-router 6)
  * hot reload with keeping react state (Vite built-in)
  * sourcemap debug (Vite built-in)
- * assets 
+ * assets
  * basic favicons
+ * splat (arbitrary) subroutes
 
 
 
@@ -18,7 +19,6 @@
 
 
 # TODO
- * splat paths
 
  * styling (allow several popular libs) & theming
 
