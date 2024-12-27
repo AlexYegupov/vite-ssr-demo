@@ -1,4 +1,4 @@
-import { Outlet, Link, useLoaderData, redirect, useRouteError, isRouteErrorResponse } from "react-router-dom";
+import { Outlet, Link, useLoaderData, redirect, useRouteError, isRouteErrorResponse } from "react-router";
 import { todosLoader, todoItemLoader, Todos, TodoItem } from './todos';
 import { About } from './about';
 import { Wiki } from './wiki';
@@ -53,8 +53,13 @@ export const routes = [
         ]
       },
       {
-        path: 'wiki/*',
-        element: <Wiki />
+        path: 'wiki',
+        children: [
+          {
+            path: '*',
+            element: <Wiki />
+          }
+        ]
       },
       {
         path: "*",

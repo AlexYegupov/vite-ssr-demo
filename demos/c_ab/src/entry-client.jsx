@@ -1,12 +1,12 @@
 import * as React from "react";
 import ReactDOM from 'react-dom/client'
-import { createBrowserRouter, matchRoutes, RouterProvider, redirect, useNavigate } from 'react-router-dom'
+import { createBrowserRouter, matchRoutes, RouterProvider, redirect, useNavigate } from 'react-router'
 import {
   StaticRouter,
   createStaticHandler,
   createStaticRouter,
   StaticRouterProvider
-} from 'react-router-dom/server'
+} from 'react-router'
 
 import { routes } from "./App"
 
@@ -25,7 +25,7 @@ function renderOnClient(url) {
     document.getElementById("app")
   ).render(
     <React.StrictMode>
-      <RouterProvider router={router} fallbackElement={null} />
+      <RouterProvider router={router} />
     </React.StrictMode>
   );
 }
@@ -72,7 +72,7 @@ async function hydrate() {
   ReactDOM.hydrateRoot(
     document.getElementById("app"),
     <React.StrictMode>
-      <RouterProvider router={router} fallbackElement={null} />
+      <RouterProvider router={router} />
     </React.StrictMode>
   );
 

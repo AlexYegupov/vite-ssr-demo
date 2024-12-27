@@ -1,5 +1,5 @@
 import { useParams } from 'react-router';
-import { useLoaderData, Link } from "react-router-dom";
+import { useLoaderData, Link } from "react-router";
 import React, { Suspense, useState } from 'react';
 import { isRenderStatic, RENDER_TYPE, RENDER_TYPE_STATIC } from './render-utils'
 
@@ -22,9 +22,7 @@ const LazyComponent = React.lazy(() => import('./test-lazy-component'));
 
 
 export async function todosLoader({ request }) {
-  await sleep(0);
-
-  console.log(`todosLoader`, isRenderStatic(request.headers))
+  console.log(`$$$$$ todosLoader`, isRenderStatic(request.headers))
 
   return TODO_ITEMS
 }
