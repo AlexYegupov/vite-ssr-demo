@@ -8,7 +8,7 @@ import {
 } from 'react-router'
 import { RENDER_TYPE, RENDER_TYPE_STATIC } from './render-utils'
 
-import { routes } from "./App";
+import { routes } from "./app";
 export { routes }; // for SSG
 
 export async function render(

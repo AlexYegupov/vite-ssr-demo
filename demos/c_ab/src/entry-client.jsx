@@ -8,7 +8,7 @@ import {
   StaticRouterProvider
 } from 'react-router'
 
-import { routes } from "./App"
+import { routes } from "./app"
 
 hydrate();
 
