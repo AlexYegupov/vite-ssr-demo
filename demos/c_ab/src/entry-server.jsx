@@ -15,6 +15,7 @@ export async function render(
   request,
   response
 ) {
+  console.log(`render()`)
   let { query, dataRoutes } = createStaticHandler(routes);  //?? move globally
   let remixRequest = createFetchRequest(request, response);
   let context = await query(remixRequest);
@@ -35,6 +36,7 @@ export async function render(
 }
 
 export async function renderStatic(url) {
+  console.log(`renderStatic()`)
   let { query, dataRoutes } = createStaticHandler(routes);
   let remixRequest = new Request(
     url,

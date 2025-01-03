@@ -1,6 +1,5 @@
 
-import { useParams } from 'react-router';
-import { useLoaderData, Link } from "react-router";
+import { useParams, useLoaderData, useFetcher, Link, Form  } from "react-router";
 import React, { Suspense, useState } from 'react';
 import { isRenderStatic, RENDER_TYPE, RENDER_TYPE_STATIC } from './render-utils'
 
@@ -28,8 +27,20 @@ export async function todosLoader({ request }) {
   return TODO_ITEMS
 }
 
+export async function todosAction({
+  request,
+}) {
+  console.log(`todosAction`)
+  return {a: 'b'}
+  /* let formData = await request.formData();
+   * let title = await formData.get("title");
+   * let project = await someApi.updateProject({ title });
+   * return project; */
+}
+
 export function Todos() {
   let data = useLoaderData();
+  //let fetcher = useFetcher();
 
   console.log(`Todos`, data)
   const [lazyLoaded, setLazyLoaded] = useState(null);
@@ -44,6 +55,12 @@ export function Todos() {
           </li>
         )}
       </ul>
+
+      Add todo:
+      <Form method="post">
+        <input type="text" name="caption" />
+        <button type="submit">OK</button>
+      </Form>
 
       <button onClick={importTest}>load Test module</button>
 

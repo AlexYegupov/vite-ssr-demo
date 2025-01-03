@@ -1,5 +1,5 @@
 import { Outlet, Link, useLoaderData, redirect, useRouteError, isRouteErrorResponse } from "react-router";
-import { todosLoader, todoItemLoader, Todos, TodoItem } from './todos';
+import { todosLoader, todoItemLoader, todosAction, Todos, TodoItem } from './todos';
 import { About } from './about';
 import { Wiki } from './wiki';
 
@@ -42,12 +42,18 @@ export const routes = [
         children: [
           {
             index: true,
+            action: todosAction,
             loader: todosLoader,
             element: <Todos />,
           },
           {
             path: ':id',
             loader: todoItemLoader,
+            action: async ({ params, request }) => {
+              let formData = await request.formData();
+              console.log('todo item action', formData)
+              return {'a': 10}
+            },
             element: <TodoItem />
           }
         ]
@@ -102,7 +108,6 @@ const sleep = () => {}
 
 async function homeLoader() {
   await sleep();
-  console.log(``)
   return { data: `Home loader server data` };
 }
 
@@ -159,7 +164,6 @@ async function dashboardLoader() {
 
 function Dashboard() {
   let data = useLoaderData();
-  console.log(`DATA`, data)
   return (
     <div>
       <h2>Dashboard</h2>
@@ -171,7 +175,6 @@ function Dashboard() {
 async function redirectLoader({ request }) {
   const url = new URL(request.url);
   const to = url.searchParams.get("to") || '/';
-
   console.log(`redirectLoader`, to)
 
   return redirect(to);
