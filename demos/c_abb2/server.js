@@ -6,7 +6,6 @@ import express from 'express'
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
 const isTest = process.env.VITEST
-const PORT = process.env.PORT || 5173
 
 export async function createServer(
   root = process.cwd(),
@@ -27,10 +26,11 @@ export async function createServer(
    * @type {import('vite').ViteDevServer}
    */
   let vite
+  let viteModule
   if (!isProd) {
-    vite = await (
-      await import('vite')
-    ).createServer({
+    viteModule = await import('vite');
+
+    vite = await viteModule.createServer({
       root,
       logLevel: isTest ? 'error' : 'info',
       server: {
@@ -46,6 +46,7 @@ export async function createServer(
         },
       },
       appType: 'custom',
+      // mode: 'production', // Указываем режим
     })
     // use vite's connect instance as middleware
     app.use(vite.middlewares)
@@ -93,13 +94,17 @@ export async function createServer(
     }
   })
 
-  return { app, vite }
+  return { app, vite, viteModule }
 }
 
 if (!isTest) {
-  createServer().then(({ app }) =>
-    app.listen(PORT , () => {
-      console.log(`http://localhost:${PORT}`)
-    }),
-  )
+
+  createServer().then(({ app, viteModule }) => {
+    const loadEnv = viteModule.loadEnv;
+    const env = loadEnv(process.env.NODE_ENV || 'development', process.cwd())
+
+    app.listen(env.VITE_PORT , () => {
+      console.log(`http://${env.VITE_HOST}:${env.VITE_PORT}`)
+    })
+  })
 }

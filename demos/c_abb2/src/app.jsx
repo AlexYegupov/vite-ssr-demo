@@ -1,10 +1,11 @@
-import { Outlet, Link, redirect, useRouteError, isRouteErrorResponse, useParams, useLoaderData, useFetcher, Form, useNavigation } from "react-router";
-import React, { Suspense, useState } from 'react';
-import { isRenderStatic, RENDER_TYPE, RENDER_TYPE_STATIC } from './render-utils'
+import React from 'react';
+import { Form, isRouteErrorResponse, Link, Outlet, redirect, useFetcher, useLoaderData, useNavigation, useParams, useRouteError } from "react-router";
+import { /* getBaseUrl, */ isBrowser, formatFullUrl } from './render-utils';
 
 import { addTodo, deleteTodo, getTodos } from "./todos";
+import { fetchApi } from "./api";
 
-import { About } from './about';
+import { About, aboutLoader } from './about';
 import { Wiki } from './wiki';
 
 export const routes = [
@@ -26,6 +27,7 @@ export const routes = [
       {
         path: "about",
         element: <About />,
+        loader: aboutLoader
       },
       {
         path: "dashboard",
@@ -44,18 +46,19 @@ export const routes = [
         path: 'todos',
         action: todosAction,
         loader: todosLoader,
-        Component: TodosList,
-        ErrorBoundary: TodosBoundary,
+        //nw clientLoader: async () => console.log(`clientLoader`),
+        Component: Todos,
+        ErrorBoundary: ErrorBoundary,
+        //_skipSSG: true,
         children: [
           {
             path: ':id',
-            /* loader: todoItemLoader, */
+            loader: todoLoader,
             /* action: async ({ params, request }) => {
              *   let formData = await request.formData();
              *   console.log('todo item action', formData)
              *   return {'a': 10}
              * }, */
-            loader: todoLoader,
             Component: Todo,
           }
         ]
@@ -93,18 +96,19 @@ function ErrorBoundary() {
   console.error(error)
   return (
     <div>
-      <h1>Unexpected Error</h1>
+      <h1>Unexpected Error💥</h1>
       <p>{error?.message || "Unknown error"}</p>
     </div>
   )
 }
+
 
 function Layout() {
   return <Outlet />;
 }
 
 //const sleep = (n = 500) => new Promise((r) => setTimeout(r, n));
-const sleep = () => {}
+const sleep = () => { }
 
 //const rand = () => Math.round(Math.random() * 100);
 
@@ -226,15 +230,35 @@ export async function todosAction({ request }) {
 }
 
 export async function todosLoader() {
-  console.log(`todosLoader`)
-  await sleep();
-  return getTodos();
+  console.log(`todosLoader`, isBrowser(), process.env /* getBaseUrl() */)
+  console.log(`E:`, process.env.VITE_BASE_URL, process.env.BASE_URL,
+    import.meta.env
+  )
+
+  //const todosUrl = `${import.meta.enm.VITE_BASE_URL}/todos.json`
+  //const response = await fetchApi(import.meta.env.KEY todos.json);
+  //const response = await fetch(formatFullUrl('/todos.json'))
+  const response = await fetchApi('/todos.json');
+
+  console.log(`response`, response)
+
+  if (!response.ok) {
+    throw new Error("Failed to load todos");
+  }
+  return response.json()
+  /* if (isBrowser) {
+   *   return
+   * } */
+  //await sleep();
+  //return getTodos();
 }
 
-export function TodosList() {
-  let todos = useLoaderData();
+export function Todos() {
+  let todos = useLoaderData() || [];
   let navigation = useNavigation();
   let formRef = React.useRef(null);
+
+  console.log(`Todos`, todos)
 
   // If we add and then we delete - this will keep isAdding=true until the
   // fetcher completes it's revalidation
@@ -262,9 +286,9 @@ export function TodosList() {
             Click this link to force an error in the loader
           </Link>
         </li>
-        {Object.entries(todos).map(([id, todo]) => (
+        {todos.map(({ id, title, completed }) => (
           <li key={id}>
-            <TodoItem id={id} todo={todo} />
+            <TodoItem id={id} title={title} completed={completed} />
           </li>
         ))}
       </ul>
@@ -297,13 +321,13 @@ export function TodoItem({ id, todo }) {
   return (
     <>
       <Link to={`/todos/${id}`}>{todo}</Link>
-    &nbsp;
-    <fetcher.Form method="post" style={{ display: "inline" }}>
-      <input type="hidden" name="action" value="delete" />
-      <button type="submit" name="todoId" value={id} disabled={isDeleting}>
-        {isDeleting ? "Deleting..." : "Delete"}
-      </button>
-    </fetcher.Form>
+      &nbsp;
+      <fetcher.Form method="post" style={{ display: "inline" }}>
+        <input type="hidden" name="action" value="delete" />
+        <button type="submit" name="todoId" value={id} disabled={isDeleting}>
+          {isDeleting ? "Deleting..." : "Delete"}
+        </button>
+      </fetcher.Form>
     </>
   );
 }

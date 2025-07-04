@@ -29,13 +29,18 @@ async function renderSingleRoute(route, parentPath) {
 
   // route has dynamic segments
   if (url.includes(':') || url.includes('*')) {
-    console.log(`Skip url with dynamic segments:`, url)
+    console.log(`Skip ${url} with dynamic segment`)
     return;
   }
 
   // skip if route has children index route
   if (route?.children?.some( childRoute => childRoute.index )) {
-    console.log(`SKIP:`, url)
+    console.log(`Skip ${url} in favor of child index route`)
+    return;
+  }
+
+  if (route._skipSSG) {
+    console.log(`Skip ${url} because of flag`)
     return;
   }
 
