@@ -1,85 +1,85 @@
 {
-    // Use IntelliSense to learn about possible attributes.
-    // Hover to view descriptions of existing attributes.
-    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
-
-    // Описание конфигураций для разработки
     "version": "0.2.0",
+    "compounds": [
+        {
+            "name": "Debug Full Stack",
+            "configurations": ["Debug Server", "Debug Client"],
+            "stopAll": true
+        }
+    ],
     "configurations": [
-        // Когда использовать: Когда вы работаете только над фронтендом (компоненты React, маршрутизация, UI)
-        // Преимущества: Быстрый запуск, фокус на клиентской части, хорошо для быстрых изменений в интерфейсе
+        
+        // Client-side debugging (browser)
         {
-            "type": "node",
+            "name": "Debug Client",
+            "type": "chrome",
             "request": "launch",
-            "name": "Run React Router Dev",
-            "skipFiles": [
-                "<node_internals>/**"
-            ],
-            "runtimeExecutable": "npm",
-            "runtimeArgs": ["run", "dev"],
-            "console": "integratedTerminal",
-            "sourceMaps": true
+            "url": "http://localhost:8787",
+            "webRoot": "${workspaceFolder}",
+            "sourceMaps": true,
+            "sourceMapPathOverrides": {
+                "/@fs/*": "${workspaceFolder}/*",
+                "/@id/*": "${workspaceFolder}/node_modules/*"
+            },
+            "skipFiles": ["<node_internals>/**"],
+            "trace": true
         },
-        // Когда использовать: Когда вам нужно протестировать полное приложение как оно будет работать на Cloudflare
-        // Преимущества: Имитирует реальное окружение Cloudflare Workers, включая серверный рендеринг
+        
+        // Server-side debugging (Node.js with Wrangler)
         {
+            "name": "Debug Server",
             "type": "node",
             "request": "launch",
-            "name": "Run Wrangler Dev",
-            "skipFiles": [
-                "<node_internals>/**"
-            ],
-            "runtimeExecutable": "npm",
-            "runtimeArgs": ["run", "start"],
-            "console": "integratedTerminal",
-            "sourceMaps": true
-        },
-        // Когда использовать: Когда у вас проблемы в серверной части кода и нужно отладить их
-        // Преимущества: Позволяет ставить точки останова в серверном коде, видеть переменные и выполнение кода на сервере
-        {
-            "type": "node",
-            "request": "launch",
-            "name": "Debug Wrangler Dev",
-            "skipFiles": [
-                "<node_internals>/**"
-            ],
             "runtimeExecutable": "npm",
             "runtimeArgs": ["run", "dev:debug"],
-            "outFiles": [
-                "${workspaceFolder}/**/*.js"
-            ],
+            "cwd": "${workspaceFolder}",
             "console": "integratedTerminal",
+            "outputCapture": "std",
             "sourceMaps": true,
             "resolveSourceMapLocations": [
                 "${workspaceFolder}/**",
                 "!**/node_modules/**"
-            ]
+            ],
+            "skipFiles": ["<node_internals>/**"],
+            "internalConsoleOptions": "openOnSessionStart",
+            "autoAttachChildProcesses": true
         },
-        // Когда использовать: Когда у вас проблемы в клиентском коде (JavaScript в браузере)
-        // Преимущества: Позволяет отлаживать код, который выполняется в браузере, после того как сервер уже запущен
+        
+        // Local development with Wrangler (no debug)
         {
-            "type": "chrome",
+            "name": "Start Local Server",
+            "type": "node",
             "request": "launch",
-            "name": "Debug Browser",
-            "url": "http://localhost:8787",
-            "webRoot": "${workspaceFolder}",
-            "sourceMapPathOverrides": {
-                "webpack:///./*": "${workspaceFolder}/*"
-            }
+            "runtimeExecutable": "npm",
+            "runtimeArgs": ["run", "dev:wrangler:local"],
+            "cwd": "${workspaceFolder}",
+            "console": "integratedTerminal",
+            "skipFiles": ["<node_internals>/**"]
         },
-        // Когда использовать: Когда проблема может быть как в клиентском, так и в серверном коде
-        // Преимущества: Запускает сервер и автоматически открывает браузер с отладкой, позволяя отслеживать весь путь выполнения кода
-        // Рекомендуется для решения проблемы с ошибкой SyntaxError: Identifier '__vite__injectQuery' has already been declared
+        
+        // React Router development server
         {
-            "name": "Debug Full Stack",
+            "name": "Start React Router Dev",
+            "type": "node",
+            "request": "launch",
+            "runtimeExecutable": "npm",
+            "runtimeArgs": ["run", "dev"],
+            "cwd": "${workspaceFolder}",
+            "console": "integratedTerminal",
+            "skipFiles": ["<node_internals>/**"],
+            "sourceMaps": true
+        },
+        
+        // Full stack debug configuration (matches dev:full-stack script)
+        {
+            "name": "Debug Full Stack (Wrangler)",
             "type": "node",
             "request": "launch",
             "runtimeExecutable": "npm",
             "runtimeArgs": ["run", "dev:full-stack"],
-            "outFiles": [
-                "${workspaceFolder}/**/*.js"
-            ],
+            "cwd": "${workspaceFolder}",
             "console": "integratedTerminal",
+            "skipFiles": ["<node_internals>/**"],
             "sourceMaps": true,
             "serverReadyAction": {
                 "pattern": "Local: (https?://\\S+)",
