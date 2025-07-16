@@ -24,6 +24,7 @@ export const links: Route.LinksFunction = () => [
 ];
 
 export function Layout({ children }: { children: React.ReactNode }) {
+  console.log(234);
   return (
     <html lang="en">
       <head>
@@ -33,6 +34,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <Links />
       </head>
       <body>
+        22233
         {children}
         <ScrollRestoration />
         <Scripts />
