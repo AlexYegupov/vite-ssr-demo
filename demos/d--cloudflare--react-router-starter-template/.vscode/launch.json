@@ -43,9 +43,7 @@
       "env": {
         "NODE_ENV": "development",
         "VITE_DEV_MODE": "true",
-        "DEBUG": "vite:*",
-        "WRANGLER_SOURCEMAP": "true",
-        "SOURCEMAP": "true"
+        "DEBUG": "vite:*"
       },
       "preLaunchTask": "npm: build",
       "serverReadyAction": {
@@ -63,13 +61,6 @@
         "${workspaceFolder}/.wrangler/**/*.js"
       ],
       "sourceMaps": true,
-      "sourceMapPathOverrides": {
-        "webpack:///*": "${workspaceFolder}/*",
-        "webpack:///./~/*": "${workspaceFolder}/node_modules/*",
-        "webpack:///./*": "${workspaceFolder}/*",
-        "webpack:///src/*": "${workspaceFolder}/src/*",
-        "webpack:///app/*": "${workspaceFolder}/app/*"
-      },
       "skipFiles": ["<node_internals>/**"]
     },
     {

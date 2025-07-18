@@ -4,6 +4,10 @@
 declare namespace Cloudflare {
 	interface Env {
 		VALUE_FROM_CLOUDFLARE: "Hello from Cloudflare";
+		// Controls access to sourcemap files in production
+		SOURCEMAPS_ACCESS_PROD?: string;
+		// Controls whether to generate sourcemaps for production
+		SOURCEMAPS_GENERATE_PROD?: string;
 	}
 }
 interface Env extends Cloudflare.Env {}

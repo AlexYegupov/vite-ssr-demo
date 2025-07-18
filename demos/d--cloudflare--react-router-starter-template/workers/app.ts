@@ -16,6 +16,17 @@ const requestHandler = createRequestHandler(
 
 export default {
   fetch(request, env, ctx) {
+    const url = new URL(request.url);
+    
+    // Block sourcemap requests unless SOURCEMAPS_ACCESS_PROD env variable is set to "true"
+    if (url.pathname.endsWith('.map') && env.SOURCEMAPS_ACCESS_PROD !== "true") {
+      // Return 404 Not Found to hide the fact that sourcemaps exist
+      return new Response('Not Found', {
+        status: 404,
+        statusText: 'Not Found'
+      });
+    }
+    
     return requestHandler(request, {
       cloudflare: { env, ctx },
     });

@@ -5,35 +5,41 @@ import { defineConfig } from "vite";
 import tsconfigPaths from "vite-tsconfig-paths";
 import { resolve } from "path";
 
+// Determine whether to generate sourcemaps based on environment
+// In development, always generate sourcemaps
+// In production, use SOURCEMAPS_GENERATE_PROD env variable
+const enableSourcemaps =
+  process.env.NODE_ENV !== "production" ||
+  process.env.SOURCEMAPS_GENERATE_PROD === "true";
+
 export default defineConfig({
   plugins: [
-    cloudflare({ 
-      viteEnvironment: { name: "ssr" }
+    cloudflare({
+      viteEnvironment: { name: "ssr" },
     }),
     tailwindcss(),
     reactRouter(),
     tsconfigPaths(),
   ],
   build: {
-    sourcemap: true,
-    minify: process.env.NODE_ENV === 'production',
+    sourcemap: enableSourcemaps,
+    minify: process.env.NODE_ENV === "production",
     rollupOptions: {
       output: {
-        sourcemapExcludeSources: false
-      }
-    }
+        sourcemapExcludeSources: false,
+      },
+    },
   },
-  // Enable sourcemaps for development
   css: {
-    devSourcemap: true,
+    devSourcemap: enableSourcemaps,
   },
-  // Ensure sourcemaps work in development mode
   optimizeDeps: {
     esbuildOptions: {
-      sourcemap: true
-    }
+      sourcemap: enableSourcemaps,
+    },
   },
   server: {
-    sourcemapIgnoreList: false
-  }
+    // In development, always include sourcemaps
+    sourcemapIgnoreList: false,
+  },
 });

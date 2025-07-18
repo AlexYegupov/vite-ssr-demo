@@ -100,6 +100,44 @@ You can then promote a version to production after verification or roll it out p
 npx wrangler versions deploy
 ```
 
+## Sourcemaps
+
+This project provides two environment variables to control sourcemaps:
+
+### 1. Controlling Sourcemap Generation
+
+By default, sourcemaps are **not generated** in production builds to reduce bundle size. They are always generated in development mode regardless of settings.
+
+To enable sourcemap generation in production builds, set the `SOURCEMAPS_GENERATE_PROD` environment variable to `"true"` before building:
+
+```sh
+# For local builds
+SOURCEMAPS_GENERATE_PROD=true npm run build
+
+# For Cloudflare deployments
+wrangler secret put SOURCEMAPS_GENERATE_PROD --value "true"
+```
+
+### 2. Controlling Sourcemap Access
+
+Even when sourcemaps are generated, they are not accessible in production by default for security reasons. To enable access to existing sourcemaps (e.g., for debugging), set the `SOURCEMAPS_ACCESS_PROD` environment variable to `"true"`:
+
+```sh
+wrangler secret put SOURCEMAPS_ACCESS_PROD --value "true"
+```
+
+This will allow access to `.map` files in your production environment. Remember to disable access again after debugging:
+
+```sh
+wrangler secret delete SOURCEMAPS_ACCESS_PROD
+```
+
+### Recommended Configurations
+
+- **Development**: Sourcemaps are always generated and accessible
+- **Production (default)**: Sourcemaps are not generated and not accessible
+- **Production debugging**: Enable both generation and access during build/deploy
+
 ## Styling
 
 This template comes with [Tailwind CSS](https://tailwindcss.com/) already configured for a simple default starting experience. You can use whatever CSS framework you prefer.
