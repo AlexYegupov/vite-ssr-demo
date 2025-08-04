@@ -1,9 +1,6 @@
-import { Card, Typography } from "antd";
 import logoDark from "./logo-dark.svg";
 import logoLight from "./logo-light.svg";
 import styles from "./welcome.module.css";
-
-const { Text } = Typography;
 
 export function Welcome({ message }: { message: string }) {
   return (
@@ -24,10 +21,10 @@ export function Welcome({ message }: { message: string }) {
           </div>
         </header>
         <div className={styles.navContainer}>
-          <Card className={styles.navCard}>
-            <Text className={styles.navTitle}>
+          <div className={styles.navCard}>
+            <h2 className={styles.navTitle}>
               What&apos;s next?
-            </Text>
+            </h2>
             <ul className={styles.resourceList}>
               {resources.map(({ href, text, icon }) => (
                 <li key={href} className={styles.resourceItem}>
@@ -44,7 +41,7 @@ export function Welcome({ message }: { message: string }) {
               ))}
               <li className={styles.message}>{message}</li>
             </ul>
-          </Card>
+          </div>
         </div>
       </div>
     </main>
