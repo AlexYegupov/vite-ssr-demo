@@ -1,20 +1,12 @@
 import { Link, useLocation } from "react-router";
-import { Menu } from "antd";
-import type { MenuProps } from "antd";
 import styles from "./main-menu.module.css";
 
 export function MainMenu() {
   const location = useLocation();
   
-  const menuItems: MenuProps["items"] = [
-    {
-      key: "/",
-      label: <Link to="/">Home</Link>,
-    },
-    {
-      key: "/mypage",
-      label: <Link to="/mypage">My Page</Link>,
-    },
+  const menuItems = [
+    { path: "/", label: "Home" },
+    { path: "/mypage", label: "My Page" },
   ];
 
   return (
@@ -24,16 +16,18 @@ export function MainMenu() {
           React Router App
         </div>
         
-        <Menu
-          mode="horizontal"
-          selectedKeys={[location.pathname]}
-          items={menuItems}
-          style={{ 
-            flex: 1, 
-            backgroundColor: "transparent",
-            borderBottom: "none"
-          }}
-        />
+        <ul className={styles.menuItems}>
+          {menuItems.map((item) => (
+            <li key={item.path} className={styles.menuItem}>
+              <Link 
+                to={item.path} 
+                className={`${styles.menuLink} ${location.pathname === item.path ? styles.menuLinkActive : ''}`}
+              >
+                {item.label}
+              </Link>
+            </li>
+          ))}
+        </ul>
       </div>
     </nav>
   );
