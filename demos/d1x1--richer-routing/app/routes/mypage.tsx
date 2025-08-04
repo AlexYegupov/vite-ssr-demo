@@ -1,4 +1,8 @@
+import { Typography } from "antd";
 import type { Route } from "./+types/mypage";
+import styles from "./mypage.module.css";
+
+const { Title, Paragraph } = Typography;
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -9,17 +13,11 @@ export function meta({}: Route.MetaArgs) {
 
 export default function MyPage() {
   return (
-    <div style={{ 
-      fontFamily: "system-ui, sans-serif", 
-      lineHeight: "1.8",
-      maxWidth: "1200px",
-      margin: "0 auto",
-      padding: "0 1rem"
-    }}>
-      <h1>My Page</h1>
-      <p>Welcome to your custom page!</p>
-      <p>This is a new page with the /mypage route.</p>
-      <p>You can navigate between pages using the main menu above.</p>
+    <div className={styles.container}>
+      <Title level={1} className={styles.title}>My Page</Title>
+      <Paragraph className={styles.paragraph}>Welcome to your custom page!</Paragraph>
+      <Paragraph className={styles.paragraph}>This is a new page with the /mypage route.</Paragraph>
+      <Paragraph className={styles.paragraph}>You can navigate between pages using the main menu above.</Paragraph>
     </div>
   );
 }
