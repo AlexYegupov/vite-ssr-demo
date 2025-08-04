@@ -29,6 +29,12 @@
   flex: 1;
 }
 
+.menu {
+  flex: 1;
+  background-color: transparent;
+  border-bottom: none;
+}
+
 .menuItem {
   margin: 0;
 }
