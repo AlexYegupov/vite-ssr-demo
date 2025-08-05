@@ -20,7 +20,7 @@ const cleanDirectory = (dirPath) => {
   }
 };
 
-const runBuild = () => {
+const runBuild = async () => {
   console.log('Building static site with SPA mode + prerendering...');
   console.log(`Project root: ${projectRoot}`);
 
@@ -59,21 +59,109 @@ const runBuild = () => {
       console.log('✓ Favicon copied');
     }
 
-    // Generate prerendered HTML files
     console.log('\nGenerating prerendered HTML files...');
-    const spaFallback = path.join(BUILD_DIR, 'client', '__spa-fallback.html');
-    const htmlTemplate = fs.readFileSync(spaFallback, 'utf-8');
+    
+    // Import the server build
+    let serverModule;
+    try {
+      serverModule = await import(path.join(projectRoot, 'build', 'server', 'assets', 'server-build-xUfVAezN.js'));
+    } catch (error) {
+      console.error('Error importing server build:', error);
+      throw error;
+    }
+    
+    // Get the client build assets
+    const clientAssets = fs.readdirSync(path.join(BUILD_DIR, 'client', 'assets'));
+    const cssFiles = clientAssets.filter(file => file.endsWith('.css'));
+    const jsFiles = clientAssets.filter(file => file.endsWith('.js'));
+    
+    // Create a basic HTML template with a placeholder for content
+    const createHtmlTemplate = (content = '') => `<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>React Router App</title>
+    ${cssFiles.map(css => `<link rel="stylesheet" href="/assets/${css}" />`).join('\n    ')}
+  </head>
+  <body>
+    <div id="root">${content}</div>
+    ${jsFiles.map(js => `<script type="module" src="/assets/${js}"></script>`).join('\n    ')}
+  </body>
+</html>`;
 
-    // Home page
-    const homeHtml = updateHtmlForRoute(htmlTemplate, 'Home', 'Welcome to our site');
-    fs.writeFileSync(path.join(STATIC_DIR, 'index.html'), homeHtml);
-    console.log('✓ Generated index.html');
+    // Function to render a route to HTML
+    const renderRoute = async (path) => {
+      try {
+        const { renderToReadableStream } = await import('react-dom/server.edge');
+        const { createStaticHandler } = await import('@remix-run/router');
+        const { createStaticRouter, StaticRouterProvider } = await import('react-router-dom/server.edge');
+        
+        // Get the routes from the server build
+        const routes = serverModule.routes || [];
+        
+        // Create a static handler
+        const { query } = createStaticHandler(routes);
+        
+        // Create a context for the static render
+        const context = await query(new Request(`https://example.com${path}`));
+        
+        if (context instanceof Response) {
+          throw new Error(`Failed to render ${path}: ${context.status} ${context.statusText}`);
+        }
+        
+        // Create a static router
+        const router = createStaticRouter(routes, context);
+        
+        // Render the app to a string
+        const stream = await renderToReadableStream(
+          <StaticRouterProvider router={router} context={context} />,
+          {
+            bootstrapModules: ['/assets/entry.client.js']
+          }
+        );
+        
+        // Convert the stream to a string
+        const reader = stream.getReader();
+        let result = '';
+        
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
+          result += new TextDecoder().decode(value);
+        }
+        
+        return result;
+      } catch (error) {
+        console.error(`Error rendering ${path}:`, error);
+        return '';
+      }
+    };
 
-    // MyPage
-    const mypageHtml = updateHtmlForRoute(htmlTemplate, 'My Page', 'My custom page');
-    fs.mkdirSync(path.join(STATIC_DIR, 'mypage'), { recursive: true });
-    fs.writeFileSync(path.join(STATIC_DIR, 'mypage', 'index.html'), mypageHtml);
-    console.log('✓ Generated mypage/index.html');
+    // Render and save each route
+    const routes = ['/', '/mypage'];
+    
+    for (const route of routes) {
+      try {
+        console.log(`\nRendering ${route}...`);
+        const content = await renderRoute(route);
+        const html = createHtmlTemplate(content);
+        
+        if (route === '/') {
+          fs.writeFileSync(path.join(STATIC_DIR, 'index.html'), html);
+          console.log('✓ Generated index.html');
+        } else {
+          const routeDir = route.replace(/^\/+/, ''); // Remove leading slashes
+          const dirPath = path.join(STATIC_DIR, routeDir);
+          fs.mkdirSync(dirPath, { recursive: true });
+          fs.writeFileSync(path.join(dirPath, 'index.html'), html);
+          console.log(`✓ Generated ${routeDir}/index.html`);
+        }
+      } catch (error) {
+        console.error(`❌ Failed to generate ${route}:`, error);
+        throw error;
+      }
+    }
 
     console.log('\n✨ Static site generation complete!');
     console.log(`📁 Output directory: ${STATIC_DIR}`);
@@ -102,4 +190,7 @@ function updateHtmlForRoute(html, title, description) {
   return html;
 }
 
-runBuild();
+runBuild().catch(error => {
+  console.error('Build failed:', error);
+  process.exit(1);
+});
