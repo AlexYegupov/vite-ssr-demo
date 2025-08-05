@@ -230,10 +230,8 @@ export async function todosAction({ request }) {
 }
 
 export async function todosLoader() {
-  console.log(`todosLoader`, isBrowser(), process.env /* getBaseUrl() */)
-  console.log(`E:`, process.env.VITE_BASE_URL, process.env.BASE_URL,
-    import.meta.env
-  )
+  console.log(`todosLoader`, isBrowser(), /* process.env */ /* getBaseUrl() */)
+  //console.log(`E:`, process.env.VITE_BASE_URL, process.env.BASE_URL,  import.meta.env)
 
   //const todosUrl = `${import.meta.enm.VITE_BASE_URL}/todos.json`
   //const response = await fetchApi(import.meta.env.KEY todos.json);
@@ -274,6 +272,7 @@ export function Todos() {
 
   return (
     <>
+      <Link to="/">Home</Link>
       <h2>Todos</h2>
       <p>
         This todo app uses a &lt;Form&gt; to submit new todos and a
@@ -314,13 +313,13 @@ export function TodosBoundary() {
   );
 }
 
-export function TodoItem({ id, todo }) {
+export function TodoItem({ id, title, completed }) {
   let fetcher = useFetcher();
 
   let isDeleting = fetcher.formData != null;
   return (
     <>
-      <Link to={`/todos/${id}`}>{todo}</Link>
+      <Link to={`/todos/${id}`}>{title}</Link>
       &nbsp;
       <fetcher.Form method="post" style={{ display: "inline" }}>
         <input type="hidden" name="action" value="delete" />
