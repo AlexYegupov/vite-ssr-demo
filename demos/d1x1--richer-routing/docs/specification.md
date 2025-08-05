@@ -2,7 +2,7 @@
 
 ## Overview
 
-React Router demo application showcasing client-side routing with multiple pages and navigation. Built with React Router 7, deployed on Cloudflare Workers with SSR support.
+React Router demo application showcasing client-side routing with multiple pages and navigation. Built with React Router 7, deployed on Cloudflare Workers with SSR support. Includes static site generation capability for pre-rendering pages as static HTML files.
 
 ## Entities
 

@@ -2,7 +2,7 @@ import logoDark from "./logo-dark.svg";
 import logoLight from "./logo-light.svg";
 import styles from "./welcome.module.css";
 
-export function Welcome({ message }: { message: string }) {
+export function Welcome({ message = "Welcome to React Router!" }: { message?: string }) {
   return (
     <main className={styles.container}>
       <div className={styles.content}>
