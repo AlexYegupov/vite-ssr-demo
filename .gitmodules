@@ -7,3 +7,6 @@
 [submodule "_submodules/react-router-templates"]
 	path = _submodules/react-router-templates
 	url = git@github.com:remix-run/react-router-templates.git
+[submodule "_submodules/cloudflare"]
+	path = _submodules/cloudflare
+	url = git@github.com:cloudflare/templates.git
