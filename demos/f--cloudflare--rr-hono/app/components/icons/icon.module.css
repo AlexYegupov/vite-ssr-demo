@@ -1,0 +1,11 @@
+.icon {
+  width: 24px;
+  height: 20px;
+  display: inline-block;
+  vertical-align: middle;
+}
+
+/* Ensure SVG icons inherit the current text color */
+.icon :global(svg path) {
+  stroke: currentColor;
+}

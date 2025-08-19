@@ -1,0 +1,88 @@
+/* Root layout styles */
+:root {
+  --color-primary: #2563eb;
+  --color-text: #1f2937;
+  --color-text-light: #6b7280;
+  --color-bg: #ffffff;
+  --color-border: #e5e7eb;
+  --color-error: #ef4444;
+  --spacing-1: 0.25rem;
+  --spacing-2: 0.5rem;
+  --spacing-4: 1rem;
+  --spacing-6: 1.5rem;
+  --spacing-8: 2rem;
+  --spacing-12: 3rem;
+  --spacing-16: 4rem;
+  --border-radius: 0.5rem;
+  --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+}
+
+/* Dark mode overrides */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-text: #f3f4f6;
+    --color-text-light: #9ca3af;
+    --color-bg: #111827;
+    --color-border: #374151;
+  }
+}
+
+/* Base styles */
+html {
+  font-family: var(--font-sans);
+  line-height: 1.5;
+  color: var(--color-text);
+  background-color: var(--color-bg);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Layout */
+.main-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: var(--spacing-16) var(--spacing-4) var(--spacing-8);
+  min-height: 0;
+}
+
+/* Error boundary */
+.error-boundary {
+  padding: var(--spacing-16) var(--spacing-4);
+  max-width: 65ch;
+  margin: 0 auto;
+}
+
+.error-boundary h1 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin: 0 0 var(--spacing-4);
+}
+
+.error-boundary p {
+  margin: 0 0 var(--spacing-4);
+}
+
+.error-boundary pre {
+  background-color: rgba(0, 0, 0, 0.05);
+  border-radius: var(--border-radius);
+  padding: var(--spacing-4);
+  overflow-x: auto;
+  font-size: 0.875rem;
+  line-height: 1.5;
+  margin: var(--spacing-4) 0;
+}
+
+@media (prefers-color-scheme: dark) {
+  .error-boundary pre {
+    background-color: rgba(255, 255, 255, 0.1);
+  }
+}
