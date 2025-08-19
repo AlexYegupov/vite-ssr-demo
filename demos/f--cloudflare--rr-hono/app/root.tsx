@@ -9,6 +9,7 @@ import {
 
 import type { Route } from "./+types/root";
 import styles from "./root.module.css";
+import NotFound from "./$";
 
 export const links: Route.LinksFunction = () => [
   { rel: "preconnect", href: "https://fonts.googleapis.com" },
@@ -46,19 +47,21 @@ export default function App() {
 }
 
 export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
+  if (isRouteErrorResponse(error) && error.status === 404) {
+    return <NotFound />;
+  }
+
+  // For other errors, show a generic error message
   let message = "Oops!";
   let details = "An unexpected error occurred.";
   let stack: string | undefined;
 
   if (isRouteErrorResponse(error)) {
-    message = error.status === 404 ? "404" : "Error";
-    details =
-      error.status === 404
-        ? "The requested page could not be found."
-        : error.statusText || details;
-  } else if (import.meta.env.DEV && error && error instanceof Error) {
+    message = `Error ${error.status}`;
+    details = error.statusText || details;
+  } else if (error instanceof Error) {
     details = error.message;
-    stack = error.stack;
+    stack = import.meta.env.DEV ? error.stack : undefined;
   }
 
   return (
