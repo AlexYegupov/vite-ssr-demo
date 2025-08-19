@@ -51,6 +51,10 @@
 - **CONDITIONAL**: Only when CSS styling cannot override antd styling, use :global selectors to target Ant Design component's internal elements
 - **MANDATORY**: ALWAYS use CSS variables for colors, spacing, etc.
 
+## React requirements
+
+- **PROHIBITED**: NEVER use inline svg
+
 # Documentation Requirements
 
 ## Specification Document Structure

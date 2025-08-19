@@ -1,7 +1,6 @@
 import { useMemo } from "react";
 import styles from "./welcome.module.css";
 import { LogoLight, LogoDark } from "../components/logos/logo-component";
-import { SvgIcon } from "../components/icons/svg-icon";
 
 export function Welcome({ message }: { message: string }) {
   const resources = useMemo(
@@ -9,12 +8,26 @@ export function Welcome({ message }: { message: string }) {
       {
         href: "https://reactrouter.com/docs",
         text: "React Router Docs",
-        icon: <SvgIcon name="docs" className={styles["nav-icon"]} />,
+        icon: (
+          <img 
+            src="/assets/svg/docs-icon.svg"
+            className={styles["nav-icon"]}
+            alt=""
+            aria-hidden="true"
+          />
+        ),
       },
       {
         href: "https://rmx.as/discord",
         text: "Join Discord",
-        icon: <SvgIcon name="discord" className={styles["nav-icon"]} />,
+        icon: (
+          <img 
+            src="/assets/svg/discord-icon.svg"
+            className={styles["nav-icon"]}
+            alt=""
+            aria-hidden="true"
+          />
+        ),
       },
     ],
     []
