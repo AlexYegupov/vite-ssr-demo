@@ -23,14 +23,16 @@
 }
 
 .logo-container {
-  width: 500px;
-  max-width: 100vw;
+  width: 100%;
+  max-width: 500px;
   padding: 1rem;
+  margin: 0 auto;
 }
 
 .logo-wrapper {
   width: 100%;
-  height: 100%;
+  height: 120px; /* Set a fixed height for the logo container */
+  position: relative;
 }
 
 /* Logo styling is now handled in the logo component's CSS module */

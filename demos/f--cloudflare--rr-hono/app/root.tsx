@@ -6,8 +6,10 @@ import {
   Scripts,
   ScrollRestoration,
 } from "react-router";
+import { Theme, ThemePanel } from "@radix-ui/themes";
 
 import type { Route } from "./+types/root";
+import "@radix-ui/themes/styles.css";
 import styles from "./root.module.css";
 import NotFound from "./$";
 
@@ -25,6 +27,8 @@ export const links: Route.LinksFunction = () => [
 ];
 
 export function Layout({ children }: { children: React.ReactNode }) {
+  const isDev = import.meta.env.DEV;
+
   return (
     <html lang="en">
       <head>
@@ -33,10 +37,13 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <Meta />
         <Links />
       </head>
-      <body className={styles['main-content']}>
-        {children}
-        <ScrollRestoration />
-        <Scripts />
+      <body className={styles["main-content"]}>
+        <Theme appearance="light" accentColor="violet" radius="large">
+          {isDev && <ThemePanel />}
+          {children}
+          <ScrollRestoration />
+          <Scripts />
+        </Theme>
       </body>
     </html>
   );
@@ -65,7 +72,7 @@ export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
   }
 
   return (
-    <main className={styles['error-boundary']}>
+    <main className={styles["error-boundary"]}>
       <h1>{message}</h1>
       <p>{details}</p>
       {stack && (

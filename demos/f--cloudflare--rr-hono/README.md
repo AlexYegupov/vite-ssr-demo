@@ -1,5 +1,9 @@
 AY: https://dash.cloudflare.com/c87f9ffde038c49f1b52ee8f3a7ee656/workers-and-pages/templates/react-router-hono-fullstack-template/v5.2.0
 
+  Customization:
+   - ... instead of shadcn use radix + radix themes (because of avoiding tailwind) 
+
+
 # Hono + React Router + Vite + ShadCN UI on Cloudflare Workers
 
 [![Deploy to Cloudflare](https://deploy.workers.cloudflare.com/button)](https://deploy.workers.cloudflare.com/?url=https://github.com/cloudflare/templates/tree/main/react-router-hono-fullstack-template)

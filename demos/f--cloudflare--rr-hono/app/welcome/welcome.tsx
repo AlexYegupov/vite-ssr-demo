@@ -1,4 +1,5 @@
 import { useMemo } from "react";
+import { Button } from "@radix-ui/themes";
 import styles from "./welcome.module.css";
 import { LogoLight, LogoDark } from "../components/logos/logo-component";
 
@@ -9,7 +10,7 @@ export function Welcome({ message }: { message: string }) {
         href: "https://reactrouter.com/docs",
         text: "React Router Docs",
         icon: (
-          <img 
+          <img
             src="/assets/svg/docs-icon.svg"
             className={styles["nav-icon"]}
             alt=""
@@ -21,7 +22,7 @@ export function Welcome({ message }: { message: string }) {
         href: "https://rmx.as/discord",
         text: "Join Discord",
         icon: (
-          <img 
+          <img
             src="/assets/svg/discord-icon.svg"
             className={styles["nav-icon"]}
             alt=""
@@ -35,8 +36,20 @@ export function Welcome({ message }: { message: string }) {
 
   return (
     <main className={styles.welcome}>
-
       <div className={styles.container}>
+        <div style={{ marginBottom: "2rem", textAlign: "center" }}>
+          <Button size="3" variant="solid" color="violet">
+            Get Started
+          </Button>
+          <Button
+            size="3"
+            variant="outline"
+            color="gray"
+            style={{ marginLeft: "1rem" }}
+          >
+            Learn More
+          </Button>
+        </div>
         <header className={styles.header}>
           <div className={styles["logo-container"]}>
             <div className={styles["logo-wrapper"]}>
@@ -70,5 +83,3 @@ export function Welcome({ message }: { message: string }) {
     </main>
   );
 }
-
-
