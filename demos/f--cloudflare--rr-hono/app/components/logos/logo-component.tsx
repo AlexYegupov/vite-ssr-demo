@@ -1,25 +1,16 @@
-import type { FC } from 'react';
-import styles from './logo.module.css';
+import type { FC } from "react";
+import styles from "./logo.module.css";
+import { useThemeContext } from "@radix-ui/themes";
 
-export const LogoLight: FC = () => {
-  return (
-    <div className={styles['logo-container']}>
-      <img 
-        src="/assets/logos/logo-light.svg"
-        alt="React Router Logo" 
-        className={styles['logo-light']}
-      />
-    </div>
-  );
-};
+export const Logo: FC = () => {
+  const theme = useThemeContext();
 
-export const LogoDark: FC = () => {
   return (
-    <div className={styles['logo-container']}>
-      <img 
-        src="/assets/logos/logo-dark.svg"
-        alt="React Router Logo" 
-        className={styles['logo-dark']}
+    <div className={styles["logo-container"]}>
+      <img
+        src={`/assets/logos/logo-${theme.appearance}.svg`}
+        alt="React Router Logo"
+        className={styles["logo"]}
       />
     </div>
   );

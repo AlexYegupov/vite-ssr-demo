@@ -1,7 +1,7 @@
 import { useMemo } from "react";
 import { Button } from "@radix-ui/themes";
 import styles from "./welcome.module.css";
-import { LogoLight, LogoDark } from "../components/logos/logo-component";
+import { Logo } from "../components/logos/logo-component";
 
 export function Welcome({ message }: { message: string }) {
   const resources = useMemo(
@@ -53,8 +53,7 @@ export function Welcome({ message }: { message: string }) {
         <header className={styles.header}>
           <div className={styles["logo-container"]}>
             <div className={styles["logo-wrapper"]}>
-              <LogoLight />
-              <LogoDark />
+              <Logo />              
             </div>
           </div>
         </header>
