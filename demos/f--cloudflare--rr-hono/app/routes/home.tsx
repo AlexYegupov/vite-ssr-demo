@@ -1,6 +1,7 @@
 import type { Route } from "./+types/home";
 import { Welcome } from "../welcome/welcome";
 import { Link } from "react-router-dom";
+import styles from "./home.module.css";
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -17,7 +18,7 @@ export default function Home({ loaderData }: Route.ComponentProps) {
   return (
     <div>
       <Welcome message={loaderData.message} />
-      <div style={{ textAlign: 'center', marginTop: '20px' }}>
+      <div className={styles.linkContainer}>
         <Link to="/todos">View Todo List</Link>
       </div>
     </div>

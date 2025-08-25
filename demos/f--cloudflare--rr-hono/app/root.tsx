@@ -37,7 +37,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <Meta />
         <Links />
       </head>
-      <body className={styles["main-content"]}>
+      <body className={styles.mainContent}>
         <Theme appearance="light" accentColor="violet" radius="large">
           {isDev && <ThemePanel />}
           {children}
@@ -72,7 +72,7 @@ export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
   }
 
   return (
-    <main className={styles["error-boundary"]}>
+    <main className={styles.errorBoundary}>
       <h1>{message}</h1>
       <p>{details}</p>
       {stack && (

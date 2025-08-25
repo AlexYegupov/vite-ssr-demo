@@ -6,11 +6,11 @@ export const Logo: FC = () => {
   const theme = useThemeContext();
 
   return (
-    <div className={styles["logo-container"]}>
+    <div className={styles.logoContainer}>
       <img
         src={`/assets/logos/logo-${theme.appearance}.svg`}
         alt="React Router Logo"
-        className={styles["logo"]}
+        className={styles.logo}
       />
     </div>
   );

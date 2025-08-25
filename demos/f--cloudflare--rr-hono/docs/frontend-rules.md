@@ -23,8 +23,7 @@
 
 ## Ant Design Requirements
 
-- MANDATORY: DONT use antd at all
-
+- **MANDATORY**: DONT use ant design at all
 - **MANDATORY**: Implement webpages using Ant Design components and patterns
 - **PROHIBITED**: NEVER use antd Space (use Flex instead)
 - **PROHIBITED**: NEVER use antd Grid
@@ -50,6 +49,8 @@
 - **PROHIBITED**: NEVER use inline style attributes except in extreme cases
 - **CONDITIONAL**: Only when CSS styling cannot override antd styling, use :global selectors to target Ant Design component's internal elements
 - **MANDATORY**: ALWAYS use CSS variables for colors, spacing, etc.
+- **MANDATORY**: use camelCase for CSS classnames
+  Why: to make easy jump to sourse. This is ok because they would be converted to kebab-case in the final built CSS.
 
 ## React requirements
 

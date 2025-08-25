@@ -12,7 +12,7 @@ export function Welcome({ message }: { message: string }) {
         icon: (
           <img
             src="/assets/svg/docs-icon.svg"
-            className={styles["nav-icon"]}
+            className={styles.navIcon}
             alt=""
             aria-hidden="true"
           />
@@ -24,7 +24,7 @@ export function Welcome({ message }: { message: string }) {
         icon: (
           <img
             src="/assets/svg/discord-icon.svg"
-            className={styles["nav-icon"]}
+            className={styles.navIcon}
             alt=""
             aria-hidden="true"
           />
@@ -37,7 +37,7 @@ export function Welcome({ message }: { message: string }) {
   return (
     <main className={styles.welcome}>
       <div className={styles.container}>
-        <div style={{ marginBottom: "2rem", textAlign: "center" }}>
+        <div className={styles.buttonContainer}>
           <Button size="3" variant="solid" color="violet">
             Get Started
           </Button>
@@ -45,26 +45,26 @@ export function Welcome({ message }: { message: string }) {
             size="3"
             variant="outline"
             color="gray"
-            style={{ marginLeft: "1rem" }}
+            className={styles.secondaryButton}
           >
             Learn More
           </Button>
         </div>
         <header className={styles.header}>
-          <div className={styles["logo-container"]}>
-            <div className={styles["logo-wrapper"]}>
+          <div className={styles.logoContainer}>
+            <div className={styles.logoWrapper}>
               <Logo />              
             </div>
           </div>
         </header>
         <div className={styles.content}>
           <nav className={styles.nav}>
-            <p className={styles["nav-title"]}>What&apos;s next?</p>
-            <ul className={styles["nav-list"]}>
+            <p className={styles.navTitle}>What&apos;s next?</p>
+            <ul className={styles.navList}>
               {resources.map(({ href, text, icon }) => (
-                <li key={href} className={styles["nav-item"]}>
+                <li key={href} className={styles.navItem}>
                   <a
-                    className={styles["nav-link"]}
+                    className={styles.navLink}
                     href={href}
                     target="_blank"
                     rel="noreferrer"
