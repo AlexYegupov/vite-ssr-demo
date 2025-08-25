@@ -1,6 +1,13 @@
 import { useLoaderData, Link } from "react-router-dom";
 import styles from "./todos.module.css";
 
+export function meta() {
+  return [
+    { title: "The todolist" },
+    { name: "description", content: "Manage your todos" },
+  ];
+}
+
 interface Todo {
   id: number;
   title: string;

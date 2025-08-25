@@ -1,20 +1,19 @@
-import type { Route } from "./+types/home";
 import { Welcome } from "../welcome/welcome";
 import { Link } from "react-router-dom";
 import styles from "./home.module.css";
 
-export function meta({}: Route.MetaArgs) {
+export function meta() {
   return [
-    { title: "New React Router App" },
+    { title: "The todolist" },
     { name: "description", content: "Welcome to React Router!" },
   ];
 }
 
-export function loader({ context }: Route.LoaderArgs) {
+export function loader({ context }: { context: { cloudflare: { env: { VALUE_FROM_CLOUDFLARE: string } } } }) {
   return { message: context.cloudflare.env.VALUE_FROM_CLOUDFLARE };
 }
 
-export default function Home({ loaderData }: Route.ComponentProps) {
+export default function Home({ loaderData }: { loaderData: { message: string } }) {
   return (
     <div>
       <Welcome message={loaderData.message} />
