@@ -7,6 +7,14 @@ import svgr from "vite-plugin-svgr";
 import path from 'path';
 
 export default defineConfig({
+  server: {
+    port: 5173,
+    strictPort: true,
+  },
+  preview: {
+    port: 5173,
+    strictPort: true,
+  },
   plugins: [
     cloudflare({ viteEnvironment: { name: "ssr" } }),
     tailwindcss(),

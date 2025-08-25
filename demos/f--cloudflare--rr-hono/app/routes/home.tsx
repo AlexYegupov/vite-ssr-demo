@@ -1,5 +1,6 @@
 import type { Route } from "./+types/home";
 import { Welcome } from "../welcome/welcome";
+import { Link } from "react-router-dom";
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -13,5 +14,12 @@ export function loader({ context }: Route.LoaderArgs) {
 }
 
 export default function Home({ loaderData }: Route.ComponentProps) {
-  return <Welcome message={loaderData.message} />;
+  return (
+    <div>
+      <Welcome message={loaderData.message} />
+      <div style={{ textAlign: 'center', marginTop: '20px' }}>
+        <Link to="/todos">View Todo List</Link>
+      </div>
+    </div>
+  );
 }

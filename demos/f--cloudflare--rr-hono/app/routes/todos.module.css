@@ -1,0 +1,48 @@
+.container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+.todoList {
+  list-style: none;
+  padding: 0;
+  margin: 2rem 0;
+}
+
+.todoItem {
+  display: flex;
+  align-items: center;
+  padding: 1rem;
+  margin-bottom: 0.5rem;
+  background-color: var(--color-bg-secondary);
+  border-radius: 4px;
+  transition: background-color 0.2s;
+}
+
+.todoItem:hover {
+  background-color: var(--color-bg-tertiary);
+}
+
+.checkbox {
+  margin-right: 1rem;
+  width: 1.2rem;
+  height: 1.2rem;
+  cursor: pointer;
+}
+
+.todoTitle {
+  flex: 1;
+  color: var(--color-text-primary);
+}
+
+.completed .todoTitle {
+  text-decoration: line-through;
+  color: var(--color-text-secondary);
+}
+
+.todoDate {
+  font-size: 0.9rem;
+  color: var(--color-text-tertiary);
+  margin-left: 1rem;
+}
