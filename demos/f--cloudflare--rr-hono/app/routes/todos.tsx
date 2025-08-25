@@ -5,13 +5,13 @@ interface Todo {
   id: number;
   title: string;
   completed: boolean;
-createdAt: string;
+  createdAt: string;
 }
 
-export async function loader() {
-  // Use the full URL for the API request
-  const baseUrl = import.meta.env.DEV ? "http://localhost:5173" : "";
-  const response = await fetch(`${baseUrl}/api/todos.json`);
+export async function loader({ request }: { request: Request }) {
+  // Create a new URL based on the request URL
+  const url = new URL("/api/todos.json", request.url);
+  const response = await fetch(url);
   if (!response.ok) {
     throw new Error("Failed to fetch todos");
   }
@@ -25,8 +25,8 @@ export default function TodosPage() {
     <div className={styles.container}>
       <div className={styles.headerContainer}>
         <Link to="/">Back to Home</Link>
-        <h1>Todo List</h1>
       </div>
+      <h1>Todo List</h1>
       <ul className={styles.todoList}>
         {todos.map((todo) => (
           <li

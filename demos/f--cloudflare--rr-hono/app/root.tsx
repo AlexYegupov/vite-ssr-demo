@@ -39,7 +39,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
       </head>
       <body className={styles.mainContent}>
         <Theme appearance="light" accentColor="violet" radius="large">
-          {isDev && <ThemePanel />}
+          {/*isDev && <ThemePanel />*/}
           {children}
           <ScrollRestoration />
           <Scripts />
