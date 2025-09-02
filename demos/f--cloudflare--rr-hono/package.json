@@ -32,6 +32,7 @@
     "@types/node": "24.0.4",
     "@types/react": "19.0.10",
     "@types/react-dom": "19.0.4",
+    "cross-env": "^10.0.0",
     "tailwindcss": "4.1.1",
     "typescript": "5.8.3",
     "vite": "^6.0.0",
@@ -43,7 +44,7 @@
     "build": "react-router build",
     "cf-typegen": "wrangler types",
     "deploy": "npm run build && wrangler deploy",
-    "dev": "react-router dev",
+    "dev": "cross-env PORT=${PORT:-3000} react-router dev --port ${PORT:-3000}",
     "preview": "npm run build && vite preview",
     "typecheck": "npm run cf-typegen && react-router typegen && tsc -b"
   },

@@ -1,36 +1,55 @@
-import { useLoaderData, Link } from "react-router";
+import { Welcome } from "../welcome/welcome";
+import { Link } from "react-router";
 import styles from "./todos.module.css";
 
 export function meta() {
   return [
-    { title: "The todolist222" },
+    { title: "Todo Listddd" },
     { name: "description", content: "Manage your todos" },
   ];
 }
 
-interface Todo {
+type Todo = {
   id: number;
   title: string;
   completed: boolean;
   createdAt: string;
+};
+
+type LoaderData = {
+  message: string;
+};
+
+export function loader({
+  context,
+}: {
+  context: { cloudflare: { env: { VALUE_FROM_CLOUDFLARE: string } } };
+}) {
+  return { message: context.cloudflare.env.VALUE_FROM_CLOUDFLARE };
 }
 
-export async function loader({ request }: { request: Request }) {
-  try {
-    const url = new URL("/api/todos.json", request.url);
-    const response = await fetch(url.toString());
-    if (!response.ok) {
-      throw new Error("Failed to fetch todos");
-    }
-    return response.json();
-  } catch (error) {
-    console.error("Error in loader:", error);
-    throw new Response("Error loading todos", { status: 500 });
-  }
-}
-
-export default function TodosPage() {
-  const todos = useLoaderData() as Todo[];
+export default function TodosPage({ loaderData }: { loaderData: LoaderData }) {
+  const { message } = loaderData;
+  const todos: Todo[] = [
+    {
+      id: 1,
+      title: "Complete project setup",
+      completed: false,
+      createdAt: "2025-08-20T10:00:00Z",
+    },
+    {
+      id: 2,
+      title: "Add API routes",
+      completed: true,
+      createdAt: "2025-08-21T09:30:00Z",
+    },
+    {
+      id: 3,
+      title: "Implement todo list UI",
+      completed: false,
+      createdAt: "2025-08-21T14:15:00Z",
+    },
+  ];
 
   return (
     <div className={styles.container}>

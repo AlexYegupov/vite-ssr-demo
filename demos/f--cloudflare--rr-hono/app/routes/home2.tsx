@@ -1,10 +1,9 @@
 import { Welcome } from "../welcome/welcome";
 import { Link } from "react-router";
-import styles from "./home.module.css";
 
 export function meta() {
   return [
-    { title: "The todolist" },
+    { title: "The todolist  dffdsdsf" },
     { name: "description", content: "Welcome to React Router!" },
   ];
 }
@@ -24,14 +23,12 @@ export default function Home({
 }) {
   return (
     <div>
-      {/* <Welcome message={loaderData.message} /> */}
-      <h1>Welcome</h1>
-      <div className={styles.linkContainer}>
+      home2
+      <Welcome message={loaderData.message} />
+      <div>
         <Link to="/todos">Todo List</Link>
         <br />
-        <Link to="/home2">home2 link</Link>
-        <br />
-        <Link to="/todo3">todo3 link</Link>
+        <Link to="/dead">dead link</Link>
       </div>
     </div>
   );
