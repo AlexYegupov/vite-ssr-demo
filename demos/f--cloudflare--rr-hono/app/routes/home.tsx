@@ -27,7 +27,7 @@ export default function Home({
       {/* <Welcome message={loaderData.message} /> */}
       <h1>Welcome</h1>
       <div className={styles.linkContainer}>
-        <Link to="/todos0">Todo List</Link>
+        <Link to="/todos">Todo List</Link>
         <br />
         <Link to="/home2">home2 link</Link>
         <br />
