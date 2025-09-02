@@ -20,7 +20,7 @@ import {
 export default [
   index("routes/home.tsx"),
   route("home2", "routes/home2.tsx"),
-  route("todos", "routes/todos.tsx"),
+  route("todos0", "routes/todos.tsx"),
   route("todo3", "routes/todo3.tsx"),
 
   /*   layout("./auth/layout.tsx", [
