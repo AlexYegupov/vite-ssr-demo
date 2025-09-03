@@ -15,25 +15,92 @@ interface Todo {
   createdAt: string;
 }
 
+interface WeatherData {
+  generationtime_ms: number;
+  current: {
+    temperature_2m: number;
+    wind_speed_10m: number;
+  };
+  hourly: {
+    time: string[];
+    temperature_2m: number[];
+    relative_humidity_2m: number[];
+    wind_speed_10m: number[];
+  };
+}
+
 export async function loader({ request }: { request: Request }) {
   try {
-    const url = new URL("/api/todos.json", request.url);
-    const response = await fetch(url.toString());
-    if (!response.ok) {
-      throw new Error("Failed to fetch todos");
+    /*     // Fetch weather data
+    const weatherUrl = new URL("https://api.open-meteo.com/v1/forecast");
+    weatherUrl.searchParams.append("latitude", "52.52");
+    weatherUrl.searchParams.append("longitude", "13.41");
+    weatherUrl.searchParams.append("current", "temperature_2m,wind_speed_10m");
+    weatherUrl.searchParams.append(
+      "hourly",
+      "temperature_2m,relative_humidity_2m,wind_speed_10m"
+    );
+
+    console.log("Fetching weather data from:", weatherUrl);
+    const weatherResponse = await fetch(weatherUrl.toString());
+    console.log("R:", weatherResponse);
+
+    if (!weatherResponse.ok) {
+      throw new Error(
+        `Failed to fetch weather data: ${weatherResponse.status}`
+      );
     }
-    return response.json();
+    const weatherData = await weatherResponse.json();
+ */
+    const weatherData = {};
+
+    const url = new URL(request.url);
+    // Fetch todos
+    const todosUrl = `${url.origin}/api/todos.json`;
+    console.log("Fetching todos from:", todosUrl);
+    const todosResponse = await fetch(todosUrl);
+    console.log("R:", todosResponse);
+
+    if (!todosResponse.ok) {
+      throw new Error(`Failed to fetch todos: ${todosResponse.status}`);
+    }
+
+    const todos = await todosResponse.json();
+
+    return { todos, weatherData };
   } catch (error) {
     console.error("Error in loader:", error);
-    throw new Response("Error loading todos", { status: 500 });
+    throw new Response("Error loading data", { status: 500 });
   }
 }
 
+interface LoaderData {
+  todos: Todo[];
+  weatherData: {
+    generationtime_ms: number;
+    current: {
+      temperature_2m: number;
+      wind_speed_10m: number;
+    };
+  };
+}
+
 export default function TodosPage() {
-  const todos = useLoaderData() as Todo[];
+  const { todos, weatherData } = useLoaderData() as LoaderData;
+  //console.log('Todos:', todos)
+  //console.log('Weather', weatherData)
 
   return (
     <div className={styles.container}>
+      <div className={styles.weatherInfo}>
+        <h3>Weather Data</h3>
+        <p>Data generated in {weatherData?.generationtime_ms?.toFixed(2)}</p>
+        <p>
+          Current temperature:{" "}
+          {weatherData?.current?.temperature_2m?.toFixed(2)}
+        </p>
+        <p>Wind speed: {weatherData?.current?.wind_speed_10m?.toFixed(2)}</p>
+      </div>
       <div className={styles.headerContainer}>
         <Link to="/">Back to Home</Link>
       </div>

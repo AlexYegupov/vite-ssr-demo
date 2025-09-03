@@ -28,10 +28,6 @@ export default function Home({
       <h1>Welcome</h1>
       <div className={styles.linkContainer}>
         <Link to="/todos">Todo List</Link>
-        <br />
-        <Link to="/home2">home2 link</Link>
-        <br />
-        <Link to="/todo3">todo3 link</Link>
       </div>
     </div>
   );
