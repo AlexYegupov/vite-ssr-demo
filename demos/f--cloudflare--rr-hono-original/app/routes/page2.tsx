@@ -1,7 +1,6 @@
 import type { Route } from "../+types/page2";
 import { Link } from "react-router";
 import { Welcome } from "../welcome/welcome";
-import type { InternalFetcher } from "../utils/internalFetch";
 
 type ComponentProps = {
   loaderData: {
@@ -16,8 +15,9 @@ type LoaderContext = {
     };
     ctx: ExecutionContext;
   };
-  internalFetch: InternalFetcher;
+  internalFetch: any;
   request: Request;
+  honoApp: any;
 };
 
 export function meta() {
@@ -28,11 +28,12 @@ export function meta() {
 }
 
 export async function loader({ context }: { context: LoaderContext }) {
+  console.log("<loader> Page2");
   const testResponse = await context.internalFetch(
     "/test?val=page2",
     context.request
   );
-  console.log("<loader> Page2", testResponse);
+  console.log("__", testResponse);
   return {
     message: context.cloudflare.env.VALUE_FROM_CLOUDFLARE,
     testResponse,

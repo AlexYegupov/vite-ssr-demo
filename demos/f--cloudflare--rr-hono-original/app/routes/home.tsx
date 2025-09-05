@@ -1,6 +1,5 @@
 import type { Route } from "./+types/home";
 import { Welcome } from "../welcome/welcome";
-import type { InternalFetcher } from "../utils/internalFetch";
 import { Link } from "react-router";
 
 type LoaderContext = {
@@ -10,8 +9,9 @@ type LoaderContext = {
     };
     ctx: ExecutionContext;
   };
-  internalFetch: InternalFetcher;
+  honoApp: any;
   request: Request;
+  internalFetch: any;
 };
 
 export function meta({}: Route.MetaArgs) {
@@ -22,8 +22,12 @@ export function meta({}: Route.MetaArgs) {
 }
 
 export async function loader({ context }: { context: LoaderContext }) {
-  const testResponse = await context.internalFetch("/test?val=home", context.request);
-  console.log("<loader> Home", testResponse);
+  console.log("<loader> Home");
+  const testResponse = await context.internalFetch(
+    "/test?val=home",
+    context.request
+  );
+  console.log("__", testResponse);
   return {
     message: context.cloudflare.env.VALUE_FROM_CLOUDFLARE,
     testResponse,
