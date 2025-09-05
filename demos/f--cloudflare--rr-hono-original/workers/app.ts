@@ -1,10 +1,13 @@
 import { Hono } from "hono";
 import { createRequestHandler } from "react-router";
+import { createInternalFetcher } from "../app/utils/internalFetch";
 
 const app = new Hono();
 
 // Add more routes here
 app.get("/test", (c) => c.text("hello"));
+
+app.get("/test2", (c) => c.text("hello2"));
 
 app.get("*", async (c) => {
   const requestHandler = createRequestHandler(
@@ -12,15 +15,15 @@ app.get("*", async (c) => {
     import.meta.env.MODE
   );
 
-  // Call the test endpoint handler directly instead of making HTTP request
-  const testResponse = await app.fetch(
-    new Request(new URL("/test", c.req.url)),
-    { cf: c.req.cf }
-  );
+  const internalFetch = createInternalFetcher(app);
 
   return requestHandler(c.req.raw, {
     cloudflare: { env: c.env, ctx: c.executionCtx },
-    testResponse: await testResponse.text(),
+    internalFetch,
+    request: {
+      url: c.req.url,
+      cf: (c.req.raw as any).cf,
+    },
   });
 });
 

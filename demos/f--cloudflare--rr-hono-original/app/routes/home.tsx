@@ -1,5 +1,17 @@
 import type { Route } from "./+types/home";
 import { Welcome } from "../welcome/welcome";
+import type { InternalFetcher } from "../utils/internalFetch";
+
+type LoaderContext = {
+  cloudflare: {
+    env: {
+      VALUE_FROM_CLOUDFLARE: string;
+    };
+    ctx: ExecutionContext;
+  };
+  internalFetch: InternalFetcher;
+  request: Request;
+};
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -8,11 +20,16 @@ export function meta({}: Route.MetaArgs) {
   ];
 }
 
-export function loader({ context }: Route.LoaderArgs) {
-  console.log(context.testResponse);
-  return { message: context.cloudflare.env.VALUE_FROM_CLOUDFLARE };
+export async function loader({ context }: { context: LoaderContext }) {
+  const testResponse = await context.internalFetch("/test", context.request);
+  console.log("<loader>", testResponse);
+  return {
+    message: context.cloudflare.env.VALUE_FROM_CLOUDFLARE,
+    testResponse,
+  };
 }
 
 export default function Home({ loaderData }: Route.ComponentProps) {
+  console.log("<Home>", loaderData.testResponse);
   return <Welcome message={loaderData.message} />;
 }
