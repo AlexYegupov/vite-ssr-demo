@@ -5,7 +5,10 @@ import { createInternalFetcher } from "../app/utils/internalFetch";
 const app = new Hono();
 
 // Add more routes here
-app.get("/test", (c) => c.text("test"));
+app.get("/test", (c) => {
+  const val = c.req.query('val');
+  return c.text(val || 'No val parameter provided');
+});
 
 app.get("/test2", (c) => c.text("test2"));
 

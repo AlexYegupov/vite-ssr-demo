@@ -28,7 +28,10 @@ export function meta() {
 }
 
 export async function loader({ context }: { context: LoaderContext }) {
-  const testResponse = await context.internalFetch("/test2", context.request);
+  const testResponse = await context.internalFetch(
+    "/test?val=page2",
+    context.request
+  );
   console.log("<loader> Page2", testResponse);
   return {
     message: context.cloudflare.env.VALUE_FROM_CLOUDFLARE,

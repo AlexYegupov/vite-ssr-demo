@@ -22,7 +22,7 @@ export function meta({}: Route.MetaArgs) {
 }
 
 export async function loader({ context }: { context: LoaderContext }) {
-  const testResponse = await context.internalFetch("/test", context.request);
+  const testResponse = await context.internalFetch("/test?val=home", context.request);
   console.log("<loader> Home", testResponse);
   return {
     message: context.cloudflare.env.VALUE_FROM_CLOUDFLARE,
