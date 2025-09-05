@@ -24,8 +24,7 @@ export function meta({}: Route.MetaArgs) {
 export async function loader({ context }: { context: LoaderContext }) {
   console.log("<loader> Home");
   const testResponse = await context.internalFetch(
-    "/test?val=home",
-    context.request
+    "/test?val=home"
   );
   console.log("__", testResponse);
   return {

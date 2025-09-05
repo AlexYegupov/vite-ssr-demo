@@ -30,8 +30,7 @@ export function meta() {
 export async function loader({ context }: { context: LoaderContext }) {
   console.log("<loader> Page2");
   const testResponse = await context.internalFetch(
-    "/test?val=page2",
-    context.request
+    "/test?val=page2"
   );
   console.log("__", testResponse);
   return {
