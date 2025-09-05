@@ -5,9 +5,9 @@ import { createInternalFetcher } from "../app/utils/internalFetch";
 const app = new Hono();
 
 // Add more routes here
-app.get("/test", (c) => c.text("hello"));
+app.get("/test", (c) => c.text("test"));
 
-app.get("/test2", (c) => c.text("hello2"));
+app.get("/test2", (c) => c.text("test2"));
 
 app.get("*", async (c) => {
   const requestHandler = createRequestHandler(

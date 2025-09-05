@@ -1,6 +1,7 @@
 import type { Route } from "./+types/home";
 import { Welcome } from "../welcome/welcome";
 import type { InternalFetcher } from "../utils/internalFetch";
+import { Link } from "react-router";
 
 type LoaderContext = {
   cloudflare: {
@@ -22,7 +23,7 @@ export function meta({}: Route.MetaArgs) {
 
 export async function loader({ context }: { context: LoaderContext }) {
   const testResponse = await context.internalFetch("/test", context.request);
-  console.log("<loader>", testResponse);
+  console.log("<loader> Home", testResponse);
   return {
     message: context.cloudflare.env.VALUE_FROM_CLOUDFLARE,
     testResponse,
@@ -30,6 +31,11 @@ export async function loader({ context }: { context: LoaderContext }) {
 }
 
 export default function Home({ loaderData }: Route.ComponentProps) {
-  console.log("<Home>", loaderData.testResponse);
-  return <Welcome message={loaderData.message} />;
+  console.log("<Home>", loaderData);
+  return (
+    <>
+      <Welcome message={loaderData.message} />
+      <Link to="/page2">Go to Page 2</Link>
+    </>
+  );
 }
