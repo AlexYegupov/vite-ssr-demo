@@ -15,7 +15,7 @@ type LoaderContext = {
     };
     ctx: ExecutionContext;
   };
-  internalFetch: any;
+  fetchInternal: any;
   request: Request;
   honoApp: any;
 };
@@ -29,10 +29,8 @@ export function meta() {
 
 export async function loader({ context }: { context: LoaderContext }) {
   console.log("<loader> Page2");
-  const testResponse = await context.internalFetch(
-    "/test?val=page2"
-  );
-  console.log("__", testResponse);
+  const testResponse = await context.fetchInternal("/test?val=page2");
+  console.log("__", testResponse, await testResponse?.text());
   return {
     message: context.cloudflare.env.VALUE_FROM_CLOUDFLARE,
     testResponse,

@@ -11,7 +11,7 @@ type LoaderContext = {
   };
   honoApp: any;
   request: Request;
-  internalFetch: any;
+  fetchInternal: any;
 };
 
 export function meta({}: Route.MetaArgs) {
@@ -23,9 +23,8 @@ export function meta({}: Route.MetaArgs) {
 
 export async function loader({ context }: { context: LoaderContext }) {
   console.log("<loader> Home");
-  const testResponse = await context.internalFetch(
-    "/test?val=home"
-  );
+  console.log("!context.honoApp", context.honoApp);
+  const testResponse = await context.fetchInternal("/test?val=home");
   console.log("__", testResponse);
   return {
     message: context.cloudflare.env.VALUE_FROM_CLOUDFLARE,

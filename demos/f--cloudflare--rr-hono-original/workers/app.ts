@@ -4,7 +4,7 @@ import type { IncomingRequestCfProperties } from "@cloudflare/workers-types";
 
 const app = new Hono();
 
-const createInternalFetch =
+const createFetchInternal =
   (app: Hono, baseUrl: string, cf?: IncomingRequestCfProperties) =>
   async (path: string) => {
     return await app.fetch(new Request(new URL(path, baseUrl)), {
@@ -27,10 +27,10 @@ app.get("*", async (c) => {
   console.log("app.get *");
   const response = await requestHandler(c.req.raw, {
     cloudflare: { env: c.env, ctx: c.executionCtx },
-    internalFetch: createInternalFetch(
+    fetchInternal: createFetchInternal(
       app,
       c.req.url,
-      (c.req.raw as unknown as { cf?: IncomingRequestCfProperties }).cf
+      c.req.raw.cf as IncomingRequestCfProperties
     ),
   });
   return response;
