@@ -6,11 +6,10 @@ const app = new Hono();
 
 const createInternalFetch =
   (app: Hono, baseUrl: string, cf?: IncomingRequestCfProperties) =>
-  async (path: string, options: { json?: boolean } = { json: false }) => {
-    const response = await app.fetch(new Request(new URL(path, baseUrl)), {
+  async (path: string) => {
+    return await app.fetch(new Request(new URL(path, baseUrl)), {
       cf,
     });
-    return options.json ? response.json() : response.text();
   };
 
 const requestHandler = createRequestHandler(
@@ -26,7 +25,7 @@ app.get("/test", (c) => {
 
 app.get("*", async (c) => {
   console.log("app.get *");
-  return requestHandler(c.req.raw, {
+  const response = await requestHandler(c.req.raw, {
     cloudflare: { env: c.env, ctx: c.executionCtx },
     internalFetch: createInternalFetch(
       app,
@@ -34,6 +33,7 @@ app.get("*", async (c) => {
       (c.req.raw as unknown as { cf?: IncomingRequestCfProperties }).cf
     ),
   });
+  return response;
 });
 
 export default app;
