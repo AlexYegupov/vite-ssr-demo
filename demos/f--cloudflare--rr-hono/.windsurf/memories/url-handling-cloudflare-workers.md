@@ -5,13 +5,13 @@ Fixed URL handling in the todos.tsx loader function for Cloudflare Workers envir
 ```tsx
 // Before - caused "Invalid URL" error in Cloudflare Workers
 export async function loader() {
-  const response = await fetch('/api/todos.json');
+  const response = await fetch("/api/todos");
   // ...
 }
 
 // After - properly constructs URL using request parameter
 export async function loader({ request }: { request: Request }) {
-  const url = new URL('/api/todos.json', request.url);
+  const url = new URL("/api/todos", request.url);
   const response = await fetch(url);
   // ...
 }

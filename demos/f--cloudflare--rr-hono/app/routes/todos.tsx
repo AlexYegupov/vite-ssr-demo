@@ -51,7 +51,7 @@ export async function loader({ context }: LoaderFunctionArgs) {
   const response = await context.fetchInternal("/api/todos");
 
   if (!response.ok) {
-    throw new Error("Failed to fetch todos");
+    throw new Error("Failed to fetch todos!");
   }
 
   const todos = await response.json();

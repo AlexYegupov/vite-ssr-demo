@@ -12,6 +12,7 @@ interface Env {
   // Cloudflare Worker environment variables
   WORKER_REGION?: string;
   VALUE_FROM_CLOUDFLARE?: string;
+  MOCK_API: boolean;
 }
 
 type AppContext = Context<{ Bindings: Env }>;
@@ -19,36 +20,63 @@ const app = new Hono<{ Bindings: Env }>();
 
 // Add more routes here
 
-// Serve todos from server-side JSON file
-app.get("/api/todos", async (c: AppContext) => {
-  try {
-    // In a real Cloudflare Worker, you would use a KV store
-    // For this demo, we'll use a simple in-memory array as a fallback
-    const defaultTodos = [
-      {
-        id: 1,
-        title: "Complete project setup",
-        completed: false,
-        createdAt: new Date().toISOString(),
-      },
-      {
-        id: 2,
-        title: "Add API routes",
-        completed: true,
-        createdAt: new Date().toISOString(),
-      },
-      {
-        id: 3,
-        title: "Implement todo list UI",
-        completed: false,
-        createdAt: new Date().toISOString(),
-      },
-    ];
+// Dynamic API route for JSON files with nested paths
+app.get("/api/*", async (c: AppContext) => {
+  // Only enable in mock mode
+  console.log("F", c.env);
+  if (!c.env.MOCK_API) {
+    console.log("NF", c.env);
+    return c.notFound();
+  }
 
-    return c.json(defaultTodos);
+  try {
+    const path = c.req.path.replace(/^\/api\//, "").replace(/\.json$/, "");
+
+    // Security check - allow alphanumeric paths with forward slashes
+    if (!/^[a-zA-Z0-9-\/]+$/.test(path)) {
+      return c.json({ error: "Invalid path" }, 400);
+    }
+
+    // Try to load the JSON file from the public directory
+    const response = await c.env.ASSETS.fetch(
+      new Request(new URL(`/data/${path}.json`, c.req.url))
+    );
+
+    if (!response.ok) {
+      return response.status === 404
+        ? c.json(
+            { error: "File not found", details: "No JSON file at this path" },
+            404 as const
+          )
+        : c.json({ error: "Failed to load data" }, response.status as 400 | 500);
+    }
+
+    try {
+      const data = await response.json();
+      return typeof data === "object" && data !== null
+        ? c.json(data)
+        : c.json({ error: "Invalid JSON format" }, 400);
+    } catch (error) {
+      return c.json(
+        {
+          error: "Invalid file format",
+          details: "File exists but is not valid JSON",
+        },
+        404
+      );
+    }
   } catch (error) {
-    console.error("Error in todos endpoint:", error);
-    return c.json({ error: "Failed to load todos" }, 500);
+    console.error("API Error Details:", {
+      error: error instanceof Error ? error.message : String(error),
+      stack: error instanceof Error ? error.stack : undefined,
+    });
+    return c.json(
+      {
+        error: "Failed to load data",
+        details: error instanceof Error ? error.message : String(error),
+      },
+      500
+    );
   }
 });
 
@@ -75,9 +103,15 @@ app.get("/test", (c) => {
 });
 
 const createFetchInternal =
-  (app: Hono, baseUrl: string, cf?: IncomingRequestCfProperties) =>
+  (
+    app: Hono<{ Bindings: Env }>,
+    baseUrl: string,
+    cf: IncomingRequestCfProperties,
+    env: Env
+  ) =>
   async (path: string) => {
     return await app.fetch(new Request(new URL(path, baseUrl)), {
+      ...env,
       cf,
     });
   };
@@ -95,7 +129,8 @@ app.get("*", (c: AppContext) => {
     fetchInternal: createFetchInternal(
       app,
       c.req.url,
-      c.req.raw.cf as IncomingRequestCfProperties
+      c.req.raw.cf as IncomingRequestCfProperties,
+      c.env
     ),
   });
 });

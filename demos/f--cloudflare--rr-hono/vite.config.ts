@@ -4,7 +4,7 @@ import tailwindcss from "@tailwindcss/vite";
 import { defineConfig } from "vite";
 import tsconfigPaths from "vite-tsconfig-paths";
 import svgr from "vite-plugin-svgr";
-import path from 'path';
+import path from "path";
 
 export default defineConfig({
   server: {
@@ -24,13 +24,13 @@ export default defineConfig({
       svgrOptions: {
         icon: true,
       },
-      include: '**/*.svg',
+      include: "**/*.svg",
     }),
   ],
   resolve: {
     alias: [
-      { find: '@', replacement: path.resolve(__dirname, './app') },
-      { find: '@public', replacement: path.resolve(__dirname, './public') },
+      { find: "@", replacement: path.resolve(__dirname, "./app") },
+      { find: "@public", replacement: path.resolve(__dirname, "./public") },
     ],
   },
 });
