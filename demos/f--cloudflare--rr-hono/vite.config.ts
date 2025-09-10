@@ -18,9 +18,9 @@ export default defineConfig({
   css: {
     modules: {
       // Generate scoped class names in both dev and prod
-      generateScopedName: '[name]__[local]___[hash:base64:5]',
+      generateScopedName: "[name]__[local]___[hash:base64:5]",
       // Ensure consistent class name generation
-      localsConvention: 'camelCaseOnly',
+      localsConvention: "camelCaseOnly",
     },
     // Enable CSS sourcemaps in development
     devSourcemap: true,
@@ -48,17 +48,17 @@ export default defineConfig({
     rollupOptions: {
       output: {
         manualChunks: (id) => {
-          if (id.includes('node_modules')) {
-            return 'vendor';
+          if (id.includes("node_modules")) {
+            return "vendor";
           }
-          if (id.includes('routes/')) {
-            const fileName = id.split('/').pop()?.split('.')[0];
+          if (id.includes("routes/")) {
+            const fileName = id.split("/").pop()?.split(".")[0];
             if (fileName) return `route-${fileName}`;
           }
         },
-        chunkFileNames: 'assets/[name]-[hash].js',
-        entryFileNames: 'assets/[name]-[hash].js',
-        assetFileNames: 'assets/[name]-[hash][extname]',
+        chunkFileNames: "assets/[name]-[hash].js",
+        entryFileNames: "assets/[name]-[hash].js",
+        assetFileNames: "assets/[name]-[hash][extname]",
       },
     },
   },

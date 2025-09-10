@@ -14,27 +14,15 @@
     //(nw for local fetch) "global_fetch_strictly_public"
   ],
   "main": "./workers/app.ts",
+
+  // prod env vars could be overriden in .dev.vars.dev
   "vars": {
     "VALUE_FROM_CLOUDFLARE": "Hello from Hono/CF",
-    "MOCK_API": true
+    "MOCK_API": "true"
   },
   "assets": {
     "binding": "ASSETS",
     "directory": "./public"
-  },
-  "env": {
-    "dev": {
-      "vars": {
-        "MOCK_API": true
-      }
-    },
-    "production": {
-      "vars": {
-        "MOCK_API": true
-      },
-      "compatibility_date": "2025-04-01",
-      "upload_source_maps": false
-    }
   },
   "observability": {
     "enabled": true

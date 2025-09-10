@@ -19,38 +19,49 @@ type AppContext = Context<{ Bindings: Env }>;
 const app = new Hono<{ Bindings: Env }>();
 
 // Preload all mock data files at build time
-const mockDataModules = import.meta.glob('../mock-data/*.json', { 
-  query: '?raw',
-  import: 'default',
-  eager: true 
+const mockDataModules = import.meta.glob("../mock-data/*.json", {
+  query: "?raw",
+  import: "default",
+  eager: true,
 });
 
 // Load mock data from files
 async function loadMockData(c: AppContext, filename: string): Promise<any> {
+  console.log("Environment variables:", c.env);
+
+  // Check if mock API is enabled
+  if (c.env.MOCK_API !== "true") {
+    throw new Error("Mock API is disabled");
+  }
+
   // Security check - only allow alphanumeric filenames (with optional .json extension)
   if (!/^[a-zA-Z0-9-]+(\.json)?$/.test(filename)) {
-    throw new Error('Invalid filename');
+    throw new Error("Invalid filename");
   }
-  
+
   // Add .json extension if missing
-  const normalizedFilename = filename.endsWith('.json') ? filename : `${filename}.json`;
+  const normalizedFilename = filename.endsWith(".json")
+    ? filename
+    : `${filename}.json`;
   const filePath = `../mock-data/${normalizedFilename}`;
-  
+
   try {
     // Try to fetch from assets first (production)
     if (c.env.ASSETS) {
-      const response = await c.env.ASSETS.fetch(new URL(`/mock-data/${normalizedFilename}`, c.req.url));
+      const response = await c.env.ASSETS.fetch(
+        new URL(`/mock-data/${normalizedFilename}`, c.req.url)
+      );
       if (response.ok) {
         return await response.json();
       }
     }
-    
+
     // Use preloaded modules in development
     if (mockDataModules[filePath]) {
       return JSON.parse(mockDataModules[filePath]);
     }
-    
-    throw new Error('File not found');
+
+    throw new Error("File not found");
   } catch (error) {
     console.error(`Error loading mock data file ${filename}:`, error);
     throw error;
@@ -60,13 +71,18 @@ async function loadMockData(c: AppContext, filename: string): Promise<any> {
 // API route for mock data files
 app.get("/api/:filename", async (c: AppContext) => {
   const { filename } = c.req.param();
-  
+
   try {
     const data = await loadMockData(c, filename);
     return c.json(data);
   } catch (error) {
-    if (error instanceof Error && error.message === 'Invalid filename') {
-      return c.json({ error: error.message }, 400);
+    if (error instanceof Error) {
+      if (error.message === "Invalid filename") {
+        return c.json({ error: error.message }, 400);
+      }
+      if (error.message === "Mock API is disabled") {
+        return c.json({ error: error.message }, 403);
+      }
     }
     console.error(`Error loading mock data file ${filename}:`, error);
     return c.json({ error: "File not found" }, 404);
