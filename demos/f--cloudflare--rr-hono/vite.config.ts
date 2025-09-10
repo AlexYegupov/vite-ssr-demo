@@ -15,6 +15,16 @@ export default defineConfig({
     port: 5173,
     strictPort: true,
   },
+  css: {
+    modules: {
+      // Generate scoped class names in both dev and prod
+      generateScopedName: '[name]__[local]___[hash:base64:5]',
+      // Ensure consistent class name generation
+      localsConvention: 'camelCaseOnly',
+    },
+    // Enable CSS sourcemaps in development
+    devSourcemap: true,
+  },
   plugins: [
     cloudflare({ viteEnvironment: { name: "ssr" } }),
     tailwindcss(),
@@ -32,5 +42,24 @@ export default defineConfig({
       { find: "@", replacement: path.resolve(__dirname, "./app") },
       { find: "@public", replacement: path.resolve(__dirname, "./public") },
     ],
+  },
+  build: {
+    cssCodeSplit: true,
+    rollupOptions: {
+      output: {
+        manualChunks: (id) => {
+          if (id.includes('node_modules')) {
+            return 'vendor';
+          }
+          if (id.includes('routes/')) {
+            const fileName = id.split('/').pop()?.split('.')[0];
+            if (fileName) return `route-${fileName}`;
+          }
+        },
+        chunkFileNames: 'assets/[name]-[hash].js',
+        entryFileNames: 'assets/[name]-[hash].js',
+        assetFileNames: 'assets/[name]-[hash][extname]',
+      },
+    },
   },
 });

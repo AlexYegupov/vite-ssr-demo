@@ -10,11 +10,15 @@
     "skipLibCheck": true,
     "strict": true,
     "noEmit": true,
+    "moduleResolution": "bundler",
+    "moduleDetection": "force",
+    "esModuleInterop": true,
     "types": ["./worker-configuration.d.ts"],
     "baseUrl": ".",
     "paths": {
       "@/*": ["./app/*"],
       "@public/*": ["./public/*"]
-    }
+    },
+    "allowImportingTsExtensions": true
   }
 }

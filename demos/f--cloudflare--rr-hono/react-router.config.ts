@@ -1,4 +1,4 @@
-import type { Config } from "@react-router/dev/config";
+import type { Config } from "@react-router/dev";
 
 export default {
   ssr: true,
