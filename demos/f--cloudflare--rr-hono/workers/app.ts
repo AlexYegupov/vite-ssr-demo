@@ -18,65 +18,58 @@ interface Env {
 type AppContext = Context<{ Bindings: Env }>;
 const app = new Hono<{ Bindings: Env }>();
 
-// Add more routes here
+// Preload all mock data files at build time
+const mockDataModules = import.meta.glob('../mock-data/*.json', { 
+  query: '?raw',
+  import: 'default',
+  eager: true 
+});
 
-// Dynamic API route for JSON files with nested paths
-app.get("/api/*", async (c: AppContext) => {
-  // Only enable in mock mode
-  console.log("F", c.env);
-  if (!c.env.MOCK_API) {
-    console.log("NF", c.env);
-    return c.notFound();
+// Load mock data from files
+async function loadMockData(c: AppContext, filename: string): Promise<any> {
+  // Security check - only allow alphanumeric filenames (with optional .json extension)
+  if (!/^[a-zA-Z0-9-]+(\.json)?$/.test(filename)) {
+    throw new Error('Invalid filename');
   }
-
+  
+  // Add .json extension if missing
+  const normalizedFilename = filename.endsWith('.json') ? filename : `${filename}.json`;
+  const filePath = `../mock-data/${normalizedFilename}`;
+  
   try {
-    const path = c.req.path.replace(/^\/api\//, "").replace(/\.json$/, "");
-
-    // Security check - allow alphanumeric paths with forward slashes
-    if (!/^[a-zA-Z0-9-\/]+$/.test(path)) {
-      return c.json({ error: "Invalid path" }, 400);
+    // Try to fetch from assets first (production)
+    if (c.env.ASSETS) {
+      const response = await c.env.ASSETS.fetch(new URL(`/mock-data/${normalizedFilename}`, c.req.url));
+      if (response.ok) {
+        return await response.json();
+      }
     }
-
-    // Try to load the JSON file from the public directory
-    const response = await c.env.ASSETS.fetch(
-      new Request(new URL(`/data/${path}.json`, c.req.url))
-    );
-
-    if (!response.ok) {
-      return response.status === 404
-        ? c.json(
-            { error: "File not found", details: "No JSON file at this path" },
-            404 as const
-          )
-        : c.json({ error: "Failed to load data" }, response.status as 400 | 500);
+    
+    // Use preloaded modules in development
+    if (mockDataModules[filePath]) {
+      return JSON.parse(mockDataModules[filePath]);
     }
-
-    try {
-      const data = await response.json();
-      return typeof data === "object" && data !== null
-        ? c.json(data)
-        : c.json({ error: "Invalid JSON format" }, 400);
-    } catch (error) {
-      return c.json(
-        {
-          error: "Invalid file format",
-          details: "File exists but is not valid JSON",
-        },
-        404
-      );
-    }
+    
+    throw new Error('File not found');
   } catch (error) {
-    console.error("API Error Details:", {
-      error: error instanceof Error ? error.message : String(error),
-      stack: error instanceof Error ? error.stack : undefined,
-    });
-    return c.json(
-      {
-        error: "Failed to load data",
-        details: error instanceof Error ? error.message : String(error),
-      },
-      500
-    );
+    console.error(`Error loading mock data file ${filename}:`, error);
+    throw error;
+  }
+}
+
+// API route for mock data files
+app.get("/api/:filename", async (c: AppContext) => {
+  const { filename } = c.req.param();
+  
+  try {
+    const data = await loadMockData(c, filename);
+    return c.json(data);
+  } catch (error) {
+    if (error instanceof Error && error.message === 'Invalid filename') {
+      return c.json({ error: error.message }, 400);
+    }
+    console.error(`Error loading mock data file ${filename}:`, error);
+    return c.json({ error: "File not found" }, 404);
   }
 });
 

@@ -6,15 +6,16 @@
     "app/**/.server/**/*",
     "app/**/.client/**/*",
     "workers/**/*",
-    "worker-configuration.d.ts"
+    "worker-configuration.d.ts",
+    "mock-data/**/*.json"
   ],
   "compilerOptions": {
     "composite": true,
     "strict": true,
     "lib": ["DOM", "DOM.Iterable", "ES2022"],
-    "types": ["@cloudflare/workers-types", "vite/client"],
-    "target": "ES2022",
-    "module": "ES2022",
+    "types": ["@cloudflare/workers-types", "vite/client", "node"],
+    "target": "esnext",
+    "module": "esnext",
     "moduleResolution": "bundler",
     "jsx": "react-jsx",
     "baseUrl": ".",
