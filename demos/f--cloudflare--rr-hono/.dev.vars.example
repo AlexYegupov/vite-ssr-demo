@@ -1,0 +1,4 @@
+# Local development overrides of wrangler.jsonc -> vars 
+
+MOCK_API=true
+
