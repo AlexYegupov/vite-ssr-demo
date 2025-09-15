@@ -10,8 +10,13 @@
 .mf
 .wrangler
 
-.dev.vars*
-!.dev.vars.example
+# Environment files
+.dev.vars
+!.dev.example.vars
+
+wrangler.jsonc
+!wrangler.example.jsonc
+
 
 .env*
 !.env.example

@@ -47,6 +47,8 @@
     "deploy": "npm run build && wrangler deploy",
     "dev": "cross-env PORT=${PORT:-3000} react-router dev --port ${PORT:-3000}",
     "preview": "npm run build && vite preview",
+    "preview_wrangler_local_preview_kv": "wrangler dev",
+    "preview_wrangler_remote_preview_kv": "wrangler dev --remote",    
     "typecheck": "npm run cf-typegen && react-router typegen && tsc -b",
     "logs": "wrangler tail"
   },

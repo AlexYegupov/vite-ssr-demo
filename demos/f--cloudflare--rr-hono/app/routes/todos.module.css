@@ -2,53 +2,162 @@
   max-width: 800px;
   margin: 0 auto;
   padding: 2rem;
+  color: var(--color-text-primary);
+}
+
+.weatherInfo {
+  background-color: var(--color-bg-secondary);
+  padding: 1.5rem;
+  border-radius: 8px;
+  margin-bottom: 2rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.weatherInfo h3 {
+  margin-top: 0;
+  color: var(--color-primary);
+  margin-bottom: 1rem;
+}
+
+.weatherInfo p {
+  margin: 0.5rem 0;
+  color: var(--color-text-secondary);
+}
+
+.headerContainer {
+  margin-bottom: 2rem;
+}
+
+.headerContainer a {
+  color: var(--color-primary);
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  transition: background-color 0.2s;
+}
+
+.headerContainer a:hover {
+  background-color: var(--color-bg-tertiary);
+}
+
+h1 {
+  color: var(--color-text-primary);
+  margin-bottom: 1.5rem;
+}
+
+.todoForm {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.todoInput {
+  flex: 1;
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--color-border);
+  border-radius: 4px;
+  font-size: 1rem;
+  background-color: var(--color-bg-secondary);
+  color: var(--color-text-primary);
+}
+
+.addButton {
+  padding: 0.75rem 1.5rem;
+  background-color: var(--color-primary);
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background-color 0.2s;
+}
+
+.addButton:hover {
+  background-color: var(--color-primary-dark);
 }
 
 .todoList {
   list-style: none;
   padding: 0;
-  margin: 2rem 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
 }
 
 .todoItem {
   display: flex;
   align-items: center;
-  padding: 1rem;
-  margin-bottom: 0.5rem;
+  justify-content: space-between;
+  padding: 1rem 1.25rem;
   background-color: var(--color-bg-secondary);
-  border-radius: 4px;
-  transition: background-color 0.2s;
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  transition: all 0.2s ease;
 }
 
 .todoItem:hover {
-  background-color: var(--color-bg-tertiary);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transform: translateY(-1px);
 }
 
-.checkbox {
-  margin-right: 1rem;
-  width: 1.2rem;
-  height: 1.2rem;
+.todoContent {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex: 1;
+}
+
+.todoCheckbox {
+  width: 1.25rem;
+  height: 1.25rem;
   cursor: pointer;
+  accent-color: var(--color-primary);
 }
 
-.todoTitle {
+.todoText {
   flex: 1;
   color: var(--color-text-primary);
+  font-size: 1rem;
+  line-height: 1.5;
 }
 
-.completed .todoTitle {
+.completed .todoText {
   text-decoration: line-through;
   color: var(--color-text-secondary);
 }
 
-.todoDate {
-  font-size: 0.9rem;
+.todoDates {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  font-size: 0.8rem;
   color: var(--color-text-tertiary);
   margin-left: 1rem;
+  text-align: right;
+  min-width: 200px;
 }
 
-.headerContainer {
+.deleteButton {
+  background: none;
+  border: none;
+  color: var(--color-text-tertiary);
+  font-size: 1.5rem;
+  cursor: pointer;
+  width: 2rem;
+  height: 2rem;
   display: flex;
-  justify-content: space-between;
   align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  transition: all 0.2s;
+  margin-left: 0.5rem;
+}
+
+.deleteButton:hover {
+  color: var(--color-error);
+  background-color: var(--color-bg-tertiary);
 }

@@ -13,6 +13,8 @@ interface Env {
   WORKER_REGION?: string;
   VALUE_FROM_CLOUDFLARE?: string;
   MOCK_API: boolean;
+  // KV Namespace for storing TODOs
+  TODOS_KV: KVNamespace;
 }
 
 type AppContext = Context<{ Bindings: Env }>;
@@ -67,6 +69,95 @@ async function loadMockData(c: AppContext, filename: string): Promise<any> {
     throw error;
   }
 }
+
+// API endpoints for TODOS
+const todos = new Hono<{ Bindings: Env }>();
+
+// Get all TODOs
+todos.get("/", async (c) => {
+  try {
+    console.log("Environment variables:", c.env);
+
+    console.log("KV Namespace Details:", {
+      binding: "TODOS_KV",
+      availableMethods: Object.keys(c.env.TODOS_KV).filter(
+        (k) => typeof c.env.TODOS_KV[k as keyof KVNamespace] === "function"
+      ),
+    });
+
+    const keys = await c.env.TODOS_KV.list();
+    console.log(`KV keys:`, keys);
+    console.log(`KV contains ${keys.keys.length} items`);
+    const todos = await Promise.all(
+      keys.keys.map(async (key) => {
+        const value = await c.env.TODOS_KV.get(key.name, "json");
+        return { id: key.name, ...value };
+      })
+    );
+    return c.json(todos);
+  } catch (error) {
+    console.error("Error fetching TODOs:", error);
+    return c.json({ error: "Failed to fetch TODOs" }, 500);
+  }
+});
+
+// Create a new TODO
+todos.post("/", async (c) => {
+  try {
+    const todo = await c.req.json();
+    const id = crypto.randomUUID();
+    const newTodo = {
+      ...todo,
+      id,
+      completed: false,
+      createdAt: new Date().toISOString(),
+    };
+    await c.env.TODOS_KV.put(id, JSON.stringify(newTodo));
+    return c.json(newTodo, 201);
+  } catch (error) {
+    console.error("Error creating TODO:", error);
+    return c.json({ error: "Failed to create TODO" }, 500);
+  }
+});
+
+// Update a TODO
+todos.put("/:id", async (c) => {
+  try {
+    const { id } = c.req.param();
+    const updates = await c.req.json();
+    const existing = await c.env.TODOS_KV.get(id, "json");
+
+    if (!existing) {
+      return c.json({ error: "TODO not found" }, 404);
+    }
+
+    const updatedTodo = {
+      ...existing,
+      ...updates,
+      updatedAt: new Date().toISOString(),
+    };
+    await c.env.TODOS_KV.put(id, JSON.stringify(updatedTodo));
+    return c.json(updatedTodo);
+  } catch (error) {
+    console.error("Error updating TODO:", error);
+    return c.json({ error: "Failed to update TODO" }, 500);
+  }
+});
+
+// Delete a TODO
+todos.delete("/:id", async (c) => {
+  try {
+    const { id } = c.req.param();
+    await c.env.TODOS_KV.delete(id);
+    return c.json({ success: true });
+  } catch (error) {
+    console.error("Error deleting TODO:", error);
+    return c.json({ error: "Failed to delete TODO" }, 500);
+  }
+});
+
+// Mount the todos routes
+app.route("/api/todos", todos);
 
 // API route for mock data files
 app.get("/api/:filename", async (c: AppContext) => {

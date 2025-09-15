@@ -26,7 +26,10 @@ export default defineConfig({
     devSourcemap: true,
   },
   plugins: [
-    cloudflare({ viteEnvironment: { name: "ssr" } }),
+    cloudflare({
+      viteEnvironment: { name: "ssr" },
+      experimental: { remoteBindings: true },
+    }),
     tailwindcss(),
     reactRouter(),
     tsconfigPaths(),

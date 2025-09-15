@@ -9,16 +9,23 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "f--cloudflare--rr-hono",
+  "account_id": "xxxxxxxxxx",
   "compatibility_date": "2025-04-01",
   "compatibility_flags": [
     //(nw for local fetch) "global_fetch_strictly_public"
   ],
   "main": "./workers/app.ts",
 
-  // prod env vars could be overriden in .dev.vars.dev
+  "kv_namespaces": [
+    {
+      "binding": "TODOS_KV",
+      "id": "xxxxxxxxxx",
+      "preview_id": "xxxxxxxxxx"
+    }
+  ],
   "vars": {
     "VALUE_FROM_CLOUDFLARE": "Hello from Hono/CF",
-    "MOCK_API": "true"
+    "MOCK_API": "false"
   },
   "assets": {
     "binding": "ASSETS",
