@@ -8,6 +8,7 @@ import dotenv from 'dotenv';
 // Parse command line arguments
 const args = process.argv.slice(2);
 const isVerbose = args.includes('--verbose');
+const parseJsonValues = args.includes('--json_values');
 const showHelp = args.includes('--help') || args.includes('-h');
 
 // Display help and exit if --help flag is present
@@ -19,6 +20,7 @@ Usage:
   node import_kv.js [options]
 
 Options:
+  --json_values  Parse JSON values instead of keeping them as strings
   --help, -h     Show this help message and exit
   --verbose      Show detailed information during execution
 
@@ -27,7 +29,8 @@ Description:
   Requires KV_IMPORT_TOKEN environment variable to be set in .dev.vars file.
 
 Examples:
-  node import_kv.js                   # Output KV data as JSON
+  node import_kv.js                   # Output KV data as JSON (values as strings)
+  node import_kv.js --json_values     # Output KV data as JSON (parse JSON values)
   node import_kv.js --verbose         # Show detailed information during execution
   node import_kv.js > data.json       # Save output to a file
 `);
@@ -184,12 +187,18 @@ async function exportKV() {
 
                 const valueText = await valueResponse.text();
 
-                // Try to parse the value as JSON if possible
-                try {
-                    // Parse the JSON string to get the actual object
-                    exportData[key] = JSON.parse(valueText);
-                } catch (e) {
-                    // If it's not valid JSON, keep it as a string
+                // Parse JSON values only if --json_values flag is provided
+                if (parseJsonValues) {
+                    // Try to parse the value as JSON if possible
+                    try {
+                        // Parse the JSON string to get the actual object
+                        exportData[key] = JSON.parse(valueText);
+                    } catch (e) {
+                        // If it's not valid JSON, keep it as a string
+                        exportData[key] = valueText;
+                    }
+                } else {
+                    // Keep all values as strings
                     exportData[key] = valueText;
                 }
             }
