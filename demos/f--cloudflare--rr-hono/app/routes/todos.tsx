@@ -1,5 +1,6 @@
 import { useLoaderData, Link, useFetcher } from "react-router";
 import { useState, useEffect, useRef } from "react";
+import { Button } from "@radix-ui/themes";
 import styles from "./todos.module.css";
 import type { LoaderFunctionArgs } from "react-router";
 
@@ -177,7 +178,9 @@ export default function TodosPage() {
           placeholder="Add a new todo..."
           className={styles.todoInput}
         />
-        <button type="submit" className={styles.addButton}>Add</button>
+        <Button type="submit" size="3" variant="solid">
+          Add
+        </Button>
       </form>
 
       <ul className={styles.todoList}>
@@ -220,43 +223,53 @@ export default function TodosPage() {
             <div className={styles.todoActions}>
               {editingTodoId === todo.id ? (
                 <>
-                  <button
+                  <Button
                     onClick={handleSaveEdit}
-                    className={styles.saveButton}
+                    color="green"
+                    variant="soft"
+                    size="2"
                     aria-label="Save edit"
+                    style={{ marginRight: 'var(--spacing-2)' }}
                   >
                     Save
-                  </button>
-                  <button
+                  </Button>
+                  <Button
                     onClick={handleCancelEdit}
-                    className={styles.cancelButton}
+                    color="gray"
+                    variant="soft"
+                    size="2"
                     aria-label="Cancel edit"
                   >
                     Cancel
-                  </button>
+                  </Button>
                 </>
               ) : (
                 <>
-                  <button
+                  <Button
                     onClick={(e) => {
                       e.stopPropagation();
                       handleEditTodo(todo);
                     }}
-                    className={styles.editButton}
+                    color="blue"
+                    variant="ghost"
+                    size="1"
                     aria-label="Edit todo"
+                    style={{ marginRight: 'var(--spacing-1)' }}
                   >
                     ✎
-                  </button>
-                  <button
+                  </Button>
+                  <Button
                     onClick={(e) => {
                       e.stopPropagation();
                       handleDeleteTodo(todo.id);
                     }}
-                    className={styles.deleteButton}
+                    color="red"
+                    variant="ghost"
+                    size="1"
                     aria-label="Delete todo"
                   >
                     ×
-                  </button>
+                  </Button>
                 </>
               )}
             </div>

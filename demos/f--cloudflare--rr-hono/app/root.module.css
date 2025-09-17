@@ -1,9 +1,10 @@
 /* Root layout styles */
 :root {
-  /* Colors */
-  --color-primary: #2563eb;
-  --color-primary-dark: #1d4ed8;
-  --color-primary-light: #60a5fa;
+  /* Colors - using Radix UI variables directly */
+  /* These will automatically change when the accent color changes */
+  --color-primary: var(--accent-9);
+  --color-primary-dark: var(--accent-10);
+  --color-primary-light: var(--accent-8);
   
   /* Text colors */
   --color-text-primary: #1f2937;
@@ -15,11 +16,11 @@
   --color-bg-secondary: #f9fafb;
   --color-bg-tertiary: #f3f4f6;
   
-  /* Status colors */
-  --color-success: #10b981;
-  --color-warning: #f59e0b;
-  --color-error: #ef4444;
-  --color-info: #3b82f6;
+  /* Status colors - using Radix UI color scales */
+  --color-success: var(--green-9);
+  --color-warning: var(--amber-9);
+  --color-error: var(--red-9);
+  --color-info: var(--blue-9);
   
   /* Border colors */
   --color-border: #e5e7eb;

@@ -23,7 +23,7 @@
 .button {
   display: inline-block;
   padding: var(--spacing-3) var(--spacing-6);
-  background-color: var(--color-primary);
+  background-color: var(--accent-9);
   color: white;
   text-decoration: none;
   border-radius: var(--border-radius-md);
@@ -33,7 +33,7 @@
 }
 
 .button:hover {
-  background-color: var(--color-primary-dark);
+  background-color: var(--accent-10);
 }
 
 .secondaryButton {

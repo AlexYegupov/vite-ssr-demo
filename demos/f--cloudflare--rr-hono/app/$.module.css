@@ -13,7 +13,7 @@
 h1 {
   font-size: var(--font-size-4xl);
   margin-bottom: var(--spacing-4);
-  color: var(--color-primary);
+  color: var(--accent-9);
 }
 
 p {
@@ -26,7 +26,7 @@ p {
 .link {
   display: inline-block;
   padding: var(--spacing-3) var(--spacing-6);
-  background-color: var(--color-primary);
+  background-color: var(--accent-9);
   color: white;
   text-decoration: none;
   border-radius: var(--border-radius-md);
@@ -35,5 +35,5 @@ p {
 }
 
 .link:hover {
-  background-color: var(--color-primary-dark);
+  background-color: var(--accent-10);
 }

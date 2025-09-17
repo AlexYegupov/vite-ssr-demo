@@ -2,7 +2,7 @@
   max-width: var(--max-width-md);
   margin: 0 auto;
   padding: var(--spacing-8);
-  color: var(--color-text-primary);
+  color: var(--gray-12);
 }
 
 .weatherInfo {
@@ -15,14 +15,14 @@
 
 .weatherInfo h3 {
   margin-top: 0;
-  color: var(--color-primary);
+  color: var(--accent-9);
   margin-bottom: var(--spacing-4);
   font-size: var(--font-size-xl);
 }
 
 .weatherInfo p {
   margin: var(--spacing-2) 0;
-  color: var(--color-text-secondary);
+  color: var(--gray-10);
   font-size: var(--font-size-md);
 }
 
@@ -31,7 +31,7 @@
 }
 
 .headerContainer a {
-  color: var(--color-primary);
+  color: var(--accent-9);
   text-decoration: none;
   display: inline-flex;
   align-items: center;
@@ -42,11 +42,11 @@
 }
 
 .headerContainer a:hover {
-  background-color: var(--color-bg-tertiary);
+  background-color: var(--gray-3);
 }
 
 h1 {
-  color: var(--color-text-primary);
+  color: var(--gray-12);
   margin-bottom: var(--spacing-6);
   font-size: var(--font-size-3xl);
 }
@@ -55,21 +55,22 @@ h1 {
   display: flex;
   gap: var(--spacing-4);
   margin-bottom: var(--spacing-8);
+  align-items: center;
 }
 
 .todoInput {
   flex: 1;
   padding: var(--spacing-3) var(--spacing-4);
-  border: 1px solid var(--color-border);
+  border: 1px solid var(--gray-6);
   border-radius: var(--border-radius-sm);
   font-size: var(--font-size-md);
-  background-color: var(--color-bg-secondary);
-  color: var(--color-text-primary);
+  background-color: var(--gray-2);
+  color: var(--gray-12);
 }
 
 .addButton {
   padding: var(--spacing-3) var(--spacing-6);
-  background-color: var(--color-primary);
+  background-color: var(--accent-9);
   color: white;
   border: none;
   border-radius: var(--border-radius-sm);
@@ -79,7 +80,7 @@ h1 {
 }
 
 .addButton:hover {
-  background-color: var(--color-primary-dark);
+  background-color: var(--accent-10);
 }
 
 .todoList {
@@ -96,8 +97,8 @@ h1 {
   align-items: center;
   justify-content: space-between;
   padding: var(--spacing-4) var(--spacing-5);
-  background-color: var(--color-bg-secondary);
-  border: 1px solid var(--color-border);
+  background-color: var(--gray-2);
+  border: 1px solid var(--gray-6);
   border-radius: var(--border-radius-md);
   transition: all var(--transition-fast) ease;
 }
@@ -118,19 +119,19 @@ h1 {
   width: var(--spacing-5);
   height: var(--spacing-5);
   cursor: pointer;
-  accent-color: var(--color-primary);
+  accent-color: var(--accent-9);
 }
 
 .todoText {
   flex: 1;
-  color: var(--color-text-primary);
+  color: var(--gray-12);
   font-size: var(--font-size-md);
   line-height: var(--line-height-normal);
 }
 
 .completed .todoText {
   text-decoration: line-through;
-  color: var(--color-text-secondary);
+  color: var(--gray-9);
 }
 
 .todoDates {
@@ -138,7 +139,7 @@ h1 {
   flex-direction: column;
   gap: var(--spacing-1);
   font-size: var(--font-size-xs);
-  color: var(--color-text-tertiary);
+  color: var(--gray-8);
   margin-left: var(--spacing-4);
   text-align: right;
   min-width: calc(var(--max-width-xs) - var(--spacing-8));
@@ -147,7 +148,7 @@ h1 {
 .deleteButton {
   background: none;
   border: none;
-  color: var(--color-text-tertiary);
+  color: var(--gray-8);
   font-size: var(--font-size-2xl);
   cursor: pointer;
   width: var(--spacing-8);
@@ -161,14 +162,14 @@ h1 {
 }
 
 .deleteButton:hover {
-  color: var(--color-error);
-  background-color: var(--color-bg-tertiary);
+  color: var(--red-9);
+  background-color: var(--gray-3);
 }
 
 .editButton {
   background: none;
   border: none;
-  color: var(--color-text-tertiary);
+  color: var(--gray-8);
   font-size: var(--font-size-md);
   cursor: pointer;
   width: var(--spacing-8);
@@ -182,27 +183,28 @@ h1 {
 }
 
 .editButton:hover {
-  color: var(--color-primary);
-  background-color: var(--color-bg-tertiary);
+  color: var(--accent-9);
+  background-color: var(--gray-3);
 }
 
 .todoEditInput {
   flex: 1;
   padding: var(--spacing-2);
-  border: 1px solid var(--color-primary);
+  border: 1px solid var(--accent-9);
   border-radius: var(--border-radius-sm);
   font-size: var(--font-size-md);
-  background-color: var(--color-bg-secondary);
-  color: var(--color-text-primary);
+  background-color: var(--gray-2);
+  color: var(--gray-12);
 }
 
 .todoActions {
   display: flex;
   align-items: center;
+  gap: var(--spacing-1);
 }
 
 .saveButton {
-  background-color: var(--color-success);
+  background-color: var(--green-9);
   color: white;
   border: none;
   border-radius: var(--border-radius-sm);
@@ -213,7 +215,7 @@ h1 {
 }
 
 .cancelButton {
-  background-color: var(--color-text-tertiary);
+  background-color: var(--gray-8);
   color: white;
   border: none;
   border-radius: var(--border-radius-sm);
