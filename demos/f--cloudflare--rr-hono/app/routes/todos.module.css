@@ -1,31 +1,33 @@
 .container {
-  max-width: 800px;
+  max-width: var(--max-width-md);
   margin: 0 auto;
-  padding: 2rem;
+  padding: var(--spacing-8);
   color: var(--color-text-primary);
 }
 
 .weatherInfo {
   background-color: var(--color-bg-secondary);
-  padding: 1.5rem;
-  border-radius: 8px;
-  margin-bottom: 2rem;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  padding: var(--spacing-6);
+  border-radius: var(--border-radius-md);
+  margin-bottom: var(--spacing-8);
+  box-shadow: var(--shadow-md);
 }
 
 .weatherInfo h3 {
   margin-top: 0;
   color: var(--color-primary);
-  margin-bottom: 1rem;
+  margin-bottom: var(--spacing-4);
+  font-size: var(--font-size-xl);
 }
 
 .weatherInfo p {
-  margin: 0.5rem 0;
+  margin: var(--spacing-2) 0;
   color: var(--color-text-secondary);
+  font-size: var(--font-size-md);
 }
 
 .headerContainer {
-  margin-bottom: 2rem;
+  margin-bottom: var(--spacing-8);
 }
 
 .headerContainer a {
@@ -33,10 +35,10 @@
   text-decoration: none;
   display: inline-flex;
   align-items: center;
-  gap: 0.5rem;
-  padding: 0.5rem 1rem;
-  border-radius: 4px;
-  transition: background-color 0.2s;
+  gap: var(--spacing-2);
+  padding: var(--spacing-2) var(--spacing-4);
+  border-radius: var(--border-radius-sm);
+  transition: background-color var(--transition-fast);
 }
 
 .headerContainer a:hover {
@@ -45,34 +47,35 @@
 
 h1 {
   color: var(--color-text-primary);
-  margin-bottom: 1.5rem;
+  margin-bottom: var(--spacing-6);
+  font-size: var(--font-size-3xl);
 }
 
 .todoForm {
   display: flex;
-  gap: 1rem;
-  margin-bottom: 2rem;
+  gap: var(--spacing-4);
+  margin-bottom: var(--spacing-8);
 }
 
 .todoInput {
   flex: 1;
-  padding: 0.75rem 1rem;
+  padding: var(--spacing-3) var(--spacing-4);
   border: 1px solid var(--color-border);
-  border-radius: 4px;
-  font-size: 1rem;
+  border-radius: var(--border-radius-sm);
+  font-size: var(--font-size-md);
   background-color: var(--color-bg-secondary);
   color: var(--color-text-primary);
 }
 
 .addButton {
-  padding: 0.75rem 1.5rem;
+  padding: var(--spacing-3) var(--spacing-6);
   background-color: var(--color-primary);
   color: white;
   border: none;
-  border-radius: 4px;
+  border-radius: var(--border-radius-sm);
   cursor: pointer;
   font-weight: 600;
-  transition: background-color 0.2s;
+  transition: background-color var(--transition-fast);
 }
 
 .addButton:hover {
@@ -85,35 +88,35 @@ h1 {
   margin: 0;
   display: flex;
   flex-direction: column;
-  gap: 0.75rem;
+  gap: var(--spacing-3);
 }
 
 .todoItem {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 1rem 1.25rem;
+  padding: var(--spacing-4) var(--spacing-5);
   background-color: var(--color-bg-secondary);
   border: 1px solid var(--color-border);
-  border-radius: 6px;
-  transition: all 0.2s ease;
+  border-radius: var(--border-radius-md);
+  transition: all var(--transition-fast) ease;
 }
 
 .todoItem:hover {
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--shadow-lg);
   transform: translateY(-1px);
 }
 
 .todoContent {
   display: flex;
   align-items: center;
-  gap: 1rem;
+  gap: var(--spacing-4);
   flex: 1;
 }
 
 .todoCheckbox {
-  width: 1.25rem;
-  height: 1.25rem;
+  width: var(--spacing-5);
+  height: var(--spacing-5);
   cursor: pointer;
   accent-color: var(--color-primary);
 }
@@ -121,8 +124,8 @@ h1 {
 .todoText {
   flex: 1;
   color: var(--color-text-primary);
-  font-size: 1rem;
-  line-height: 1.5;
+  font-size: var(--font-size-md);
+  line-height: var(--line-height-normal);
 }
 
 .completed .todoText {
@@ -133,28 +136,28 @@ h1 {
 .todoDates {
   display: flex;
   flex-direction: column;
-  gap: 0.25rem;
-  font-size: 0.8rem;
+  gap: var(--spacing-1);
+  font-size: var(--font-size-xs);
   color: var(--color-text-tertiary);
-  margin-left: 1rem;
+  margin-left: var(--spacing-4);
   text-align: right;
-  min-width: 200px;
+  min-width: calc(var(--max-width-xs) - var(--spacing-8));
 }
 
 .deleteButton {
   background: none;
   border: none;
   color: var(--color-text-tertiary);
-  font-size: 1.5rem;
+  font-size: var(--font-size-2xl);
   cursor: pointer;
-  width: 2rem;
-  height: 2rem;
+  width: var(--spacing-8);
+  height: var(--spacing-8);
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 4px;
-  transition: all 0.2s;
-  margin-left: 0.5rem;
+  border-radius: var(--border-radius-sm);
+  transition: all var(--transition-fast);
+  margin-left: var(--spacing-2);
 }
 
 .deleteButton:hover {
@@ -166,16 +169,16 @@ h1 {
   background: none;
   border: none;
   color: var(--color-text-tertiary);
-  font-size: 1rem;
+  font-size: var(--font-size-md);
   cursor: pointer;
-  width: 2rem;
-  height: 2rem;
+  width: var(--spacing-8);
+  height: var(--spacing-8);
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 4px;
-  transition: all 0.2s;
-  margin-left: 0.5rem;
+  border-radius: var(--border-radius-sm);
+  transition: all var(--transition-fast);
+  margin-left: var(--spacing-2);
 }
 
 .editButton:hover {
@@ -185,10 +188,10 @@ h1 {
 
 .todoEditInput {
   flex: 1;
-  padding: 0.5rem;
+  padding: var(--spacing-2);
   border: 1px solid var(--color-primary);
-  border-radius: 4px;
-  font-size: 1rem;
+  border-radius: var(--border-radius-sm);
+  font-size: var(--font-size-md);
   background-color: var(--color-bg-secondary);
   color: var(--color-text-primary);
 }
@@ -202,19 +205,19 @@ h1 {
   background-color: var(--color-success);
   color: white;
   border: none;
-  border-radius: 4px;
-  padding: 0.25rem 0.75rem;
-  font-size: 0.875rem;
+  border-radius: var(--border-radius-sm);
+  padding: var(--spacing-1) var(--spacing-3);
+  font-size: var(--font-size-sm);
   cursor: pointer;
-  margin-right: 0.5rem;
+  margin-right: var(--spacing-2);
 }
 
 .cancelButton {
   background-color: var(--color-text-tertiary);
   color: white;
   border: none;
-  border-radius: 4px;
-  padding: 0.25rem 0.75rem;
-  font-size: 0.875rem;
+  border-radius: var(--border-radius-sm);
+  padding: var(--spacing-1) var(--spacing-3);
+  font-size: var(--font-size-sm);
   cursor: pointer;
 }
