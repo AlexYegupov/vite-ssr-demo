@@ -1,5 +1,5 @@
 import { useLoaderData, Link, useFetcher } from "react-router";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import styles from "./todos.module.css";
 import type { LoaderFunctionArgs } from "react-router";
 
@@ -68,6 +68,9 @@ export default function TodosPage() {
   const fetcher = useFetcher();
   const [todos, setTodos] = useState<Todo[]>([]);
   const [newTodoTitle, setNewTodoTitle] = useState("");
+  const [editingTodoId, setEditingTodoId] = useState<string | null>(null);
+  const [editTodoTitle, setEditTodoTitle] = useState("");
+  const editInputRef = useRef<HTMLInputElement>(null);
 
   // Load todos on initial render
   useEffect(() => {
@@ -109,6 +112,36 @@ export default function TodosPage() {
       const updatedTodo = await response.json() as Todo;
       setTodos(todos.map(todo => todo.id === id ? updatedTodo : todo));
     }
+  };
+  
+  const handleEditTodo = (todo: Todo) => {
+    setEditingTodoId(todo.id);
+    setEditTodoTitle(todo.title);
+    setTimeout(() => {
+      editInputRef.current?.focus();
+    }, 0);
+  };
+  
+  const handleSaveEdit = async () => {
+    if (!editingTodoId || !editTodoTitle.trim()) return;
+    
+    const response = await fetch(`/api/todos/${editingTodoId}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ title: editTodoTitle })
+    });
+
+    if (response.ok) {
+      const updatedTodo = await response.json() as Todo;
+      setTodos(todos.map(todo => todo.id === editingTodoId ? updatedTodo : todo));
+      setEditingTodoId(null);
+      setEditTodoTitle("");
+    }
+  };
+  
+  const handleCancelEdit = () => {
+    setEditingTodoId(null);
+    setEditTodoTitle("");
   };
 
   const handleDeleteTodo = async (id: string) => {
@@ -162,7 +195,21 @@ export default function TodosPage() {
                 onChange={() => handleToggleComplete(todo.id, todo.completed)}
                 className={styles.todoCheckbox}
               />
-              <span className={styles.todoText}>{todo.title}</span>
+              {editingTodoId === todo.id ? (
+                <input
+                  type="text"
+                  value={editTodoTitle}
+                  onChange={(e) => setEditTodoTitle(e.target.value)}
+                  className={styles.todoEditInput}
+                  ref={editInputRef}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') handleSaveEdit();
+                    if (e.key === 'Escape') handleCancelEdit();
+                  }}
+                />
+              ) : (
+                <span className={styles.todoText}>{todo.title}</span>
+              )}
               <div className={styles.todoDates}>
                 <span>Created: {new Date(todo.createdAt).toLocaleString()}</span>
                 {todo.updatedAt && (
@@ -170,16 +217,49 @@ export default function TodosPage() {
                 )}
               </div>
             </div>
-            <button
-              onClick={(e) => {
-                e.stopPropagation();
-                handleDeleteTodo(todo.id);
-              }}
-              className={styles.deleteButton}
-              aria-label="Delete todo"
-            >
-              ×
-            </button>
+            <div className={styles.todoActions}>
+              {editingTodoId === todo.id ? (
+                <>
+                  <button
+                    onClick={handleSaveEdit}
+                    className={styles.saveButton}
+                    aria-label="Save edit"
+                  >
+                    Save
+                  </button>
+                  <button
+                    onClick={handleCancelEdit}
+                    className={styles.cancelButton}
+                    aria-label="Cancel edit"
+                  >
+                    Cancel
+                  </button>
+                </>
+              ) : (
+                <>
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleEditTodo(todo);
+                    }}
+                    className={styles.editButton}
+                    aria-label="Edit todo"
+                  >
+                    ✎
+                  </button>
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleDeleteTodo(todo.id);
+                    }}
+                    className={styles.deleteButton}
+                    aria-label="Delete todo"
+                  >
+                    ×
+                  </button>
+                </>
+              )}
+            </div>
           </li>
         ))}
       </ul>
