@@ -31,11 +31,11 @@ Usage:
 
 Options:
   --kv <binding>  Required. Specifies the KV binding name to use
+  --preview_kv   Use KV preview namespace
   --json         Output data as JSON instead of importing to local KV
   --json_values  Parse JSON values instead of keeping them as strings
-  --preview_kv   Use preview namespace when using local KV
-  --help, -h     Show this help message and exit
   --verbose      Show detailed information during execution
+  --help, -h     Show this help message and exit
 
 Description:
   Fetches data from Cloudflare KV storage and outputs it as JSON to stdout or imports to local KV.
@@ -230,7 +230,7 @@ async function importKV() {
 
             let successCount = 0;
             let errorCount = 0;
-            
+
             // Define preview flag outside the loop
             const previewFlag = usePreview ? '--preview' : '--preview false';
 

@@ -1,18 +1,28 @@
 // KV namespace export script
-import { readFileSync, existsSync } from 'fs';
-import { resolve, dirname } from 'path';
+import { readFileSync, existsSync, writeFileSync } from 'fs';
+import { resolve, dirname, join } from 'path';
 import { fileURLToPath } from 'url';
 import * as jsonc from 'jsonc-parser';
 import dotenv from 'dotenv';
+import { execSync } from 'child_process';
 
 // Parse command line arguments
 const args = process.argv.slice(2);
 const isVerbose = args.includes('--verbose');
-const showHelp = args.includes('--help') || args.includes('-h');
 const dryRun = args.includes('--dry-run');
+const kvIndex = args.findIndex(arg => arg === '--kv');
+const hasKvParam = kvIndex !== -1;
+const kvBinding = hasKvParam && args[kvIndex + 1] && !args[kvIndex + 1].startsWith('--') ? args[kvIndex + 1] : null;
+const showHelp = args.includes('--help') || args.includes('-h') || (!kvBinding);
+const usePreview = args.includes('--preview_kv');
+const inputFile = args.find((arg, index) => index > 0 && args[index - 1] === '--input');
 
 // Display help and exit if --help flag is present
+// Show help if explicitly requested or if --kv parameter is missing or used without a binding
 if (showHelp) {
+    if (!kvBinding) {
+        console.error('Error: --kv <binding> parameter is required');
+    }
     console.log(`
 Cloudflare KV Export Tool
 
@@ -20,20 +30,21 @@ Usage:
   node export_kv.js [options]
 
 Options:
-  --dry-run      Show what would be written without actually writing to KV
-  --help, -h     Show this help message and exit
-  --verbose      Show detailed information during execution
+  --kv <binding>   Required. Specifies the KV binding name to use
+  --input <file>   Optional. JSON file to use as input source instead of local KV
+  --dry-run        Output data as JSON instead of exporting to remote KV
+  --preview_kv     Use KV preview namespace 
+  --help, -h       Show this help message and exit
+  --verbose        Show detailed information during execution
 
 Description:
-  Reads JSON data from stdin and writes it to Cloudflare KV storage.
-  Requires KV_IMPORT_TOKEN environment variable to be set in .dev.vars file.
-  Input should be valid JSON with key-value pairs.
+  Exports data from local KV storage to Cloudflare KV or outputs it as JSON.
+  Requires KV_EXPORT_TOKEN environment variable to be set in .dev.vars file.
 
 Examples:
-  cat data.json | node export_kv.js                    # Write data to KV
-  node export_kv.js < data.json                        # Same as above
-  cat data.json | node export_kv.js --verbose          # With detailed logging
-  cat data.json | node export_kv.js --dry-run          # Preview without writing
+  node export_kv.js --kv MY_KV       # Export data from local KV to remote KV 
+  node export_kv.js --kv MY_KV --dry-run # Output local KV data as JSON instead of exporting to remote KV
+  node export_kv.js --kv MY_KV --input data.json # Export data from JSON file to remote KV
 `);
     process.exit(0);
 }
@@ -97,7 +108,7 @@ function readWranglerConfig() {
 }
 
 // Function to get KV configuration from wrangler.jsonc
-function getKVConfig(binding = 'TODOS_KV') {
+function getKVConfig(binding) {
     const config = readWranglerConfig();
 
     // Extract account ID
@@ -131,70 +142,104 @@ function getKVConfig(binding = 'TODOS_KV') {
     };
 }
 
-// Function to read JSON from stdin
-async function readStdin() {
-    return new Promise((resolve, reject) => {
-        let data = '';
-        process.stdin.setEncoding('utf8');
+// Function to get data from local KV
+async function getLocalKVData(binding) {
+    try {
+        verboseLog(`Fetching data from local KV with binding: ${binding}`);
 
-        process.stdin.on('data', chunk => {
-            data += chunk;
-        });
+        // Define preview flag
+        const previewFlag = usePreview ? '--preview' : '--preview false';
 
-        process.stdin.on('end', () => {
-            resolve(data);
-        });
+        // Use wrangler CLI to list keys (without --json flag which causes errors)
+        const command = `npx wrangler kv key list --binding=${binding} --local ${previewFlag}`;
+        verboseLog(`Executing: ${command}`);
 
-        process.stdin.on('error', reject);
-    });
+        const result = execSync(command, { encoding: 'utf8' });
+        
+        // Parse the output as JSON
+        // The output format is an array of objects with a 'name' property
+        let keys = [];
+        try {
+            const jsonData = JSON.parse(result);
+            if (Array.isArray(jsonData)) {
+                keys = jsonData.map(item => item.name);
+            }
+        } catch (e) {
+            // Fallback to plain text parsing if JSON parsing fails
+            verboseLog(`Error parsing JSON output: ${e.message}`);
+            keys = result.trim().split('\n')
+                .filter(line => line.trim() !== '')
+                .map(line => line.trim());
+        }
+
+        verboseLog(`Found ${keys.length} keys in local KV`);
+
+        const data = {};
+
+        // Get values for each key
+        for (const key of keys) {
+            verboseLog(`Fetching value for key: ${key}`);
+
+            const valueCommand = `npx wrangler kv key get --binding=${binding} --local ${previewFlag} "${key}"`;
+            const value = execSync(valueCommand, { encoding: 'utf8' });
+
+            // Try to parse as JSON, but keep as string if parsing fails
+            try {
+                data[key] = JSON.parse(value);
+            } catch (e) {
+                data[key] = value;
+            }
+        }
+
+        return data;
+    } catch (error) {
+        console.error(`Error fetching data from local KV: ${error.message}`);
+        process.exit(1);
+    }
 }
 
-async function importKV() {
+// Function to read data from input JSON file
+function readInputFile(filePath) {
     try {
-        // Read JSON data from stdin
-        const inputData = await readStdin();
+        verboseLog(`Reading data from input file: ${filePath}`);
+        const content = readFileSync(filePath, 'utf8');
+        return JSON.parse(content);
+    } catch (error) {
+        console.error(`Error reading input file: ${error.message}`);
+        process.exit(1);
+    }
+}
 
-        if (!inputData.trim()) {
-            console.error('Error: No input data received from stdin');
-            process.exit(1);
-        }
-
-        // Parse the input JSON
-        let parsedData;
-        try {
-            parsedData = JSON.parse(inputData);
-        } catch (e) {
-            console.error('Error: Invalid JSON input:', e.message);
-            process.exit(1);
-        }
-
-        // Validate that it's an object
-        if (typeof parsedData !== 'object' || parsedData === null) {
-            console.error('Error: Input must be a JSON object with key-value pairs');
-            process.exit(1);
-        }
-
-        const keys = Object.keys(parsedData);
-        if (keys.length === 0) {
-            console.error('Error: Input JSON object is empty');
-            process.exit(1);
-        }
-
-        verboseLog(`Parsed ${keys.length} key-value pairs from input`);
-
-        // Get KV configuration from wrangler.jsonc
-        const kvConfig = getKVConfig('TODOS_KV');
+async function exportKV() {
+    try {
+        // Get KV configuration from wrangler.jsonc using the binding from --kv parameter
+        const kvConfig = getKVConfig(kvBinding);
 
         // Check if API token is set in environment variables
-        const apiTokenEnvVar = process.env.KV_IMPORT_TOKEN;
+        const apiTokenEnvVar = process.env.KV_EXPORT_TOKEN;
 
         if (!apiTokenEnvVar) {
-            console.error('KV_IMPORT_TOKEN environment variable is required but not set.');
-            console.error('Please set it in your .env file or environment variables.');
+            console.error('KV_EXPORT_TOKEN environment variable is required but not set.');
+            console.error('Please set it in your .dev.vars file or environment variables.');
             process.exit(1);
         }
 
-        // Use configuration from wrangler.jsonc
+        // Get data either from input file or local KV
+        let exportData;
+        if (inputFile && existsSync(inputFile)) {
+            exportData = readInputFile(inputFile);
+        } else {
+            exportData = await getLocalKVData(kvBinding);
+        }
+
+        // If --dry-run flag is provided, just output the data as JSON and exit
+        if (dryRun) {
+            verboseLog(`Dry run mode: Outputting data as JSON`);
+            console.log(JSON.stringify(exportData, null, 2));
+            return;
+        }
+
+        // Otherwise, export data to remote KV
         const accountId = kvConfig.accountId;
         const namespaceId = kvConfig.namespaceId;
         const apiToken = apiTokenEnvVar;
@@ -204,79 +249,76 @@ async function importKV() {
             'Content-Type': 'application/json'
         };
 
-        if (dryRun) {
-            verboseLog('DRY RUN MODE - No data will be written to KV');
-        }
+        verboseLog(`Exporting ${Object.keys(exportData).length} items to remote KV namespace: ${namespaceId}`);
 
         let successCount = 0;
-        let errorCount = 0;
 
-        // Write each key-value pair to KV
-        for (const key of keys) {
-            const value = parsedData[key];
+        // Create a temporary directory for value files
+        const tempDir = join(__dirname, '../.tmp_kv_export');
+        try {
+            // Ensure temp directory exists
+            execSync(`mkdir -p ${tempDir}`);
+            verboseLog(`Created temporary directory: ${tempDir}`);
+        } catch (error) {
+            console.error(`Error creating temporary directory: ${error.message}`);
+            process.exit(1);
+        }
+
+        for (const key of Object.keys(exportData)) {
+            const value = exportData[key];
             const valueString = typeof value === 'string' ? value : JSON.stringify(value);
 
             verboseLog(`Processing key: ${key}`);
 
-            if (dryRun) {
-                verboseLog(`Would write: ${key} = ${valueString.substring(0, 100)}${valueString.length > 100 ? '...' : ''}`);
-                successCount++;
-                continue;
-            }
-
             try {
-                const response = await fetch(
-                    `https://api.cloudflare.com/client/v4/accounts/${accountId}/storage/kv/namespaces/${namespaceId}/values/${encodeURIComponent(key)}`,
-                    {
-                        method: 'PUT',
-                        headers: {
-                            ...headers,
-                            'Content-Type': 'text/plain'
-                        },
-                        body: valueString
-                    }
-                );
+                // Write value to API
+                const url = `https://api.cloudflare.com/client/v4/accounts/${accountId}/storage/kv/namespaces/${namespaceId}/values/${key}`;
 
-                if (!response.ok) {
-                    const errorData = await response.json();
-                    console.error(`Error writing key '${key}': ${response.status} ${response.statusText}`);
-                    if (errorData.errors) {
-                        console.error('Details:', JSON.stringify(errorData.errors, null, 2));
-                    }
-                    errorCount++;
-                } else {
-                    verboseLog(`Successfully wrote key: ${key}`);
-                    successCount++;
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), 5000); // 5 second timeout
+
+                const response = await fetch(url, {
+                    method: 'PUT',
+                    headers,
+                    body: valueString,
+                    signal: controller.signal
+                });
+
+                clearTimeout(timeoutId);
+
+                const responseData = await response.json();
+
+                if (!responseData.success) {
+                    throw new Error(`API Error: ${JSON.stringify(responseData.errors)}`);
                 }
-            } catch (error) {
-                console.error(`Network error writing key '${key}': ${error.message}`);
-                errorCount++;
-            }
-        }
 
-        // Summary
-        if (dryRun) {
-            verboseLog(`Dry run completed: ${successCount} keys would be written`);
-        } else {
-            verboseLog(`Export completed: ${successCount} keys written, ${errorCount} errors`);
-            if (errorCount > 0) {
-                console.error(`Warning: ${errorCount} keys failed to write`);
+                verboseLog(`Successfully wrote key: ${key} to remote KV`);
+                successCount++;
+            } catch (error) {
+                console.error(`Error writing key ${key}: ${error.message}`);
+                // Log full error details
+                console.error(error);
+                // Exit immediately on error
                 process.exit(1);
             }
         }
 
-        console.log('Export operation completed successfully');
+        // Clean up temp directory
+        execSync(`rm -rf ${tempDir}`);
+        verboseLog(`Removed temporary directory: ${tempDir}`);
+
+        // Summary
+        verboseLog(`Remote KV export completed: ${successCount} keys written`);
+        console.log(`Successfully exported ${successCount} keys to remote KV ${kvBinding}`);
+
 
     } catch (error) {
         // Handle any other errors
-        if (isVerbose) {
-            console.error(`Error in importKV: ${error.message}`);
-            if (error.stack) console.error(error.stack);
-        } else {
-            console.error(`Error: ${error.message}`);
-        }
+        console.error(`Error in exportKV: ${error.message}`);
+        // Always show stack trace for better debugging
+        if (error.stack) console.error(error.stack);
         process.exit(1);
     }
 }
 
-importKV().catch(console.error);
+exportKV().catch(console.error);
