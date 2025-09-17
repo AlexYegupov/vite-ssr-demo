@@ -58,6 +58,13 @@ h1 {
   align-items: center;
 }
 
+.todoFormContent {
+  display: flex;
+  gap: var(--spacing-4);
+  width: 100%;
+  align-items: center;
+}
+
 .todoInput {
   flex: 1;
   padding: var(--spacing-3) var(--spacing-4);
@@ -119,7 +126,32 @@ h1 {
   width: var(--spacing-5);
   height: var(--spacing-5);
   cursor: pointer;
-  accent-color: var(--accent-9);
+  border-radius: var(--border-radius-sm);
+  border: 2px solid var(--gray-8);
+  background-color: var(--gray-2);
+  transition: all var(--transition-fast);
+  position: relative;
+}
+
+.todoCheckbox:hover {
+  border-color: var(--accent-9);
+}
+
+.todoCheckbox[data-state="checked"] {
+  background-color: var(--accent-9);
+  border-color: var(--accent-9);
+}
+
+.todoCheckbox[data-state="checked"]::after {
+  content: '';
+  position: absolute;
+  top: 40%;
+  left: 50%;
+  transform: translate(-50%, -50%) rotate(45deg);
+  width: 25%;
+  height: 50%;
+  border-bottom: 2px solid white;
+  border-right: 2px solid white;
 }
 
 .todoText {

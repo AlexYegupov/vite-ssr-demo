@@ -1,6 +1,7 @@
 import { useLoaderData, Link, useFetcher } from "react-router";
 import { useState, useEffect, useRef } from "react";
 import { Button } from "@radix-ui/themes";
+import * as Checkbox from "@radix-ui/react-checkbox";
 import styles from "./todos.module.css";
 import type { LoaderFunctionArgs } from "react-router";
 
@@ -171,16 +172,18 @@ export default function TodosPage() {
       <h1>Todo List</h1>
       
       <form onSubmit={handleAddTodo} className={styles.todoForm}>
-        <input
-          type="text"
-          value={newTodoTitle}
-          onChange={(e) => setNewTodoTitle(e.target.value)}
-          placeholder="Add a new todo..."
-          className={styles.todoInput}
-        />
-        <Button type="submit" size="3" variant="solid">
-          Add
-        </Button>
+        <div className={styles.todoFormContent}>
+          <input
+            type="text"
+            value={newTodoTitle}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setNewTodoTitle(e.target.value)}
+            placeholder="Add a new todo..."
+            className={styles.todoInput}
+          />
+          <Button type="submit" size="3" variant="solid">
+            Add
+          </Button>
+        </div>
       </form>
 
       <ul className={styles.todoList}>
@@ -192,20 +195,21 @@ export default function TodosPage() {
             }`}
           >
             <div className={styles.todoContent}>
-              <input
-                type="checkbox"
+              <Checkbox.Root
                 checked={todo.completed}
-                onChange={() => handleToggleComplete(todo.id, todo.completed)}
+                onCheckedChange={() => handleToggleComplete(todo.id, todo.completed)}
                 className={styles.todoCheckbox}
+                id={`todo-${todo.id}`}
               />
+              
               {editingTodoId === todo.id ? (
                 <input
                   type="text"
                   value={editTodoTitle}
-                  onChange={(e) => setEditTodoTitle(e.target.value)}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEditTodoTitle(e.target.value)}
                   className={styles.todoEditInput}
                   ref={editInputRef}
-                  onKeyDown={(e) => {
+                  onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) => {
                     if (e.key === 'Enter') handleSaveEdit();
                     if (e.key === 'Escape') handleCancelEdit();
                   }}
@@ -228,8 +232,8 @@ export default function TodosPage() {
                     color="green"
                     variant="soft"
                     size="2"
+                    style={{ marginRight: '8px' }}
                     aria-label="Save edit"
-                    style={{ marginRight: 'var(--spacing-2)' }}
                   >
                     Save
                   </Button>
@@ -253,8 +257,8 @@ export default function TodosPage() {
                     color="blue"
                     variant="ghost"
                     size="1"
+                    style={{ marginRight: '4px' }}
                     aria-label="Edit todo"
-                    style={{ marginRight: 'var(--spacing-1)' }}
                   >
                     ✎
                   </Button>
