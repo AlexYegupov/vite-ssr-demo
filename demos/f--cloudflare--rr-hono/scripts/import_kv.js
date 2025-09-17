@@ -9,13 +9,20 @@ import { execSync } from 'child_process';
 // Parse command line arguments
 const args = process.argv.slice(2);
 const isVerbose = args.includes('--verbose');
+const useJson = args.includes('--json');
 const parseJsonValues = args.includes('--json_values');
-const useLocalKV = args.includes('--local_kv');
-const showHelp = args.includes('--help') || args.includes('-h');
-const usePreview = args.includes('--preview');
+const kvIndex = args.findIndex(arg => arg === '--kv');
+const hasKvParam = kvIndex !== -1;
+const kvBinding = hasKvParam && args[kvIndex + 1] && !args[kvIndex + 1].startsWith('--') ? args[kvIndex + 1] : null;
+const showHelp = args.includes('--help') || args.includes('-h') || (!kvBinding);
+const usePreview = args.includes('--preview_kv');
 
 // Display help and exit if --help flag is present
+// Show help if explicitly requested or if --kv parameter is missing or used without a binding
 if (showHelp) {
+    if (!kvBinding) {
+        console.error('Error: --kv <binding> parameter is required');
+    }
     console.log(`
 Cloudflare KV Import Tool
 
@@ -23,9 +30,10 @@ Usage:
   node import_kv.js [options]
 
 Options:
+  --kv <binding>  Required. Specifies the KV binding name to use
+  --json         Output data as JSON instead of importing to local KV
   --json_values  Parse JSON values instead of keeping them as strings
-  --local_kv     Import data to local KV instead of outputting JSON
-  --preview      Use preview namespace when using local KV
+  --preview_kv   Use preview namespace when using local KV
   --help, -h     Show this help message and exit
   --verbose      Show detailed information during execution
 
@@ -35,11 +43,9 @@ Description:
   Requires KV_IMPORT_TOKEN environment variable to be set in .dev.vars file.
 
 Examples:
-  node import_kv.js                   # Output KV data as JSON (values as strings)
-  node import_kv.js --json_values     # Output KV data as JSON (parse JSON values)
-  node import_kv.js --local_kv        # Import data to local KV instead of outputting JSON
-  node import_kv.js --verbose         # Show detailed information during execution
-  node import_kv.js > data.json       # Save output to a file
+  node import_kv.js --kv MY_KV       # Import data from remote KV to local KV 
+  node import_kv.js --kv MY_KV --json # Output KV data as JSON instead of importing to local KV
+  node import_kv.js --kv MY_KV --json --json_values # Output KV data as JSON with parsed JSON values
 `);
     process.exit(0);
 }
@@ -103,7 +109,7 @@ function readWranglerConfig() {
 }
 
 // Function to get KV configuration from wrangler.jsonc
-function getKVConfig(binding = 'TODOS_KV') {
+function getKVConfig(binding) {
     const config = readWranglerConfig();
 
     // Extract account ID
@@ -139,8 +145,8 @@ function getKVConfig(binding = 'TODOS_KV') {
 
 async function importKV() {
     try {
-        // Get KV configuration from wrangler.jsonc
-        const kvConfig = getKVConfig('TODOS_KV');
+        // Get KV configuration from wrangler.jsonc using the binding from --kv parameter
+        const kvConfig = getKVConfig(kvBinding);
 
         // Check if API token is set in environment variables
         const apiTokenEnvVar = process.env.KV_IMPORT_TOKEN;
@@ -219,12 +225,15 @@ async function importKV() {
             process.exit(1);
         }
 
-        if (useLocalKV) {
-            verboseLog(`Importing ${Object.keys(exportData).length} items to local KV using wrangler CLI`);
-            
+        if (!useJson) {
+            verboseLog(`Importing ${Object.keys(exportData).length} items to local KV using wrangler CLI with binding: ${kvBinding}`);
+
             let successCount = 0;
             let errorCount = 0;
             
+            // Define preview flag outside the loop
+            const previewFlag = usePreview ? '--preview' : '--preview false';
+
             // Create a temporary directory for value files
             const tempDir = join(__dirname, '../.tmp_kv_import');
             try {
@@ -235,23 +244,22 @@ async function importKV() {
                 console.error(`Error creating temporary directory: ${error.message}`);
                 process.exit(1);
             }
-            
+
             for (const key of Object.keys(exportData)) {
                 const value = exportData[key];
                 const valueString = typeof value === 'string' ? value : JSON.stringify(value);
-                
+
                 verboseLog(`Processing key: ${key}`);
-                
+
                 try {
                     // Write value to temp file to avoid command line escaping issues
                     const tempFilePath = join(tempDir, `${key.replace(/[^a-zA-Z0-9]/g, '_')}.tmp`);
                     writeFileSync(tempFilePath, valueString, 'utf8');
-                    
+
                     // Use wrangler CLI with --path option to avoid escaping issues
-                    const previewFlag = usePreview ? '--preview' : '--preview false';
-                    const command = `npx wrangler kv key put --binding=TODOS_KV --local ${previewFlag} "${key}" --path="${tempFilePath}"`;
+                    const command = `npx wrangler kv key put --binding=${kvBinding} --local ${previewFlag} "${key}" --path="${tempFilePath}"`;
                     verboseLog(`Executing: ${command}`);
-                    
+
                     // Always show stderr to preserve error messages, but control stdout based on verbose flag
                     execSync(command, { stdio: ['ignore', isVerbose ? 'inherit' : 'ignore', 'inherit'] });
                     verboseLog(`Successfully wrote key: ${key} to local KV`);
@@ -262,23 +270,24 @@ async function importKV() {
                     throw error; // Let the error propagate naturally
                 }
             }
-            
+
             // Clean up temp directory only if no errors occurred
             execSync(`rm -rf ${tempDir}`);
             verboseLog(`Removed temporary directory: ${tempDir}`);
-            
+
             // Summary
             verboseLog(`Local KV import completed: ${successCount} keys written, ${errorCount} errors`);
             if (errorCount > 0) {
                 console.error(`Warning: ${errorCount} keys failed to write to local KV`);
             } else {
-                console.log(`Successfully imported ${successCount} keys to local KV`);
+                console.log(`Successfully imported ${successCount} keys to local KV ${kvBinding} ${previewFlag}`);
             }
         } else {
-            // In non-verbose mode, just output the data directly to stdout
+            // Output the data as JSON to stdout
             if (isVerbose) {
                 verboseLog(`Import completed!`);
                 verboseLog(`Found ${Object.keys(exportData).length} items`);
+                verboseLog(`Outputting data as JSON`);
             }
             console.log(JSON.stringify(exportData, null, 2));
         }
