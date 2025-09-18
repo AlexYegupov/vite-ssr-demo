@@ -1,7 +1,7 @@
-import { Welcome } from "../welcome/welcome";
 import { Link } from "react-router";
 import styles from "./home.module.css";
 import type { LoaderFunctionArgs } from "react-router";
+import { Button } from "@radix-ui/themes";
 
 export function meta() {
   return [
@@ -24,11 +24,15 @@ export default function Home({
 }) {
   console.log("<Home>", loaderData);
   return (
-    <div>
-      {/* <Welcome message={loaderData.message} /> */}
-      <h1>Welcome</h1>
+    <div className={styles.container}>
+      <h1>Welcome to the App</h1>
       <div className={styles.linkContainer}>
-        <Link to="/todos">Todo List</Link>
+        <Link to="/todos" className={styles.linkButton}>
+          Go to Todo List
+        </Link>
+        <Link to="/weather" className={`${styles.linkButton} ${styles.weatherLink}`}>
+          Check Weather
+        </Link>
       </div>
     </div>
   );

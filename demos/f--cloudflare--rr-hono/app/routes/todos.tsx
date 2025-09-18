@@ -1,10 +1,10 @@
-import { useLoaderData, Link, useFetcher } from "react-router";
-import { useState, useEffect, useRef, ChangeEvent, KeyboardEvent } from "react";
+import { Link, useFetcher, useLoaderData } from "react-router";
+import { useState, useRef, useEffect } from "react";
 import { Button, TextField, IconButton } from "@radix-ui/themes";
 import { Pencil1Icon, Cross2Icon, CheckIcon } from "@radix-ui/react-icons";
 import * as Checkbox from "@radix-ui/react-checkbox";
 import styles from "./todos.module.css";
-import type { LoaderFunctionArgs } from "react-router";
+import todosData from "../../mock-data/todos.json";
 
 export function meta() {
   return [
@@ -14,107 +14,55 @@ export function meta() {
 }
 
 interface Todo {
-  id: string;
+  id: number;
   title: string;
   completed: boolean;
   createdAt: string;
   updatedAt?: string;
 }
 
-interface WeatherData {
-  generationtime_ms: number;
-  current: {
-    temperature_2m: number;
-    wind_speed_10m: number;
-  };
-  hourly: {
-    time: string[];
-    temperature_2m: number[];
-    relative_humidity_2m: number[];
-    wind_speed_10m: number[];
-  };
-}
-
-export async function loader({ context }: LoaderFunctionArgs) {
-  // Fetch weather data
-  const weatherUrl = new URL("https://api.open-meteo.com/v1/forecast");
-  weatherUrl.searchParams.append("latitude", "52.52");
-  weatherUrl.searchParams.append("longitude", "13.41");
-  weatherUrl.searchParams.append("current", "temperature_2m,wind_speed_10m");
-  weatherUrl.searchParams.append(
-    "hourly",
-    "temperature_2m,relative_humidity_2m,wind_speed_10m"
-  );
-
-  const weatherResponse = await fetch(weatherUrl.toString());
-
-  if (!weatherResponse.ok) {
-    throw new Error(`Failed to fetch weather data: ${weatherResponse.status}`);
-  }
-  const weatherData = await weatherResponse.json();
-
-  return { weatherData };
+export function loader() {
+  // Use mock data directly
+  return { todos: todosData };
 }
 
 interface LoaderData {
-  weatherData: {
-    generationtime_ms: number;
-    current: {
-      temperature_2m: number;
-      wind_speed_10m: number;
-    };
-  };
+  todos: Todo[];
 }
 
 export default function TodosPage() {
-  const { weatherData } = useLoaderData() as LoaderData;
-  const fetcher = useFetcher();
+  const { todos: initialTodos } = useLoaderData<{ todos: Todo[] }>();
   const [todos, setTodos] = useState<Todo[]>([]);
+  const fetcher = useFetcher();
   const [newTodoTitle, setNewTodoTitle] = useState("");
   const [editingTodoId, setEditingTodoId] = useState<string | null>(null);
   const [editTodoTitle, setEditTodoTitle] = useState("");
   const editInputRef = useRef<HTMLInputElement>(null);
 
-  // Load todos on initial render
+  // Initialize todos from loader data
   useEffect(() => {
-    const fetchTodos = async () => {
-      const response = await fetch("/api/todos");
-      if (response.ok) {
-        const data = (await response.json()) as Todo[];
-        setTodos(data);
-      }
-    };
-    fetchTodos();
-  }, []);
+    setTodos(initialTodos);
+  }, [initialTodos]);
 
-  const handleAddTodo = async (e: React.FormEvent) => {
+  const handleAddTodo = (e: React.FormEvent) => {
     e.preventDefault();
     if (!newTodoTitle.trim()) return;
 
-    const response = await fetch("/api/todos", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ title: newTodoTitle }),
-    });
-
-    if (response.ok) {
-      const newTodo = (await response.json()) as Todo;
-      setTodos([...todos, newTodo]);
-      setNewTodoTitle("");
-    }
+    const newTodo: Todo = {
+      id: Date.now(),
+      title: newTodoTitle,
+      completed: false,
+      createdAt: new Date().toISOString(),
+    };
+    
+    setTodos([...todos, newTodo]);
+    setNewTodoTitle("");
   };
 
-  const handleToggleComplete = async (id: string, completed: boolean) => {
-    const response = await fetch(`/api/todos/${id}`, {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ completed: !completed }),
-    });
-
-    if (response.ok) {
-      const updatedTodo = (await response.json()) as Todo;
-      setTodos(todos.map((todo) => (todo.id === id ? updatedTodo : todo)));
-    }
+  const handleToggleComplete = (id: number, completed: boolean) => {
+    setTodos(todos.map(todo => 
+      todo.id === id ? { ...todo, completed: !completed } : todo
+    ));
   };
 
   const handleEditTodo = (todo: Todo) => {
@@ -125,23 +73,18 @@ export default function TodosPage() {
     }, 0);
   };
 
-  const handleSaveEdit = async () => {
+  const handleSaveEdit = () => {
     if (!editingTodoId || !editTodoTitle.trim()) return;
 
-    const response = await fetch(`/api/todos/${editingTodoId}`, {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ title: editTodoTitle }),
-    });
-
-    if (response.ok) {
-      const updatedTodo = (await response.json()) as Todo;
-      setTodos(
-        todos.map((todo) => (todo.id === editingTodoId ? updatedTodo : todo))
-      );
-      setEditingTodoId(null);
-      setEditTodoTitle("");
-    }
+    setTodos(
+      todos.map(todo =>
+        todo.id === editingTodoId 
+          ? { ...todo, title: editTodoTitle, updatedAt: new Date().toISOString() }
+          : todo
+      )
+    );
+    setEditingTodoId(null);  
+    setEditTodoTitle("");
   };
 
   const handleCancelEdit = () => {
@@ -149,31 +92,15 @@ export default function TodosPage() {
     setEditTodoTitle("");
   };
 
-  const handleDeleteTodo = async (id: string) => {
-    const response = await fetch(`/api/todos/${id}`, {
-      method: "DELETE",
-    });
-
-    if (response.ok) {
-      setTodos(todos.filter((todo) => todo.id !== id));
-    }
+  const handleDeleteTodo = (id: number) => {
+    setTodos(todos.filter(todo => todo.id !== id));
   };
 
   return (
     <div className={styles.container}>
-      <div className={styles.weatherInfo}>
-        <h3>Weather Data</h3>
-        <p>Data generated in {weatherData?.generationtime_ms?.toFixed(2)}ms</p>
-        <p>
-          Current temperature:{" "}
-          {weatherData?.current?.temperature_2m?.toFixed(2)}°C
-        </p>
-        <p>
-          Wind speed: {weatherData?.current?.wind_speed_10m?.toFixed(2)} km/h
-        </p>
-      </div>
       <div className={styles.headerContainer}>
         <Link to="/">Back to Home</Link>
+        <Link to="/weather" className={styles.weatherLink}>View Weather</Link>
       </div>
       <h1>Todo List</h1>
 

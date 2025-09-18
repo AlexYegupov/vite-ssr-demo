@@ -28,6 +28,10 @@
 
 .headerContainer {
   margin-bottom: var(--spacing-8);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--spacing-4);
 }
 
 .headerContainer a {
@@ -38,11 +42,26 @@
   gap: var(--spacing-2);
   padding: var(--spacing-2) var(--spacing-4);
   border-radius: var(--border-radius-sm);
-  transition: background-color var(--transition-fast);
+  transition: all var(--transition-fast);
 }
 
-.headerContainer a:hover {
+.headerContainer a:not(.weatherLink):hover {
   background-color: var(--gray-3);
+}
+
+.weatherLink {
+  background-color: var(--blue-9);
+  color: white !important;
+  padding: var(--spacing-2) var(--spacing-4) !important;
+  border-radius: var(--border-radius-sm);
+  transition: all var(--transition-fast);
+}
+
+.weatherLink:hover {
+  background-color: var(--blue-10) !important;
+  text-decoration: none !important;
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-sm);
 }
 
 h1 {

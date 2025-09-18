@@ -9,4 +9,5 @@ import {
 export default [
   index("routes/home.tsx"),
   route("todos", "routes/todos.tsx"),
+  route("weather", "routes/weather.tsx"),
 ] satisfies RouteConfig;
