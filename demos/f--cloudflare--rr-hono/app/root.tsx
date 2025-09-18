@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import {
   isRouteErrorResponse,
   Links,
@@ -28,22 +29,23 @@ export const links: Route.LinksFunction = () => [
 
 export function Layout({ children }: { children: React.ReactNode }) {
   const isDev = import.meta.env.DEV;
-
+  
   return (
-    <html lang="en">
+    <html lang="en" data-theme="dark">
       <head>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta name="color-scheme" content="dark" />
         <Meta />
         <Links />
       </head>
-      <body className={styles.mainContent}>
-        <Theme appearance="light" accentColor="violet" radius="large">
-          {isDev && <ThemePanel />}
+      <body>
+        <Theme appearance="dark" accentColor="blue" grayColor="slate" radius="medium">
           {children}
-          <ScrollRestoration />
-          <Scripts />
+          {isDev && <ThemePanel />}
         </Theme>
+        <ScrollRestoration />
+        <Scripts />
       </body>
     </html>
   );
