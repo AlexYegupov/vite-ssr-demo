@@ -253,7 +253,7 @@ export default function TodosPage() {
                     color="green"
                     variant="soft"
                     size="2"
-                    style={{ marginRight: "8px" }}
+                    className={styles.saveEditButton}
                     aria-label="Save edit"
                   >
                     Save
@@ -277,11 +277,11 @@ export default function TodosPage() {
                     }}
                     color="blue"
                     variant="ghost"
-                    size="1"
-                    style={{ marginRight: "4px" }}
+                    size="4"
+                    className={styles.editActionButton}
                     aria-label="Edit todo"
                   >
-                    ✎
+                    ✎dfsdf
                   </Button>
                   <Button
                     onClick={(e: React.MouseEvent) => {
@@ -290,7 +290,8 @@ export default function TodosPage() {
                     }}
                     color="red"
                     variant="ghost"
-                    size="1"
+                    size="2"
+                    className={styles.deleteActionButton}
                     aria-label="Delete todo"
                   >
                     ×
