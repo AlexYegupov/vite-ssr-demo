@@ -24,23 +24,15 @@ interface WeatherData {
   };
 }
 
-// Mock weather data
-const mockWeatherData: WeatherData = {
-  generationtime_ms: 123.45,
-  current: {
-    temperature_2m: 22.5,
-    wind_speed_10m: 15.2,
-  },
-  hourly: {
-    time: [],
-    temperature_2m: [],
-    relative_humidity_2m: [],
-    wind_speed_10m: [],
-  },
-};
-
-export function loader() {
-  return { weatherData: mockWeatherData };
+export async function loader() {
+  const response = await fetch('https://api.open-meteo.com/v1/forecast?latitude=52.52&longitude=13.41&current=temperature_2m,wind_speed_10m&hourly=temperature_2m,relative_humidity_2m,wind_speed_10m&timezone=Europe%2FBerlin');
+  
+  if (!response.ok) {
+    throw new Response(`Weather API error: ${response.status}`, { status: response.status });
+  }
+  
+  const weatherData: WeatherData = await response.json();
+  return { weatherData };
 }
 
 export default function WeatherPage() {
