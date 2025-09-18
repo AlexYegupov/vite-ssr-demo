@@ -1,6 +1,7 @@
 import { useLoaderData, Link, useFetcher } from "react-router";
 import { useState, useEffect, useRef, ChangeEvent, KeyboardEvent } from "react";
-import { Button, TextField } from "@radix-ui/themes";
+import { Button, TextField, IconButton } from "@radix-ui/themes";
+import { Pencil1Icon, Cross2Icon, CheckIcon } from "@radix-ui/react-icons";
 import * as Checkbox from "@radix-ui/react-checkbox";
 import styles from "./todos.module.css";
 import type { LoaderFunctionArgs } from "react-router";
@@ -228,7 +229,7 @@ export default function TodosPage() {
                       if (e.key === "Enter") handleSaveEdit();
                       if (e.key === "Escape") handleCancelEdit();
                     }}
-                    size="2"
+                    size="3"
                   />
                 </div>
               ) : (
@@ -248,54 +249,53 @@ export default function TodosPage() {
             <div className={styles.todoActions}>
               {editingTodoId === todo.id ? (
                 <>
-                  <Button
+                  <IconButton
                     onClick={handleSaveEdit}
                     color="green"
                     variant="soft"
-                    size="2"
+                    size="3"
                     className={styles.saveEditButton}
                     aria-label="Save edit"
                   >
-                    Save
-                  </Button>
-                  <Button
+                    <CheckIcon width="24" height="24" />
+                  </IconButton>
+                  <IconButton
                     onClick={handleCancelEdit}
                     color="gray"
                     variant="soft"
-                    size="2"
+                    size="3"
                     aria-label="Cancel edit"
                   >
-                    Cancel
-                  </Button>
+                    <Cross2Icon width="24" height="24" />
+                  </IconButton>
                 </>
               ) : (
                 <>
-                  <Button
+                  <IconButton
                     onClick={(e: React.MouseEvent) => {
                       e.stopPropagation();
                       handleEditTodo(todo);
                     }}
                     color="blue"
                     variant="ghost"
-                    size="4"
+                    size="3"
                     className={styles.editActionButton}
                     aria-label="Edit todo"
                   >
-                    ✎dfsdf
-                  </Button>
-                  <Button
+                    <Pencil1Icon width="24" height="24" />
+                  </IconButton>
+                  <IconButton
                     onClick={(e: React.MouseEvent) => {
                       e.stopPropagation();
                       handleDeleteTodo(todo.id);
                     }}
                     color="red"
                     variant="ghost"
-                    size="2"
-                    className={styles.deleteActionButton}
+                    size="3"
                     aria-label="Delete todo"
                   >
-                    ×
-                  </Button>
+                    <Cross2Icon width="24" height="24" />
+                  </IconButton>
                 </>
               )}
             </div>

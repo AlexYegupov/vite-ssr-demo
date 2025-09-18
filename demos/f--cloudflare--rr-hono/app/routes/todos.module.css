@@ -189,51 +189,69 @@ h1 {
   min-width: calc(var(--max-width-xs) - var(--spacing-8));
 }
 
+.todoActions {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2);
+  margin-left: var(--spacing-4);
+}
+
+/* Base button styles */
+.iconButton,
+.saveButton,
+.cancelButton,
+.editButton,
 .deleteButton {
-  background: none;
-  border: none;
-  color: var(--gray-8);
-  font-size: var(--font-size-2xl);
-  cursor: pointer;
-  width: var(--spacing-8);
-  height: var(--spacing-8);
-  display: flex;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
   border-radius: var(--border-radius-sm);
-  transition: all var(--transition-fast);
-  margin-left: var(--spacing-2);
+  transition: background-color var(--transition-fast);
+  cursor: pointer;
+  border: none;
+  background: none;
+  padding: 0;
 }
 
-.deleteButton:hover {
-  color: var(--red-9);
-  background-color: var(--gray-3);
+/* Save button */
+.saveButton {
+  color: var(--green-9);
 }
 
+.saveButton:hover {
+  background-color: var(--green-4);
+}
+
+/* Cancel button */
+.cancelButton {
+  color: var(--gray-9);
+}
+
+.cancelButton:hover {
+  background-color: var(--gray-4);
+}
+
+/* Edit button */
 .editButton {
-  background: none;
-  border: none;
-  color: var(--gray-8);
-  font-size: var(--font-size-md);
-  cursor: pointer;
-  width: var(--spacing-8);
-  height: var(--spacing-8);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: var(--border-radius-sm);
-  transition: all var(--transition-fast);
-  margin-left: var(--spacing-2);
+  color: var(--blue-9);
 }
 
 .editButton:hover {
-  color: var(--accent-9);
-  background-color: var(--gray-3);
+  background-color: var(--blue-4);
+}
+
+/* Delete button */
+.deleteButton {
+  color: var(--red-9);
+}
+
+.deleteButton:hover {
+  background-color: var(--red-4);
 }
 
 .todoEditInput {
   flex: 1;
-  position: relative;
+  margin-right: var(--spacing-4);
 }
 
 .todoEditInputField {
@@ -251,29 +269,10 @@ h1 {
   outline: none;
   border-color: var(--accent-9);
   box-shadow: 0 0 0 1px var(--accent-9);
+  font-size: var(--font-size-md);
+  cursor: text;
+  margin-right: 0;
 }
-
-.todoActions {
-  display: flex;
-  align-items: center;
-  gap: var(--spacing-1);
-}
-
-.saveButton {
-  background-color: var(--green-9);
-  color: white;
-  border: none;
-  border-radius: var(--border-radius-sm);
-  padding: var(--spacing-1) var(--spacing-3);
-  font-size: var(--font-size-xl);
-  cursor: pointer;
-  margin-right: var(--spacing-2);
-
-  
-
-}
-
-
 
 .cancelButton {
   background-color: var(--gray-8);
