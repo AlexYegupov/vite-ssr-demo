@@ -67,12 +67,24 @@ h1 {
 
 .todoInput {
   flex: 1;
+  position: relative;
+}
+
+.todoInputField {
+  width: 100%;
   padding: var(--spacing-3) var(--spacing-4);
   border: 1px solid var(--gray-6);
   border-radius: var(--border-radius-sm);
   font-size: var(--font-size-md);
   background-color: var(--gray-2);
   color: var(--gray-12);
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.todoInputField:focus {
+  outline: none;
+  border-color: var(--accent-9);
+  box-shadow: 0 0 0 1px var(--accent-9);
 }
 
 .addButton {
@@ -221,12 +233,24 @@ h1 {
 
 .todoEditInput {
   flex: 1;
+  position: relative;
+}
+
+.todoEditInputField {
+  width: 100%;
   padding: var(--spacing-2);
   border: 1px solid var(--accent-9);
   border-radius: var(--border-radius-sm);
   font-size: var(--font-size-md);
   background-color: var(--gray-2);
   color: var(--gray-12);
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.todoEditInputField:focus {
+  outline: none;
+  border-color: var(--accent-9);
+  box-shadow: 0 0 0 1px var(--accent-9);
 }
 
 .todoActions {
@@ -254,4 +278,98 @@ h1 {
   padding: var(--spacing-1) var(--spacing-3);
   font-size: var(--font-size-sm);
   cursor: pointer;
+}
+
+.input {
+  padding: 8px 12px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 16px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.input:focus {
+  outline: none;
+  border-color: #007bff;
+  box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+}
+
+.button {
+  padding: 8px 16px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.button:hover {
+  background-color: #0056b3;
+}
+
+.saveButton {
+  padding: 4px 8px;
+  background-color: #28a745;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-right: 8px;
+  font-size: 14px;
+}
+
+.cancelButton {
+  padding: 4px 8px;
+  background-color: #6c757d;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.editButton {
+  padding: 2px 6px;
+  background-color: #17a2b8;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-right: 4px;
+  font-size: 14px;
+}
+
+.deleteButton {
+  padding: 2px 6px;
+  background-color: #dc3545;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.todoCheckbox {
+  width: 20px;
+  height: 20px;
+  border: 1px solid #ccc;
+  border-radius: 3px;
+  background-color: white;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.todoCheckbox[data-state='checked'] {
+  background-color: #007bff;
+  border-color: #007bff;
+}
+
+.checkboxIndicator {
+  color: white;
+  font-size: 12px;
+  font-weight: bold;
 }

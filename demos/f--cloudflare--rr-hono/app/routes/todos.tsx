@@ -1,6 +1,6 @@
 import { useLoaderData, Link, useFetcher } from "react-router";
-import { useState, useEffect, useRef } from "react";
-import { Button } from "@radix-ui/themes";
+import { useState, useEffect, useRef, ChangeEvent, KeyboardEvent } from "react";
+import { Button, TextField } from "@radix-ui/themes";
 import * as Checkbox from "@radix-ui/react-checkbox";
 import styles from "./todos.module.css";
 import type { LoaderFunctionArgs } from "react-router";
@@ -77,9 +77,9 @@ export default function TodosPage() {
   // Load todos on initial render
   useEffect(() => {
     const fetchTodos = async () => {
-      const response = await fetch('/api/todos');
+      const response = await fetch("/api/todos");
       if (response.ok) {
-        const data = await response.json() as Todo[];
+        const data = (await response.json()) as Todo[];
         setTodos(data);
       }
     };
@@ -90,32 +90,32 @@ export default function TodosPage() {
     e.preventDefault();
     if (!newTodoTitle.trim()) return;
 
-    const response = await fetch('/api/todos', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ title: newTodoTitle })
+    const response = await fetch("/api/todos", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ title: newTodoTitle }),
     });
 
     if (response.ok) {
-      const newTodo = await response.json() as Todo;
+      const newTodo = (await response.json()) as Todo;
       setTodos([...todos, newTodo]);
-      setNewTodoTitle('');
+      setNewTodoTitle("");
     }
   };
 
   const handleToggleComplete = async (id: string, completed: boolean) => {
     const response = await fetch(`/api/todos/${id}`, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ completed: !completed })
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ completed: !completed }),
     });
 
     if (response.ok) {
-      const updatedTodo = await response.json() as Todo;
-      setTodos(todos.map(todo => todo.id === id ? updatedTodo : todo));
+      const updatedTodo = (await response.json()) as Todo;
+      setTodos(todos.map((todo) => (todo.id === id ? updatedTodo : todo)));
     }
   };
-  
+
   const handleEditTodo = (todo: Todo) => {
     setEditingTodoId(todo.id);
     setEditTodoTitle(todo.title);
@@ -123,24 +123,26 @@ export default function TodosPage() {
       editInputRef.current?.focus();
     }, 0);
   };
-  
+
   const handleSaveEdit = async () => {
     if (!editingTodoId || !editTodoTitle.trim()) return;
-    
+
     const response = await fetch(`/api/todos/${editingTodoId}`, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ title: editTodoTitle })
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ title: editTodoTitle }),
     });
 
     if (response.ok) {
-      const updatedTodo = await response.json() as Todo;
-      setTodos(todos.map(todo => todo.id === editingTodoId ? updatedTodo : todo));
+      const updatedTodo = (await response.json()) as Todo;
+      setTodos(
+        todos.map((todo) => (todo.id === editingTodoId ? updatedTodo : todo))
+      );
       setEditingTodoId(null);
       setEditTodoTitle("");
     }
   };
-  
+
   const handleCancelEdit = () => {
     setEditingTodoId(null);
     setEditTodoTitle("");
@@ -148,11 +150,11 @@ export default function TodosPage() {
 
   const handleDeleteTodo = async (id: string) => {
     const response = await fetch(`/api/todos/${id}`, {
-      method: 'DELETE'
+      method: "DELETE",
     });
 
     if (response.ok) {
-      setTodos(todos.filter(todo => todo.id !== id));
+      setTodos(todos.filter((todo) => todo.id !== id));
     }
   };
 
@@ -162,24 +164,30 @@ export default function TodosPage() {
         <h3>Weather Data</h3>
         <p>Data generated in {weatherData?.generationtime_ms?.toFixed(2)}ms</p>
         <p>
-          Current temperature: {weatherData?.current?.temperature_2m?.toFixed(2)}°C
+          Current temperature:{" "}
+          {weatherData?.current?.temperature_2m?.toFixed(2)}°C
         </p>
-        <p>Wind speed: {weatherData?.current?.wind_speed_10m?.toFixed(2)} km/h</p>
+        <p>
+          Wind speed: {weatherData?.current?.wind_speed_10m?.toFixed(2)} km/h
+        </p>
       </div>
       <div className={styles.headerContainer}>
         <Link to="/">Back to Home</Link>
       </div>
       <h1>Todo List</h1>
-      
+
       <form onSubmit={handleAddTodo} className={styles.todoForm}>
         <div className={styles.todoFormContent}>
-          <input
-            type="text"
-            value={newTodoTitle}
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setNewTodoTitle(e.target.value)}
-            placeholder="Add a new todo..."
-            className={styles.todoInput}
-          />
+          <div className={styles.todoInput}>
+            <TextField.Root
+              value={newTodoTitle}
+              onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                setNewTodoTitle(e.target.value)
+              }
+              placeholder="Add a new todo..."
+              size="3"
+            />
+          </div>
           <Button type="submit" size="3" variant="solid">
             Add
           </Button>
@@ -197,30 +205,43 @@ export default function TodosPage() {
             <div className={styles.todoContent}>
               <Checkbox.Root
                 checked={todo.completed}
-                onCheckedChange={() => handleToggleComplete(todo.id, todo.completed)}
+                onCheckedChange={() =>
+                  handleToggleComplete(todo.id, todo.completed)
+                }
                 className={styles.todoCheckbox}
                 id={`todo-${todo.id}`}
-              />
-              
+              >
+                <Checkbox.Indicator className={styles.checkboxIndicator}>
+                  ✓
+                </Checkbox.Indicator>
+              </Checkbox.Root>
+
               {editingTodoId === todo.id ? (
-                <input
-                  type="text"
-                  value={editTodoTitle}
-                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEditTodoTitle(e.target.value)}
-                  className={styles.todoEditInput}
-                  ref={editInputRef}
-                  onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) => {
-                    if (e.key === 'Enter') handleSaveEdit();
-                    if (e.key === 'Escape') handleCancelEdit();
-                  }}
-                />
+                <div className={styles.todoEditInput}>
+                  <TextField.Root
+                    value={editTodoTitle}
+                    onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                      setEditTodoTitle(e.target.value)
+                    }
+                    ref={editInputRef}
+                    onKeyDown={(e: KeyboardEvent<HTMLInputElement>) => {
+                      if (e.key === "Enter") handleSaveEdit();
+                      if (e.key === "Escape") handleCancelEdit();
+                    }}
+                    size="2"
+                  />
+                </div>
               ) : (
                 <span className={styles.todoText}>{todo.title}</span>
               )}
               <div className={styles.todoDates}>
-                <span>Created: {new Date(todo.createdAt).toLocaleString()}</span>
+                <span>
+                  Created: {new Date(todo.createdAt).toLocaleString()}
+                </span>
                 {todo.updatedAt && (
-                  <span>Updated: {new Date(todo.updatedAt).toLocaleString()}</span>
+                  <span>
+                    Updated: {new Date(todo.updatedAt).toLocaleString()}
+                  </span>
                 )}
               </div>
             </div>
@@ -232,7 +253,7 @@ export default function TodosPage() {
                     color="green"
                     variant="soft"
                     size="2"
-                    style={{ marginRight: '8px' }}
+                    style={{ marginRight: "8px" }}
                     aria-label="Save edit"
                   >
                     Save
@@ -250,20 +271,20 @@ export default function TodosPage() {
               ) : (
                 <>
                   <Button
-                    onClick={(e) => {
+                    onClick={(e: React.MouseEvent) => {
                       e.stopPropagation();
                       handleEditTodo(todo);
                     }}
                     color="blue"
                     variant="ghost"
                     size="1"
-                    style={{ marginRight: '4px' }}
+                    style={{ marginRight: "4px" }}
                     aria-label="Edit todo"
                   >
                     ✎
                   </Button>
                   <Button
-                    onClick={(e) => {
+                    onClick={(e: React.MouseEvent) => {
                       e.stopPropagation();
                       handleDeleteTodo(todo.id);
                     }}
