@@ -126,8 +126,9 @@ h1 {
   font-size: var(--font-size-xs);
   color: var(--gray-8);
   margin-left: var(--space-4);
+  margin-right: var(--space-4);
   text-align: right;
-  min-width: calc(var(--max-width-xs) - var(--spacing-8));
+  min-width: 180px;
 }
 
 .todoActions {
