@@ -56,15 +56,17 @@ export default function TodosPage() {
       completed: false,
       createdAt: new Date().toISOString(),
     };
-    
+
     setTodos([...todos, newTodo]);
     setNewTodoTitle("");
   };
 
   const handleToggleComplete = (id: number, completed: boolean) => {
-    setTodos(todos.map(todo => 
-      todo.id === id ? { ...todo, completed: !completed } : todo
-    ));
+    setTodos(
+      todos.map((todo) =>
+        todo.id === id ? { ...todo, completed: !completed } : todo
+      )
+    );
   };
 
   const handleEditTodo = (todo: Todo) => {
@@ -79,13 +81,17 @@ export default function TodosPage() {
     if (!editingTodoId || !editTodoTitle.trim()) return;
 
     setTodos(
-      todos.map(todo =>
-        todo.id === editingTodoId 
-          ? { ...todo, title: editTodoTitle, updatedAt: new Date().toISOString() }
+      todos.map((todo) =>
+        todo.id === editingTodoId
+          ? {
+              ...todo,
+              title: editTodoTitle,
+              updatedAt: new Date().toISOString(),
+            }
           : todo
       )
     );
-    setEditingTodoId(null);  
+    setEditingTodoId(null);
     setEditTodoTitle("");
   };
 
@@ -96,46 +102,50 @@ export default function TodosPage() {
 
   const handleDeleteTodo = (id: number) => {
     // Mark todo as pending delete instead of removing immediately
-    setTodos(todos.map(todo => 
-      todo.id === id 
-        ? { ...todo, pendingDelete: true, deleteTimer: 5 } 
-        : todo
-    ));
-    
+    setTodos(
+      todos.map((todo) =>
+        todo.id === id ? { ...todo, pendingDelete: true, deleteTimer: 5 } : todo
+      )
+    );
+
     // Start countdown timer
     const intervalId = setInterval(() => {
-      setTodos(prevTodos => {
+      setTodos((prevTodos) => {
         // Find the todo with this ID
-        const todoToUpdate = prevTodos.find(t => t.id === id);
-        
+        const todoToUpdate = prevTodos.find((t) => t.id === id);
+
         // If todo doesn't exist or is no longer pending delete, clear interval
         if (!todoToUpdate || !todoToUpdate.pendingDelete) {
           clearInterval(intervalId);
           return prevTodos;
         }
-        
+
         // If timer reached 0, actually delete the todo
         if (todoToUpdate.deleteTimer === 1) {
           clearInterval(intervalId);
           // Wait for animation to complete before removing from DOM
           setTimeout(() => {
-            setTodos(currentTodos => currentTodos.filter(t => t.id !== id));
+            setTodos((currentTodos) => currentTodos.filter((t) => t.id !== id));
           }, 100); // Small delay to ensure animation completes
           return prevTodos;
         }
-        
+
         // Otherwise, decrement the timer
-        return prevTodos.map(t => 
+        return prevTodos.map((t) =>
           t.id === id ? { ...t, deleteTimer: (t.deleteTimer || 5) - 1 } : t
         );
       });
     }, 1000);
   };
-  
+
   const handleUndoDelete = (id: number) => {
-    setTodos(todos.map(todo => 
-      todo.id === id ? { ...todo, pendingDelete: false, deleteTimer: undefined } : todo
-    ));
+    setTodos(
+      todos.map((todo) =>
+        todo.id === id
+          ? { ...todo, pendingDelete: false, deleteTimer: undefined }
+          : todo
+      )
+    );
   };
 
   return (
