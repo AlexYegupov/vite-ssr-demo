@@ -23,9 +23,14 @@ interface Todo {
   deleteTimer?: number;
 }
 
-export function loader() {
-  // Use mock data directly
-  return { todos: todosData };
+export async function loader({ request }: { request: Request }) {
+  const url = new URL('/api/todos', request.url);
+  const response = await fetch(url.toString());
+  if (!response.ok) {
+    throw new Error('Failed to load todos');
+  }
+  const todos = await response.json();
+  return { todos };
 }
 
 interface LoaderData {
@@ -61,12 +66,24 @@ export default function TodosPage() {
     setNewTodoTitle("");
   };
 
-  const handleToggleComplete = (id: number, completed: boolean) => {
-    setTodos(
-      todos.map((todo) =>
-        todo.id === id ? { ...todo, completed: !completed } : todo
-      )
-    );
+  const handleToggleComplete = async (id: number, completed: boolean) => {
+    try {
+      const response = await fetch(`/api/todos/${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ completed: !completed })
+      });
+      
+      if (!response.ok) throw new Error('Failed to update todo');
+      
+      setTodos(
+        todos.map((todo) =>
+          todo.id === id ? { ...todo, completed: !completed } : todo
+        )
+      );
+    } catch (error) {
+      console.error('Error updating todo:', error);
+    }
   };
 
   const handleEditTodo = (todo: Todo) => {
