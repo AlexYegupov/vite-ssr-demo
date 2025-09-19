@@ -19,6 +19,8 @@ interface Todo {
   completed: boolean;
   createdAt: string;
   updatedAt?: string;
+  pendingDelete?: boolean;
+  deleteTimer?: number;
 }
 
 export function loader() {
@@ -93,14 +95,49 @@ export default function TodosPage() {
   };
 
   const handleDeleteTodo = (id: number) => {
-    setTodos(todos.filter(todo => todo.id !== id));
+    // Mark todo as pending delete instead of removing immediately
+    setTodos(todos.map(todo => 
+      todo.id === id 
+        ? { ...todo, pendingDelete: true, deleteTimer: 5 } 
+        : todo
+    ));
+    
+    // Start countdown timer
+    const intervalId = setInterval(() => {
+      setTodos(prevTodos => {
+        // Find the todo with this ID
+        const todoToUpdate = prevTodos.find(t => t.id === id);
+        
+        // If todo doesn't exist or is no longer pending delete, clear interval
+        if (!todoToUpdate || !todoToUpdate.pendingDelete) {
+          clearInterval(intervalId);
+          return prevTodos;
+        }
+        
+        // If timer reached 0, actually delete the todo
+        if (todoToUpdate.deleteTimer === 1) {
+          clearInterval(intervalId);
+          return prevTodos.filter(t => t.id !== id);
+        }
+        
+        // Otherwise, decrement the timer
+        return prevTodos.map(t => 
+          t.id === id ? { ...t, deleteTimer: (t.deleteTimer || 5) - 1 } : t
+        );
+      });
+    }, 1000);
+  };
+  
+  const handleUndoDelete = (id: number) => {
+    setTodos(todos.map(todo => 
+      todo.id === id ? { ...todo, pendingDelete: false, deleteTimer: undefined } : todo
+    ));
   };
 
   return (
     <div className={styles.container}>
       <div className={styles.headerContainer}>
         <Link to="/">Back to Home</Link>
-        <Link to="/weather" className={styles.weatherLink}>View Weather</Link>
       </div>
       <h1>Todo List</h1>
 
@@ -128,8 +165,22 @@ export default function TodosPage() {
             key={todo.id}
             className={`${styles.todoItem} ${
               todo.completed ? styles.completed : ""
-            }`}
+            } ${todo.pendingDelete ? styles.pendingDelete : ""}`}
           >
+            {todo.pendingDelete && (
+              <Button
+                onClick={(e: React.MouseEvent) => {
+                  e.stopPropagation();
+                  handleUndoDelete(todo.id);
+                }}
+                color="red"
+                variant="outline"
+                size="2"
+                className={styles.undoButton}
+              >
+                Cancel deletion ({todo.deleteTimer})
+              </Button>
+            )}
             <div className={styles.todoContent}>
               <Checkbox.Root
                 checked={todo.completed}

@@ -102,9 +102,6 @@ export default function WeatherPage() {
     <div className={styles.container}>
       <div className={styles.headerContainer}>
         <Link to="/">Back to Home</Link>
-        <Link to="/todos" className={styles.weatherLink}>
-          View Todos
-        </Link>
       </div>
       
       <h1>Weather Information</h1>

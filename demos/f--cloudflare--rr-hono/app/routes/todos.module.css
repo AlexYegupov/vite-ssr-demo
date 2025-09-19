@@ -231,3 +231,44 @@ h1 {
   align-items: center;
   justify-content: center;
 }
+
+.pendingDelete {
+  opacity: 0.6;
+  background-color: var(--gray-4);
+  border-color: var(--gray-7);
+}
+
+.pendingDelete .todoText,
+.pendingDelete .todoDates {
+  color: var(--gray-11);
+}
+
+.todoItem {
+  position: relative;
+}
+
+.undoButton {
+  position: absolute;
+  top: 50%;
+  right: var(--space-4);
+  transform: translateY(-50%);
+  z-index: 10;
+  background-color: var(--red-9);
+  color: var(--gray-12);
+  animation: pulse 1s infinite alternate;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: var(--font-weight-medium);
+  padding: var(--space-1) var(--space-3);
+  box-shadow: var(--shadow-5);
+}
+
+@keyframes pulse {
+  from {
+    opacity: 0.8;
+  }
+  to {
+    opacity: 1;
+  }
+}

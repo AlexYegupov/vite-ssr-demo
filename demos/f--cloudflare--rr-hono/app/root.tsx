@@ -40,10 +40,10 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <Links />
       </head>
       <body>
-        <Theme>
+        <Theme appearance="dark" accentColor="sky">
           {children}
           {isDev && <ThemePanel defaultOpen={false} />}
-      </Theme>
+        </Theme>
         <ScrollRestoration />
         <Scripts />
       </body>
