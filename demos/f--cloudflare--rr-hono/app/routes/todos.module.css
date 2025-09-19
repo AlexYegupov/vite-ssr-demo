@@ -5,27 +5,6 @@
   color: var(--gray-12);
 }
 
-.weatherInfo {
-  background-color: var(--color-bg-secondary);
-  padding: var(--spacing-6);
-  border-radius: var(--border-radius-md);
-  margin-bottom: var(--spacing-8);
-  box-shadow: var(--shadow-md);
-}
-
-.weatherInfo h3 {
-  margin-top: 0;
-  color: var(--accent-9);
-  margin-bottom: var(--spacing-4);
-  font-size: var(--font-size-xl);
-}
-
-.weatherInfo p {
-  margin: var(--spacing-2) 0;
-  color: var(--gray-10);
-  font-size: var(--font-size-md);
-}
-
 .headerContainer {
   margin-bottom: var(--spacing-8);
   display: flex;
@@ -47,21 +26,6 @@
 
 .headerContainer a:not(.weatherLink):hover {
   background-color: var(--gray-3);
-}
-
-.weatherLink {
-  background-color: var(--blue-9);
-  color: white !important;
-  padding: var(--spacing-2) var(--spacing-4) !important;
-  border-radius: var(--border-radius-sm);
-  transition: all var(--transition-fast);
-}
-
-.weatherLink:hover {
-  background-color: var(--blue-10) !important;
-  text-decoration: none !important;
-  transform: translateY(-1px);
-  box-shadow: var(--shadow-sm);
 }
 
 h1 {
@@ -310,4 +274,3 @@ h1 {
 .editActionButton {
   margin-right: var(--spacing-1);
 }
-

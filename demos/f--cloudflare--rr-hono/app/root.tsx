@@ -31,17 +31,16 @@ export function Layout({ children }: { children: React.ReactNode }) {
   const isDev = import.meta.env.DEV;
 
   return (
-    <html lang="en" data-theme="dark">
+    <html lang="en">
       <head>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <meta name="color-scheme" content="dark" />
+        <meta name="color-scheme" content="light dark" />
         <Meta />
         <Links />
       </head>
       <body>
         <Theme
-          appearance="dark"
           accentColor="blue"
           grayColor="slate"
           radius="medium"

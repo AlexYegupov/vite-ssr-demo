@@ -7,14 +7,14 @@
   --color-primary-light: var(--accent-8);
   
   /* Text colors */
-  --color-text-primary: #1f2937;
-  --color-text-secondary: #6b7280;
-  --color-text-tertiary: #9ca3af;
+  --color-text-primary: var(--gray-12);
+  --color-text-secondary: var(--gray-11);
+  --color-text-tertiary: var(--gray-10);
   
   /* Background colors */
-  --color-bg-primary: #ffffff;
-  --color-bg-secondary: #f9fafb;
-  --color-bg-tertiary: #f3f4f6;
+  --color-bg-primary: var(--gray-1);
+  --color-bg-secondary: var(--gray-2);
+  --color-bg-tertiary: var(--gray-3);
   
   /* Status colors - using Radix UI color scales */
   --color-success: var(--green-9);
@@ -70,6 +70,14 @@
   --shadow-md: 0 2px 4px rgba(0, 0, 0, 0.1);
   --shadow-lg: 0 4px 8px rgba(0, 0, 0, 0.15);
   
+  /* Glass effect */
+  --color-bg-glass: rgba(255, 255, 255, 0.1);
+  --color-border-glass: rgba(255, 255, 255, 0.2);
+  --blur-sm: 4px;
+  --blur-md: 10px;
+  --blur-lg: 16px;
+  
+  
   /* Line heights */
   --line-height-tight: 1.25;
   --line-height-normal: 1.5;
@@ -80,14 +88,14 @@
 @media (prefers-color-scheme: dark) {
   :root {
     /* Text colors */
-    --color-text-primary: #f3f4f6;
-    --color-text-secondary: #d1d5db;
-    --color-text-tertiary: #9ca3af;
+    --color-text-primary: var(--gray-12);
+    --color-text-secondary: var(--gray-11);
+    --color-text-tertiary: var(--gray-10);
     
     /* Background colors */
-    --color-bg-primary: #111827;
-    --color-bg-secondary: #1f2937;
-    --color-bg-tertiary: #374151;
+    --color-bg-primary: var(--gray-1);
+    --color-bg-secondary: var(--gray-2);
+    --color-bg-tertiary: var(--gray-3);
     
     /* Border colors */
     --color-border: #374151;
@@ -97,6 +105,10 @@
     --color-primary: #3b82f6;
     --color-primary-dark: #2563eb;
     --color-primary-light: #60a5fa;
+    
+    /* Dark mode glass effect */
+    --color-bg-glass: rgba(0, 0, 0, 0.2);
+    --color-border-glass: rgba(255, 255, 255, 0.1);
   }
 }
 
