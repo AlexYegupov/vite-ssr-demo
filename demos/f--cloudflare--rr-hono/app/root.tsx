@@ -43,7 +43,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <Theme>
           {children}
           {isDev && <ThemePanel defaultOpen={false} />}
-        </Theme>
+      </Theme>
         <ScrollRestoration />
         <Scripts />
       </body>

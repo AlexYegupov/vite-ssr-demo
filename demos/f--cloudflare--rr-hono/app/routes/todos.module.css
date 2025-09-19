@@ -1,27 +1,25 @@
 .container {
   max-width: var(--max-width-md);
   margin: 0 auto;
-  padding: var(--spacing-8);
-  color: var(--gray-12);
+  padding: var(--space-4);
 }
 
 .headerContainer {
-  margin-bottom: var(--spacing-8);
+  margin-bottom: var(--space-4);
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: var(--spacing-4);
+  gap: var(--space-2);
 }
 
 .headerContainer a {
-  color: var(--accent-9);
+  color: var(--accent-11);
   text-decoration: none;
   display: inline-flex;
   align-items: center;
-  gap: var(--spacing-2);
-  padding: var(--spacing-2) var(--spacing-4);
-  border-radius: var(--border-radius-sm);
-  transition: all var(--transition-fast);
+  gap: var(--space-1);
+  padding: var(--space-1) var(--space-2);
+  border-radius: var(--radius-2);
 }
 
 .headerContainer a:not(.weatherLink):hover {
@@ -29,39 +27,35 @@
 }
 
 h1 {
-  color: var(--gray-12);
-  margin-bottom: var(--spacing-6);
-  font-size: var(--font-size-3xl);
+  margin-bottom: var(--space-3);
+  font-size: var(--font-size-6);
 }
 
 .todoForm {
   display: flex;
-  gap: var(--spacing-4);
-  margin-bottom: var(--spacing-8);
+  gap: var(--space-2);
+  margin-bottom: var(--space-4);
   align-items: center;
 }
 
 .todoFormContent {
   display: flex;
-  gap: var(--spacing-4);
+  gap: var(--space-2);
   width: 100%;
   align-items: center;
 }
 
 .todoInput {
   flex: 1;
-  position: relative;
 }
 
 .todoInputField {
   width: 100%;
-  padding: var(--spacing-3) var(--spacing-4);
+  padding: var(--space-2) var(--space-3);
   border: 1px solid var(--gray-6);
-  border-radius: var(--border-radius-sm);
-  font-size: var(--font-size-md);
-  background-color: var(--gray-2);
-  color: var(--gray-12);
-  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+  border-radius: var(--radius-2);
+  font-size: var(--font-size-3);
+  background-color: var(--color-panel);
 }
 
 .todoInputField:focus {
@@ -71,14 +65,13 @@ h1 {
 }
 
 .addButton {
-  padding: var(--spacing-3) var(--spacing-6);
+  padding: var(--space-2) var(--space-3);
   background-color: var(--accent-9);
   color: white;
   border: none;
-  border-radius: var(--border-radius-sm);
+  border-radius: var(--radius-2);
   cursor: pointer;
-  font-weight: 600;
-  transition: background-color var(--transition-fast);
+  font-weight: var(--font-weight-medium);
 }
 
 .addButton:hover {
@@ -91,18 +84,17 @@ h1 {
   margin: 0;
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-3);
+  gap: var(--space-2);
 }
 
 .todoItem {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: var(--spacing-4) var(--spacing-5);
-  background-color: var(--gray-2);
+  padding: var(--space-3);
+  background-color: var(--color-panel);
   border: 1px solid var(--gray-6);
-  border-radius: var(--border-radius-md);
-  transition: all var(--transition-fast) ease;
+  border-radius: var(--radius-3);
 }
 
 .todoItem:hover {
@@ -113,61 +105,27 @@ h1 {
 .todoContent {
   display: flex;
   align-items: center;
-  gap: var(--spacing-4);
+  gap: var(--space-2);
   flex: 1;
-}
-
-.todoCheckbox {
-  width: var(--spacing-5);
-  height: var(--spacing-5);
-  cursor: pointer;
-  border-radius: var(--border-radius-sm);
-  border: 2px solid var(--gray-8);
-  background-color: var(--gray-2);
-  transition: all var(--transition-fast);
-  position: relative;
-}
-
-.todoCheckbox:hover {
-  border-color: var(--accent-9);
-}
-
-.todoCheckbox[data-state="checked"] {
-  background-color: var(--accent-9);
-  border-color: var(--accent-9);
-}
-
-.todoCheckbox[data-state="checked"]::after {
-  content: '';
-  position: absolute;
-  top: 40%;
-  left: 50%;
-  transform: translate(-50%, -50%) rotate(45deg);
-  width: 25%;
-  height: 50%;
-  border-bottom: 2px solid white;
-  border-right: 2px solid white;
 }
 
 .todoText {
   flex: 1;
-  color: var(--gray-12);
-  font-size: var(--font-size-md);
-  line-height: var(--line-height-normal);
+  font-size: var(--font-size-3);
 }
 
 .completed .todoText {
   text-decoration: line-through;
-  color: var(--gray-9);
+  color: var(--gray-11);
 }
 
 .todoDates {
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-1);
+  gap: var(--space-1);
   font-size: var(--font-size-xs);
   color: var(--gray-8);
-  margin-left: var(--spacing-4);
+  margin-left: var(--space-4);
   text-align: right;
   min-width: calc(var(--max-width-xs) - var(--spacing-8));
 }
@@ -175,57 +133,30 @@ h1 {
 .todoActions {
   display: flex;
   align-items: center;
-  gap: var(--spacing-2);
-  margin-left: var(--spacing-4);
+  gap: var(--space-1);
 }
 
-/* Base button styles */
-.iconButton,
-.saveButton,
-.cancelButton,
-.editButton,
-.deleteButton {
+.iconButton {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  border-radius: var(--border-radius-sm);
-  transition: background-color var(--transition-fast);
+  border-radius: var(--radius-1);
   cursor: pointer;
   border: none;
   background: none;
-  padding: 0;
+  padding: var(--space-1);
 }
 
-/* Save button */
-.saveButton {
-  color: var(--green-9);
-}
-
-.saveButton:hover {
-  background-color: var(--green-4);
-}
-
-/* Cancel button */
-.cancelButton {
-  color: var(--gray-9);
-}
-
-.cancelButton:hover {
-  background-color: var(--gray-4);
-}
-
-/* Edit button */
 .editButton {
-  color: var(--blue-9);
+  color: var(--blue-11);
 }
 
 .editButton:hover {
   background-color: var(--blue-4);
 }
 
-/* Delete button */
 .deleteButton {
-  color: var(--red-9);
+  color: var(--red-11);
 }
 
 .deleteButton:hover {
@@ -234,16 +165,16 @@ h1 {
 
 .todoEditInput {
   flex: 1;
-  margin-right: var(--spacing-4);
+  margin-right: var(--space-4);
 }
 
 .todoEditInputField {
   width: 100%;
-  padding: var(--spacing-2);
+  padding: var(--space-2);
   border: 1px solid var(--accent-9);
-  border-radius: var(--border-radius-sm);
-  font-size: var(--font-size-md);
-  background-color: var(--gray-2);
+  border-radius: var(--radius-2);
+  font-size: var(--font-size-3);
+  background-color: var(--color-panel);
   color: var(--gray-12);
   transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
 }
@@ -252,7 +183,7 @@ h1 {
   outline: none;
   border-color: var(--accent-9);
   box-shadow: 0 0 0 1px var(--accent-9);
-  font-size: var(--font-size-md);
+  font-size: var(--font-size-3);
   cursor: text;
   margin-right: 0;
 }
@@ -261,16 +192,41 @@ h1 {
   background-color: var(--gray-8);
   color: white;
   border: none;
-  border-radius: var(--border-radius-sm);
-  padding: var(--spacing-1) var(--spacing-3);
+  border-radius: var(--radius-2);
+  padding: var(--space-1) var(--space-3);
   font-size: var(--font-size-sm);
   cursor: pointer;
 }
 
 .saveEditButton {
-  margin-right: var(--spacing-2);
+  margin-right: var(--space-2);
 }
 
 .editActionButton {
-  margin-right: var(--spacing-1);
+  margin-right: var(--space-1);
+}
+
+.todoCheckbox {
+  width: 20px;
+  height: 20px;
+  border: 1px solid var(--gray-8);
+  border-radius: var(--radius-1);
+  background-color: var(--color-panel);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: var(--space-2);
+}
+
+.todoCheckbox[data-state="checked"] {
+  background-color: var(--accent-9);
+  border-color: var(--accent-9);
+}
+
+.checkboxIndicator {
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
