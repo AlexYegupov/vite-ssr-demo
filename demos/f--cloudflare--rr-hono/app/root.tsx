@@ -40,11 +40,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <Links />
       </head>
       <body>
-        <Theme
-          accentColor="blue"
-          grayColor="slate"
-          radius="medium"
-        >
+        <Theme>
           {children}
           {isDev && <ThemePanel defaultOpen={false} />}
         </Theme>
