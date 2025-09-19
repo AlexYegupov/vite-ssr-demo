@@ -1,5 +1,5 @@
 import { Link, useFetcher, useLoaderData } from "react-router";
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, ChangeEvent, KeyboardEvent } from "react";
 import { Button, TextField, IconButton } from "@radix-ui/themes";
 import { Pencil1Icon, Cross2Icon, CheckIcon } from "@radix-ui/react-icons";
 import * as Checkbox from "@radix-ui/react-checkbox";
@@ -117,7 +117,11 @@ export default function TodosPage() {
         // If timer reached 0, actually delete the todo
         if (todoToUpdate.deleteTimer === 1) {
           clearInterval(intervalId);
-          return prevTodos.filter(t => t.id !== id);
+          // Wait for animation to complete before removing from DOM
+          setTimeout(() => {
+            setTodos(currentTodos => currentTodos.filter(t => t.id !== id));
+          }, 100); // Small delay to ensure animation completes
+          return prevTodos;
         }
         
         // Otherwise, decrement the timer
@@ -178,7 +182,7 @@ export default function TodosPage() {
                 size="2"
                 className={styles.undoButton}
               >
-                Cancel deletion ({todo.deleteTimer})
+                Cancel deletion ({todo.deleteTimer}s)
               </Button>
             )}
             <div className={styles.todoContent}>

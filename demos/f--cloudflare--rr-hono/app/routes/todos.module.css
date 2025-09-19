@@ -233,13 +233,17 @@ h1 {
 }
 
 .pendingDelete {
-  opacity: 0.6;
+  animation: fadeOut 5s forwards;
   background-color: var(--gray-4);
   border-color: var(--gray-7);
 }
 
 .pendingDelete .todoText,
-.pendingDelete .todoDates {
+.pendingDelete .todoDates,
+.pendingDelete .todoActions,
+.pendingDelete .todoContent,
+.pendingDelete .todoCheckbox {
+  animation: fadeOut 5s forwards;
   color: var(--gray-11);
 }
 
@@ -262,6 +266,7 @@ h1 {
   font-weight: var(--font-weight-medium);
   padding: var(--space-1) var(--space-3);
   box-shadow: var(--shadow-5);
+  opacity: 1 !important; /* Ensure the button stays visible */
 }
 
 @keyframes pulse {
@@ -270,5 +275,17 @@ h1 {
   }
   to {
     opacity: 1;
+  }
+}
+
+@keyframes fadeOut {
+  0% {
+    opacity: 1;
+  }
+  20% {
+    opacity: 0.8;
+  }
+  100% {
+    opacity: 0.2;
   }
 }
