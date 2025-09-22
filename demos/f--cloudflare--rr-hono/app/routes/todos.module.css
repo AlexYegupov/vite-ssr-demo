@@ -237,15 +237,15 @@ li.pendingDelete {
   transition: background-color 5s ease-out;
 }
 
-.pendingDelete .todoDates,
-.pendingDelete .todoActions,
-.pendingDelete .todoContent,
-.pendingDelete .todoCheckbox {
-  animation: fadeOut 5s forwards;
-}
-
 .todoItem {
   position: relative;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.todoItem[data-pending-deletion="true"] {
+  opacity: 0.5;
+  transform: translateX(-10px);
+  pointer-events: none;
 }
 
 @keyframes pulse {
@@ -254,18 +254,6 @@ li.pendingDelete {
   }
   to {
     opacity: 1;
-  }
-}
-
-@keyframes fadeOut {
-  0% {
-    opacity: 1;
-  }
-  20% {
-    opacity: 0.8;
-  }
-  100% {
-    opacity: 0.2;
   }
 }
 

@@ -11,6 +11,7 @@ export interface ToastMessage {
     label: string;
     onClick: () => void;
   };
+  onDismiss?: () => void;
 }
 
 interface ToastContextType {

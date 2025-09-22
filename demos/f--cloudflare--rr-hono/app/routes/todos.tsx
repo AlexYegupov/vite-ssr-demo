@@ -27,6 +27,7 @@ interface Todo {
   createdAt: string;
   updatedAt?: string;
   pendingDelete?: boolean;
+  pendingDeletion?: boolean;
   deleteTimer?: number;
 }
 
@@ -129,6 +130,12 @@ export default function TodosPage() {
   const handleDeleteTodo = (id: string) => {
     const todoToDelete = todos.find((t) => t.id === id);
     if (todoToDelete) {
+      // Mark todo as pending deletion
+      setTodos(todos.map(todo => 
+        todo.id === id ? { ...todo, pendingDeletion: true } : todo
+      ));
+
+      // Add toast with onDismiss callback
       addToast({
         title: "Todo deleted",
         description: `"${todoToDelete.title}" was removed`,
@@ -137,51 +144,26 @@ export default function TodosPage() {
           onClick: () => handleUndoDelete(id),
         },
         duration: 5000, // 5 seconds to undo
+        onDismiss: () => {
+          // Only remove the todo if it's still marked for deletion (wasn't undone)
+          setTodos(currentTodos => {
+            const todo = currentTodos.find(t => t.id === id);
+            if (todo?.pendingDeletion) {
+              return currentTodos.filter(t => t.id !== id);
+            }
+            return currentTodos;
+          });
+        }
       });
     }
-
-    // Mark todo as pending delete instead of removing immediately
-    setTodos(
-      todos.map((todo) =>
-        todo.id === id ? { ...todo, pendingDelete: true, deleteTimer: 5 } : todo
-      )
-    );
-
-    // Start countdown timer
-    const intervalId = setInterval(() => {
-      setTodos((prevTodos) => {
-        // Find the todo with this ID
-        const todoToUpdate = prevTodos.find((t) => t.id === id);
-
-        // If todo doesn't exist or is no longer pending delete, clear interval
-        if (!todoToUpdate || !todoToUpdate.pendingDelete) {
-          clearInterval(intervalId);
-          return prevTodos;
-        }
-
-        // If timer reached 0, actually delete the todo
-        if (todoToUpdate.deleteTimer === 1) {
-          clearInterval(intervalId);
-          // Wait for animation to complete before removing from DOM
-          setTimeout(() => {
-            setTodos((currentTodos) => currentTodos.filter((t) => t.id !== id));
-          }, 100); // Small delay to ensure animation completes
-          return prevTodos;
-        }
-
-        // Otherwise, decrement the timer
-        return prevTodos.map((t) =>
-          t.id === id ? { ...t, deleteTimer: (t.deleteTimer || 5) - 1 } : t
-        );
-      });
-    }, 1000);
   };
 
   const handleUndoDelete = (id: string) => {
-    setTodos(
-      todos.map((todo) =>
-        todo.id === id
-          ? { ...todo, pendingDelete: false, deleteTimer: undefined }
+    // Clear the pendingDeletion flag to restore the todo
+    setTodos(prevTodos => 
+      prevTodos.map(todo => 
+        todo.id === id 
+          ? { ...todo, pendingDeletion: false } 
           : todo
       )
     );
@@ -216,9 +198,8 @@ export default function TodosPage() {
         {todos.map((todo) => (
           <li
             key={todo.id}
-            className={`${styles.todoItem} ${
-              todo.completed ? styles.completed : ""
-            } ${todo.pendingDelete ? styles.pendingDelete : ""}`}
+            className={`${styles.todoItem} ${todo.completed ? styles.completed : ""}`}
+            data-pending-deletion={todo.pendingDeletion || false}
           >
             <div className={styles.todoContent}>
               <Checkbox.Root
