@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import styles from "./weather.module.css";
 import { CitySelector } from "../components/city-selector";
 import citiesData from "../../src/data/world-cities.json";
+import { useToast } from "../context/toast-context";
 
 export function meta() {
   return [
@@ -134,8 +135,15 @@ export default function WeatherPage() {
   };
   
   const [searchParams, setSearchParams] = useSearchParams();
+  const { addToast } = useToast();
   
   const handleCityChange = (cityValue: string) => {
+    const [cityName, country] = cityValue.split(",");
+    addToast({
+      title: "City Changed",
+      description: `Now showing weather for ${cityName}, ${country}`,
+      duration: 3000
+    });
     setSearchParams({ city: cityValue });
   };
   
