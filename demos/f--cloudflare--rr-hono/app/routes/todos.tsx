@@ -24,6 +24,12 @@ interface Todo {
   deleteTimer?: number;
 }
 
+interface ToastMessage {
+  id: string;
+  title: string;
+  createdAt: number;
+}
+
 export async function loader({ request }: { request: Request }) {
   const url = new URL('/api/todos', request.url);
   const response = await fetch(url.toString());
@@ -46,7 +52,7 @@ export default function TodosPage() {
   const [editingTodoId, setEditingTodoId] = useState<string | null>(null);
   const [editTodoTitle, setEditTodoTitle] = useState("");
   const editInputRef = useRef<HTMLInputElement>(null);
-  const [toastOpen, setToastOpen] = useState(false);
+  const [toasts, setToasts] = useState<ToastMessage[]>([]);
   const [deletedTodoTitle, setDeletedTodoTitle] = useState('');
 
   // Initialize todos from loader data
@@ -123,8 +129,16 @@ export default function TodosPage() {
   const handleDeleteTodo = (id: string) => {
     const todoToDelete = todos.find(t => t.id === id);
     if (todoToDelete) {
-      setDeletedTodoTitle(todoToDelete.title);
-      setToastOpen(true);
+      const newToast = {
+        id: `toast-${Date.now()}-${Math.floor(Math.random() * 10000)}`,
+        title: todoToDelete.title,
+        createdAt: Date.now()
+      };
+      setToasts(prev => [...prev, newToast]);
+      
+      setTimeout(() => {
+        setToasts(prev => prev.filter(t => t.id !== newToast.id));
+      }, 5000);
     }
     
     // Mark todo as pending delete instead of removing immediately
@@ -175,7 +189,7 @@ export default function TodosPage() {
   };
 
   return (
-    <Toast.Provider>
+    <Toast.Provider swipeDirection="right">
       <div className={styles.container}>
         <div className={styles.headerContainer}>
           <Link to="/">Back to Home</Link>
@@ -321,27 +335,25 @@ export default function TodosPage() {
             </li>
           ))}
         </ul>
-        <Toast.Root 
-          className={styles.toastRoot} 
-          open={toastOpen} 
-          onOpenChange={setToastOpen}
-          duration={5000}
-        >
-          <Toast.Title className={styles.toastTitle}>
-            Todo deleted
-          </Toast.Title>
-          <Toast.Description className={styles.toastDescription}>
-            "{deletedTodoTitle}" was removed
-          </Toast.Description>
-          <Toast.Action className={styles.toastAction} asChild altText="Undo delete">
-            <Button size="1" variant="soft" onClick={() => {
-              // Add undo functionality here if needed
-              setToastOpen(false);
-            }}>
-              Dismiss
-            </Button>
-          </Toast.Action>
-        </Toast.Root>
+        {toasts.map((toast) => (
+          <Toast.Root 
+            key={toast.id}
+            className={styles.toastRoot}
+            duration={5000}
+            onOpenChange={(open) => !open && setToasts(prev => prev.filter(t => t.id !== toast.id))}
+          >
+            <Toast.Title className={styles.toastTitle}>Todo deleted</Toast.Title>
+            <Toast.Description>"{toast.title}" was removed</Toast.Description>
+            <Toast.Action asChild altText="Dismiss">
+              <Button size="1" variant="soft" onClick={() => 
+                setToasts(prev => prev.filter(t => t.id !== toast.id))
+              }>
+                Dismiss
+              </Button>
+            </Toast.Action>
+          </Toast.Root>
+        ))}
+        
         <Toast.Viewport className={styles.toastViewport} />
       </div>
     </Toast.Provider>
