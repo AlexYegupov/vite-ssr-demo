@@ -17,6 +17,14 @@ interface Env {
   TODOS_KV: KVNamespace;
 }
 
+interface Todo {
+  id: string;
+  title: string;
+  completed: boolean;
+  createdAt: string;
+  updatedAt?: string;
+}
+
 type AppContext = Context<{ Bindings: Env }>;
 const app = new Hono<{ Bindings: Env }>();
 
@@ -32,7 +40,7 @@ async function loadMockData(c: AppContext, filename: string): Promise<any> {
   console.log("Environment variables:", c.env);
 
   // Check if mock API is enabled
-  if (c.env.MOCK_API !== "true") {
+  if (c.env.MOCK_API !== true) {
     throw new Error("Mock API is disabled");
   }
 
@@ -50,8 +58,9 @@ async function loadMockData(c: AppContext, filename: string): Promise<any> {
   try {
     // Try to fetch from assets first (production)
     if (c.env.ASSETS) {
+      const url = new URL(`/mock-data/${normalizedFilename}`, c.req.url);
       const response = await c.env.ASSETS.fetch(
-        new URL(`/mock-data/${normalizedFilename}`, c.req.url)
+        new Request(url.toString())
       );
       if (response.ok) {
         return await response.json();
@@ -59,8 +68,8 @@ async function loadMockData(c: AppContext, filename: string): Promise<any> {
     }
 
     // Use preloaded modules in development
-    if (mockDataModules[filePath]) {
-      return JSON.parse(mockDataModules[filePath]);
+    if (mockDataModules[filePath] && typeof mockDataModules[filePath] === 'string') {
+      return JSON.parse(mockDataModules[filePath] as string);
     }
 
     throw new Error("File not found");
@@ -90,11 +99,11 @@ todos.get("/", async (c) => {
     console.log(`KV contains ${keys.keys.length} items`);
     const todos = await Promise.all(
       keys.keys.map(async (key) => {
-        const value = await c.env.TODOS_KV.get(key.name, "json");
-        return { id: key.name, ...value };
+        const value = await c.env.TODOS_KV.get<Todo>(key.name, "json");
+        return value ? { ...value, id: key.name } : null;
       })
     );
-    return c.json(todos);
+    return c.json(todos.filter(Boolean));
   } catch (error) {
     console.error("Error fetching TODOs:", error);
     return c.json({ error: "Failed to fetch TODOs" }, 500);

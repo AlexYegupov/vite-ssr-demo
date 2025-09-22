@@ -8,6 +8,8 @@ import {
   ScrollRestoration,
 } from "react-router";
 import { Theme, ThemePanel } from "@radix-ui/themes";
+import { ToastProvider } from "./context/toast-context";
+import { GlobalToast } from "./components/toast";
 
 import type { Route } from "./+types/root";
 import "@radix-ui/themes/styles.css";
@@ -41,8 +43,11 @@ export function Layout({ children }: { children: React.ReactNode }) {
       </head>
       <body>
         <Theme appearance="dark" accentColor="sky">
-          {children}
-          {isDev && <ThemePanel defaultOpen={false} />}
+          <ToastProvider>
+            {children}
+            <GlobalToast />
+            {isDev && <ThemePanel defaultOpen={false} />}
+          </ToastProvider>
         </Theme>
         <ScrollRestoration />
         <Scripts />

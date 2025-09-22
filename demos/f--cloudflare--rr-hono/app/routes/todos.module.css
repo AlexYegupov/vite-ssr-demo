@@ -371,3 +371,10 @@ li.pendingDelete {
 .toastAction {
   grid-area: action;
 }
+
+.controls {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: var(--space-3);
+  gap: var(--space-2);
+}
