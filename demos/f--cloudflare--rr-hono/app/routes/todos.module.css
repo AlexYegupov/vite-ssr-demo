@@ -296,7 +296,7 @@ li.pendingDelete {
   display: flex;
   flex-direction: column-reverse;
   gap: var(--space-3);
-  width: min(360px, 100vw - var(--space-8));
+  width: min(var(--max-width-toast), calc(100vw - var(--space-8)));
   
   /* Styling */
   margin: 0;
@@ -326,8 +326,8 @@ li.pendingDelete {
   
   /* Animations */
   animation: 
-    toastSlideIn 200ms cubic-bezier(0.16, 1, 0.3, 1),
-    fadeIn 200ms ease-out;
+    toastSlideIn var(--duration-200) var(--ease-in-out),
+    fadeIn var(--duration-200) var(--ease-out);
 }
 
 /* Animation keyframes */
@@ -343,8 +343,8 @@ li.pendingDelete {
 
 .toastRoot[data-state='closed'] {
   animation: 
-    toastSlideOut 200ms ease-in,
-    fadeOut 200ms ease-in;
+    toastSlideOut var(--duration-200) var(--ease-in),
+    fadeOut var(--duration-200) var(--ease-in);
 }
 
 @keyframes toastSlideOut {
