@@ -1,4 +1,5 @@
-import { createContext, useContext, useState } from 'react';
+import { createContext, useContext, useState, useCallback } from 'react';
+import type { ReactNode } from 'react';
 import * as Toast from '@radix-ui/react-toast';
 
 export interface ToastMessage {
@@ -16,8 +17,9 @@ export interface ToastMessage {
 
 interface ToastContextType {
   toasts: ToastMessage[];
-  addToast: (toast: Omit<ToastMessage, 'id' | 'createdAt'>) => void;
+  addToast: (toast: Omit<ToastMessage, 'id' | 'createdAt'> & { id?: string }) => void;
   removeToast: (id: string) => void;
+  removeToastById: (id: string) => void;
 }
 
 const ToastContext = createContext<ToastContextType | null>(null);
@@ -25,23 +27,31 @@ const ToastContext = createContext<ToastContextType | null>(null);
 export function ToastProvider({ children }: { children: React.ReactNode }) {
   const [toasts, setToasts] = useState<ToastMessage[]>([]);
 
-  const addToast = (toast: Omit<ToastMessage, 'id' | 'createdAt'>) => {
+  const addToast = (toast: Omit<ToastMessage, 'id' | 'createdAt'> & { id?: string }) => {
     const newToast = {
       ...toast,
-      id: `toast-${Date.now()}-${Math.floor(Math.random() * 10000)}`,
+      id: toast.id || `toast-${Date.now()}-${Math.floor(Math.random() * 10000)}`,
       createdAt: Date.now(),
       duration: toast.duration || 5000,
     };
     setToasts((prev) => [...prev, newToast]);
   };
 
-  const removeToast = (id: string) => {
-    setToasts((prev) => prev.filter((t) => t.id !== id));
-  };
+  const removeToast = useCallback((id: string) => {
+    setToasts((currentToasts) =>
+      currentToasts.filter((toast) => toast.id !== id)
+    );
+  }, []);
+
+  const removeToastById = useCallback((id: string) => {
+    setToasts((currentToasts) =>
+      currentToasts.filter((toast) => toast.id !== id)
+    );
+  }, []);
 
   return (
     <Toast.Provider>
-      <ToastContext.Provider value={{ toasts, addToast, removeToast }}>
+      <ToastContext.Provider value={{ toasts, addToast, removeToast, removeToastById }}>
         {children}
       </ToastContext.Provider>
     </Toast.Provider>

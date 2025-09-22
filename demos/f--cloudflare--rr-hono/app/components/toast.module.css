@@ -11,6 +11,25 @@
   max-width: var(--max-width-sm);
 }
 
+.toastHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--spacing-4);
+  margin-bottom: var(--spacing-1);
+}
+
+.timer {
+  font-size: var(--font-size-sm);
+  color: var(--gray-10);
+  background: var(--gray-4);
+  padding: var(--spacing-1) var(--spacing-2);
+  border-radius: var(--border-radius-full);
+  min-width: 2.5rem;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+}
+
 .toastRoot[data-state='open'] {
   animation: slideIn var(--transition-normal) ease-out;
 }
