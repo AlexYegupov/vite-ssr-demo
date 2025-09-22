@@ -141,8 +141,8 @@ export default function TodosPage() {
       // Add toast with onDismiss callback
       addToast({
         id: toastId,
-        title: "Todo deleted",
-        description: `"${todoToDelete.title}" is about to be removed`,
+        title: "Delete todo",
+        description: `"${todoToDelete.title}" has been removed`,
         action: {
           label: "Undo",
           onClick: () => handleUndoDelete(id),
