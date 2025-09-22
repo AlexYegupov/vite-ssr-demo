@@ -25,8 +25,8 @@ export function GlobalToast() {
             )}
           </div>
           
-          <div className={styles.toastActions}>
-            {toast.action && (
+          {toast.action && (
+            <div className={styles.toastActions}>
               <ToastPrimitive.Action asChild altText={toast.action.label}>
                 <button 
                   className={`${styles.toastButton} ${styles.toastAction}`}
@@ -39,16 +39,8 @@ export function GlobalToast() {
                   {toast.action.label}
                 </button>
               </ToastPrimitive.Action>
-            )}
-            <ToastPrimitive.Close asChild>
-              <button 
-                className={`${styles.toastButton} ${styles.toastClose}`}
-                aria-label="Dismiss"
-              >
-                Dismiss
-              </button>
-            </ToastPrimitive.Close>
-          </div>
+            </div>
+          )}
         </ToastPrimitive.Root>
       ))}
       <ToastPrimitive.Viewport className={styles.toastViewport} />

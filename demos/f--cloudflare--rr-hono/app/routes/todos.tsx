@@ -220,20 +220,6 @@ export default function TodosPage() {
               todo.completed ? styles.completed : ""
             } ${todo.pendingDelete ? styles.pendingDelete : ""}`}
           >
-            {todo.pendingDelete && (
-              <Button
-                onClick={(e: React.MouseEvent) => {
-                  e.stopPropagation();
-                  handleUndoDelete(todo.id);
-                }}
-                color="red"
-                variant="outline"
-                size="2"
-                className={styles.undoButton}
-              >
-                Cancel deletion ({todo.deleteTimer}s)
-              </Button>
-            )}
             <div className={styles.todoContent}>
               <Checkbox.Root
                 checked={todo.completed}
