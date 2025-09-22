@@ -1,7 +1,9 @@
-import { useLoaderData } from "react-router";
+import { useLoaderData, useSearchParams } from "react-router";
 import { Link } from "react-router";
+import { useState, useEffect } from "react";
 import styles from "./weather.module.css";
-import { Text } from "@radix-ui/themes";
+import { CitySelector } from "../components/city-selector";
+import citiesData from "../../src/data/world-cities.json";
 
 export function meta() {
   return [
@@ -26,9 +28,40 @@ interface WeatherData {
   };
 }
 
-export async function loader() {
+interface City {
+  name: string;
+  country: string;
+  latitude: number;
+  longitude: number;
+  population: number;
+}
+
+// Get the first 10 cities directly from world-cities.json
+
+export async function loader({ request }: { request: Request }) {
+  const url = new URL(request.url);
+  const cityParam = url.searchParams.get("city");
+  
+  const cities = citiesData as City[];
+  const defaultCity = cities[0];
+  let latitude = defaultCity.latitude;
+  let longitude = defaultCity.longitude;
+  let cityName = `${defaultCity.name}, ${defaultCity.country}`;
+  
+  if (cityParam) {
+    const [name, country] = cityParam.split(",");
+    const city = [...cities.slice(0, 10)].find(
+      c => c.name === name && c.country === country
+    );
+    if (city) {
+      latitude = city.latitude;
+      longitude = city.longitude;
+      cityName = `${city.name}, ${city.country}`;
+    }
+  }
+
   const response = await fetch(
-    "https://api.open-meteo.com/v1/forecast?latitude=52.52&longitude=13.41&current=temperature_2m,wind_speed_10m,weather_code,is_day&hourly=temperature_2m,relative_humidity_2m,wind_speed_10m&timezone=Europe%2FBerlin"
+    `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current=temperature_2m,wind_speed_10m,weather_code,is_day&hourly=temperature_2m,relative_humidity_2m,wind_speed_10m&timezone=auto`
   );
 
   if (!response.ok) {
@@ -38,7 +71,8 @@ export async function loader() {
   }
 
   const weatherData: WeatherData = await response.json();
-  return { weatherData };
+  // Use first 10 cities from citiesData
+  return { weatherData, cityName, cities: (citiesData as City[]).slice(0, 10) };
 }
 
 function getWeatherIcon(weatherCode: number, isDay: number): string {
@@ -93,7 +127,17 @@ function getWeatherDescription(weatherCode: number): string {
 }
 
 export default function WeatherPage() {
-  const { weatherData } = useLoaderData() as { weatherData: WeatherData };
+  const { weatherData, cityName, cities } = useLoaderData() as { 
+    weatherData: WeatherData; 
+    cityName: string; 
+    cities: City[];
+  };
+  
+  const [searchParams, setSearchParams] = useSearchParams();
+  
+  const handleCityChange = (cityValue: string) => {
+    setSearchParams({ city: cityValue });
+  };
   
   const weatherIcon = getWeatherIcon(weatherData.current.weather_code, weatherData.current.is_day);
   const weatherDescription = getWeatherDescription(weatherData.current.weather_code);
@@ -106,7 +150,16 @@ export default function WeatherPage() {
       
       <h1>Weather Information</h1>
       
+      <div className={styles.citySelectorContainer}>
+        <CitySelector 
+          value={cityName}
+          onValueChange={handleCityChange}
+          cities={cities}
+        />
+      </div>
+      
       <div className={styles.weatherDisplay}>
+        <div className={styles.location}>{cityName}</div>
         <div className={styles.weatherIcon}>{weatherIcon}</div>
         <div className={styles.temperature}>{weatherData.current.temperature_2m.toFixed(1)}°C</div>
         <div className={styles.weatherDescription}>{weatherDescription}</div>
@@ -123,7 +176,7 @@ export default function WeatherPage() {
           </div>
           
           <div className={styles.detailItem}>
-            <div className={styles.detailLabel}>Data Time</div>
+            <div className={styles.detailLabel}>Response Time</div>
             <div className={styles.detailValue}>{weatherData.generationtime_ms.toFixed(1)}ms</div>
           </div>
         </div>

@@ -27,6 +27,11 @@
   transform: translateY(-1px);
 }
 
+.citySelectorContainer {
+  margin: var(--space-4) 0;
+  text-align: center;
+}
+
 .weatherDisplay {
   background: var(--color-panel);
   border-radius: var(--radius-4);
@@ -35,6 +40,13 @@
   box-shadow: var(--shadow-2);
   border: 1px solid var(--gray-6);
   text-align: center;
+}
+
+.location {
+  font-size: var(--font-size-4);
+  font-weight: var(--font-weight-semibold);
+  color: var(--gray-12);
+  margin-bottom: var(--space-3);
 }
 
 .weatherIcon {
