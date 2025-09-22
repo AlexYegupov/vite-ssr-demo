@@ -142,7 +142,7 @@ export default function TodosPage() {
       addToast({
         id: toastId,
         title: "Todo deleted",
-        description: `"${todoToDelete.title}" was removed`,
+        description: `"${todoToDelete.title}" is about to be removed`,
         action: {
           label: "Undo",
           onClick: () => handleUndoDelete(id),
