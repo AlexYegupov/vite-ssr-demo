@@ -1,6 +1,6 @@
 .toastRoot {
-  background: var(--color-bg-secondary);
-  border: 1px solid var(--color-border);
+  background: var(--gray-2);
+  border: 1px solid var(--gray-6);
   border-radius: var(--border-radius-md);
   box-shadow: var(--shadow-lg);
   padding: var(--spacing-4);
@@ -58,14 +58,14 @@
 }
 
 .toastTitle {
-  font-weight: 600;
-  color: var(--color-text-primary);
+  font-weight: var(--font-weight-semibold);
+  color: var(--gray-12);
   font-size: var(--font-size-sm);
   margin: 0;
 }
 
 .toastDescription {
-  color: var(--color-text-secondary);
+  color: var(--gray-11);
   font-size: var(--font-size-xs);
   margin: 0;
   line-height: var(--line-height-normal);
@@ -75,17 +75,17 @@
   align-self: flex-end;
   background: none;
   border: none;
-  color: var(--color-primary);
+  color: var(--accent-9);
   cursor: pointer;
   padding: var(--spacing-1) var(--spacing-2);
   border-radius: var(--border-radius-sm);
   font-size: var(--font-size-xs);
-  font-weight: 500;
+  font-weight: var(--font-weight-medium);
   transition: background-color var(--transition-fast);
 }
 
 .toastAction:hover {
-  background-color: var(--color-bg-tertiary);
+  background-color: var(--gray-4);
 }
 
 .toastViewport {
