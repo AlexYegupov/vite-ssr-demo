@@ -14,20 +14,41 @@ export function GlobalToast() {
           duration={toast.duration}
           onOpenChange={(open: boolean) => !open && removeToast(toast.id)}
         >
-          <ToastPrimitive.Title className={styles.toastTitle}>{toast.title}</ToastPrimitive.Title>
-          {toast.description && (
-            <ToastPrimitive.Description className={styles.toastDescription}>
-              {toast.description}
-            </ToastPrimitive.Description>
-          )}
-          <ToastPrimitive.Action asChild altText="Dismiss">
-            <button 
-              className={styles.toastAction}
-              onClick={() => removeToast(toast.id)}
-            >
-              Dismiss
-            </button>
-          </ToastPrimitive.Action>
+          <div className={styles.toastContent}>
+            <ToastPrimitive.Title className={styles.toastTitle}>
+              {toast.title}
+            </ToastPrimitive.Title>
+            {toast.description && (
+              <ToastPrimitive.Description className={styles.toastDescription}>
+                {toast.description}
+              </ToastPrimitive.Description>
+            )}
+          </div>
+          
+          <div className={styles.toastActions}>
+            {toast.action && (
+              <ToastPrimitive.Action asChild altText={toast.action.label}>
+                <button 
+                  className={`${styles.toastButton} ${styles.toastAction}`}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    toast.action?.onClick();
+                    removeToast(toast.id);
+                  }}
+                >
+                  {toast.action.label}
+                </button>
+              </ToastPrimitive.Action>
+            )}
+            <ToastPrimitive.Close asChild>
+              <button 
+                className={`${styles.toastButton} ${styles.toastClose}`}
+                aria-label="Dismiss"
+              >
+                Dismiss
+              </button>
+            </ToastPrimitive.Close>
+          </div>
         </ToastPrimitive.Root>
       ))}
       <ToastPrimitive.Viewport className={styles.toastViewport} />

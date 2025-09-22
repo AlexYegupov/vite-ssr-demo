@@ -132,6 +132,11 @@ export default function TodosPage() {
       addToast({
         title: "Todo deleted",
         description: `"${todoToDelete.title}" was removed`,
+        action: {
+          label: "Undo",
+          onClick: () => handleUndoDelete(id),
+        },
+        duration: 5000, // 5 seconds to undo
       });
     }
 
