@@ -58,11 +58,7 @@ export async function loader({
       );
     }
 
-    const data = await response.json();
-
-    // Handle both array format and object with todos property
-    const todos = Array.isArray(data) ? data : data.todos || [];
-
+    const todos = await response.json();
     return { todos };
   } catch (error) {
     console.error("Error in todos loader:", error);
@@ -76,7 +72,7 @@ interface LoaderData {
 
 export default function TodosPage() {
   const { todos: initialTodos } = useLoaderData<{ todos: Todo[] }>();
-  const [todos, setTodos] = useState<Todo[]>([]);
+  const [todos, setTodos] = useState<Todo[]>(initialTodos);
   const fetcher = useFetcher();
   const [newTodoTitle, setNewTodoTitle] = useState("");
   const [editingTodoId, setEditingTodoId] = useState<string | null>(null);
@@ -84,10 +80,6 @@ export default function TodosPage() {
   const editInputRef = useRef<HTMLInputElement>(null);
   const { addToast } = useToast();
 
-  // Initialize todos from loader data
-  useEffect(() => {
-    setTodos(initialTodos);
-  }, [initialTodos]);
 
   const handleAddTodo = async (e: React.FormEvent) => {
     e.preventDefault();
