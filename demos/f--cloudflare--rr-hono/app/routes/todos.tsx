@@ -116,22 +116,32 @@ export default function TodosPage() {
     }, 0);
   };
 
-  const handleSaveEdit = () => {
+  const handleSaveEdit = async () => {
     if (!editingTodoId || !editTodoTitle.trim()) return;
 
-    setTodos(
-      todos.map((todo) =>
-        todo.id === editingTodoId
-          ? {
-              ...todo,
-              title: editTodoTitle,
-              updatedAt: new Date().toISOString(),
-            }
-          : todo
-      )
-    );
-    setEditingTodoId(null);
-    setEditTodoTitle("");
+    try {
+      const response = await fetch(`/api/todos/${editingTodoId}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ title: editTodoTitle })
+      });
+
+      if (!response.ok) throw new Error('Failed to update todo');
+      
+      const updatedTodo = await response.json();
+      setTodos(todos.map(todo => 
+        todo.id === editingTodoId ? updatedTodo : todo
+      ));
+      setEditingTodoId(null);
+      setEditTodoTitle('');
+    } catch (error) {
+      console.error('Error updating todo:', error);
+      addToast({
+        title: 'Error',
+        description: 'Failed to update todo',
+        duration: 3000
+      });
+    }
   };
 
   const handleCancelEdit = () => {
