@@ -31,7 +31,6 @@ interface Todo {
   deleteTimer?: number;
 }
 
-
 export async function loader({ request }: { request: Request }) {
   const url = new URL("/api/todos", request.url);
   const response = await fetch(url.toString());
@@ -131,31 +130,33 @@ export default function TodosPage() {
     const todoToDelete = todos.find((t) => t.id === id);
     if (todoToDelete) {
       // Mark todo as pending deletion for visual feedback
-      setTodos(todos.map(todo => 
-        todo.id === id ? { ...todo, pendingDeletion: true } : todo
-      ));
+      setTodos(
+        todos.map((todo) =>
+          todo.id === id ? { ...todo, pendingDeletion: true } : todo
+        )
+      );
 
       // Create a unique ID for this toast
       const toastId = `todo-delete-${id}`;
-      
+
       // Add toast with onDismiss callback
       addToast({
         id: toastId,
-        title: "Delete todo",
-        description: `"${todoToDelete.title}" has been removed`,
+        title: "Todo deleted",
+        description: `"${todoToDelete.title}" is about to be removed`,
         action: {
           label: "Undo",
           onClick: () => handleUndoDelete(id),
         },
         duration: 3000, // 3 seconds to undo
         onDismiss: () => {
-          console.log('onDismiss called for todo:', id);
+          console.log("onDismiss called for todo:", id);
           // Always remove the todo when toast is dismissed
-          setTodos(currentTodos => {
-            console.log('Removing todo:', id, 'from todos');
-            return currentTodos.filter(t => t.id !== id);
+          setTodos((currentTodos) => {
+            console.log("Removing todo:", id, "from todos");
+            return currentTodos.filter((t) => t.id !== id);
           });
-        }
+        },
       });
     }
   };
@@ -163,18 +164,16 @@ export default function TodosPage() {
   const { removeToastById } = useToast();
 
   const handleUndoDelete = (id: string) => {
-    console.log('Undo delete for todo:', id);
+    console.log("Undo delete for todo:", id);
     // Clear the pendingDeletion flag to restore the todo
-    setTodos(prevTodos => {
-      const updated = prevTodos.map(todo => 
-        todo.id === id 
-          ? { ...todo, pendingDeletion: false } 
-          : todo
+    setTodos((prevTodos) => {
+      const updated = prevTodos.map((todo) =>
+        todo.id === id ? { ...todo, pendingDeletion: false } : todo
       );
-      console.log('Updated todos after undo:', updated);
+      console.log("Updated todos after undo:", updated);
       return updated;
     });
-    
+
     // Find and remove the toast for this todo
     const toastId = `todo-delete-${id}`;
     removeToastById(toastId);
@@ -209,7 +208,9 @@ export default function TodosPage() {
         {todos.map((todo) => (
           <li
             key={todo.id}
-            className={`${styles.todoItem} ${todo.completed ? styles.completed : ""}`}
+            className={`${styles.todoItem} ${
+              todo.completed ? styles.completed : ""
+            }`}
             data-pending-deletion={todo.pendingDeletion || false}
           >
             <div className={styles.todoContent}>
