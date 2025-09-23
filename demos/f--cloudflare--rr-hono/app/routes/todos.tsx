@@ -11,7 +11,6 @@ import { Pencil1Icon, Cross2Icon, CheckIcon } from "@radix-ui/react-icons";
 import * as Checkbox from "@radix-ui/react-checkbox";
 import { useToast } from "../context/toast-context";
 import styles from "./todos.module.css";
-import todosData from "../../mock-data/todos.json";
 
 export function meta() {
   return [
@@ -60,19 +59,33 @@ export default function TodosPage() {
     setTodos(initialTodos);
   }, [initialTodos]);
 
-  const handleAddTodo = (e: React.FormEvent) => {
+  const handleAddTodo = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!newTodoTitle.trim()) return;
 
-    const newTodo: Todo = {
-      id: Date.now().toString(),
-      title: newTodoTitle,
-      completed: false,
-      createdAt: new Date().toISOString(),
-    };
+    try {
+      const response = await fetch('/api/todos', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          title: newTodoTitle,
+          completed: false
+        })
+      });
 
-    setTodos([...todos, newTodo]);
-    setNewTodoTitle("");
+      if (!response.ok) throw new Error('Failed to create todo');
+      
+      const newTodo = await response.json();
+      setTodos([...todos, newTodo]);
+      setNewTodoTitle('');
+    } catch (error) {
+      console.error('Error creating todo:', error);
+      addToast({
+        title: 'Error',
+        description: 'Failed to create todo',
+        duration: 3000
+      });
+    }
   };
 
   const handleToggleComplete = async (id: string, completed: boolean) => {
