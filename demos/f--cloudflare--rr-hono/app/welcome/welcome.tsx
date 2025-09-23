@@ -37,7 +37,7 @@ export function Welcome({ message }: { message: string }) {
   return (
     <main className={styles.welcome}>
       <div className={styles.container}>
-        <div className={styles.buttonContainer}>
+        <section className={styles.buttonContainer} aria-label="Call to action">
           <Button size="3" variant="solid" color="violet">
             Get Started
           </Button>
@@ -49,17 +49,15 @@ export function Welcome({ message }: { message: string }) {
           >
             Learn More
           </Button>
-        </div>
+        </section>
         <header className={styles.header}>
           <div className={styles.logoContainer}>
-            <div className={styles.logoWrapper}>
-              <Logo />              
-            </div>
+            <Logo />              
           </div>
         </header>
-        <div className={styles.content}>
-          <nav className={styles.nav}>
-            <p className={styles.navTitle}>What&apos;s next?</p>
+        <section className={styles.content}>
+          <h2 id="resources-heading" className={styles.navTitle}>What&apos;s next?</h2>
+          <nav className={styles.nav} aria-labelledby="resources-heading">
             <ul className={styles.navList}>
               {resources.map(({ href, text, icon }) => (
                 <li key={href} className={styles.navItem}>
@@ -74,10 +72,10 @@ export function Welcome({ message }: { message: string }) {
                   </a>
                 </li>
               ))}
-              <li className={styles.message}>{message}</li>
             </ul>
           </nav>
-        </div>
+          <p className={styles.message}>{message}</p>
+        </section>
       </div>
     </main>
   );

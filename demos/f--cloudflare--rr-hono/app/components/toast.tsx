@@ -42,22 +42,22 @@ function ToastWithTimer({
         }
       }}
     >
-      <div className={styles.toastContent}>
-        <div className={styles.toastHeader}>
-          <ToastPrimitive.Title className={styles.toastTitle}>
-            {toast.title}
+      <section className={styles.toastContent}>
+        <header className={styles.toastHeader}>
+          <ToastPrimitive.Title className={styles.toastTitle} asChild>
+            <h3>{toast.title}</h3>
           </ToastPrimitive.Title>
-          {toast.duration && <div className={styles.timer}>{timeLeft}s</div>}
-        </div>
+          {toast.duration && <time className={styles.timer}>{timeLeft}s</time>}
+        </header>
         {toast.description && (
-          <ToastPrimitive.Description className={styles.toastDescription}>
-            {toast.description}
+          <ToastPrimitive.Description className={styles.toastDescription} asChild>
+            <p>{toast.description}</p>
           </ToastPrimitive.Description>
         )}
-      </div>
+      </section>
 
       {toast.action && (
-        <div className={styles.toastActions}>
+        <footer className={styles.toastActions}>
           <ToastPrimitive.Action asChild altText={toast.action.label}>
             <button
               className={`${styles.toastButton} ${styles.toastAction}`}
@@ -73,7 +73,7 @@ function ToastWithTimer({
               {toast.action.label}
             </button>
           </ToastPrimitive.Action>
-        </div>
+        </footer>
       )}
     </ToastPrimitive.Root>
   );
@@ -92,7 +92,7 @@ export function GlobalToast() {
   };
 
   return (
-    <>
+    <aside aria-label="Notifications" role="region">
       {toasts.map((toast) => (
         <ToastWithTimer
           key={toast.id}
@@ -101,6 +101,6 @@ export function GlobalToast() {
         />
       ))}
       <ToastPrimitive.Viewport className={styles.toastViewport} />
-    </>
+    </aside>
   );
 }

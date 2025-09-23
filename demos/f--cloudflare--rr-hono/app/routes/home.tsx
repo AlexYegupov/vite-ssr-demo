@@ -24,16 +24,18 @@ export default function Home({
 }) {
   console.log("<Home>", loaderData);
   return (
-    <div className={styles.container}>
-      <h1>Welcome to the App</h1>
-      <div className={styles.linkContainer}>
+    <main className={styles.container}>
+      <header>
+        <h1>Welcome to the App</h1>
+      </header>
+      <nav className={styles.linkContainer} aria-label="Main navigation">
         <Link to="/todos" className={styles.linkButton}>
           Go to Todo List
         </Link>
         <Link to="/weather" className={`${styles.linkButton} ${styles.weatherLink}`}>
           Check Weather
         </Link>
-      </div>
-    </div>
+      </nav>
+    </main>
   );
 }
