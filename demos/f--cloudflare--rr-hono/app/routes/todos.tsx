@@ -30,14 +30,44 @@ interface Todo {
   deleteTimer?: number;
 }
 
-export async function loader({ request }: { request: Request }) {
-  const url = new URL("/api/todos", request.url);
-  const response = await fetch(url.toString());
-  if (!response.ok) {
-    throw new Error("Failed to load todos");
+export async function loader({
+  request,
+  context,
+}: {
+  request: Request;
+  context: any;
+}) {
+  try {
+    const url = new URL("/api/todos", request.url);
+
+    // Use context.fetch instead of global fetch for internal requests
+    const response = await context.fetchInternal("/api/todos");
+
+    if (!response.ok) {
+      console.error("Failed to load todos:", {
+        status: response.status,
+        statusText: response.statusText,
+      });
+
+      // Try to get error details from response
+      const errorText = await response.text();
+      console.error("Error response:", errorText);
+
+      throw new Error(
+        `Failed to load todos: ${response.status} ${response.statusText}`
+      );
+    }
+
+    const data = await response.json();
+
+    // Handle both array format and object with todos property
+    const todos = Array.isArray(data) ? data : data.todos || [];
+
+    return { todos };
+  } catch (error) {
+    console.error("Error in todos loader:", error);
+    throw error;
   }
-  const todos = await response.json();
-  return { todos };
 }
 
 interface LoaderData {
@@ -64,7 +94,9 @@ export default function TodosPage() {
     if (!newTodoTitle.trim()) return;
 
     try {
-      const response = await fetch("/api/todos", {
+      // Use absolute URL for API requests
+      const url = new URL("/api/todos", window.location.origin);
+      const response = await fetch(url.toString(), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -90,7 +122,8 @@ export default function TodosPage() {
 
   const handleToggleComplete = async (id: string, completed: boolean) => {
     try {
-      const response = await fetch(`/api/todos/${id}`, {
+      const url = new URL(`/api/todos/${id}`, window.location.origin);
+      const response = await fetch(url.toString(), {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ completed: !completed }),
@@ -120,7 +153,11 @@ export default function TodosPage() {
     if (!editingTodoId || !editTodoTitle.trim()) return;
 
     try {
-      const response = await fetch(`/api/todos/${editingTodoId}`, {
+      const url = new URL(
+        `/api/todos/${editingTodoId}`,
+        window.location.origin
+      );
+      const response = await fetch(url.toString(), {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ title: editTodoTitle }),
@@ -176,7 +213,8 @@ export default function TodosPage() {
           console.log("onDismiss called for todo:", id);
           try {
             // Make API request to delete the todo
-            const response = await fetch(`/api/todos/${id}`, {
+            const url = new URL(`/api/todos/${id}`, window.location.origin);
+            const response = await fetch(url.toString(), {
               method: "DELETE",
               headers: { "Content-Type": "application/json" },
             });
