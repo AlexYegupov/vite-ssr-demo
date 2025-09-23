@@ -172,13 +172,30 @@ export default function TodosPage() {
           onClick: () => handleUndoDelete(id),
         },
         duration: 3000, // 3 seconds to undo
-        onDismiss: () => {
+        onDismiss: async () => {
           console.log("onDismiss called for todo:", id);
-          // Always remove the todo when toast is dismissed
-          setTodos((currentTodos) => {
-            console.log("Removing todo:", id, "from todos");
-            return currentTodos.filter((t) => t.id !== id);
-          });
+          try {
+            // Make API request to delete the todo
+            const response = await fetch(`/api/todos/${id}`, {
+              method: 'DELETE',
+              headers: { 'Content-Type': 'application/json' }
+            });
+            
+            if (!response.ok) throw new Error('Failed to delete todo');
+            
+            // Remove the todo from local state after successful API call
+            setTodos((currentTodos) => {
+              console.log("Removing todo:", id, "from todos");
+              return currentTodos.filter((t) => t.id !== id);
+            });
+          } catch (error) {
+            console.error('Error deleting todo:', error);
+            addToast({
+              title: 'Error',
+              description: 'Failed to delete todo from server',
+              duration: 3000
+            });
+          }
         },
       });
     }
