@@ -4,6 +4,8 @@ import { defineConfig } from "vite";
 import tsconfigPaths from "vite-tsconfig-paths";
 import svgr from "vite-plugin-svgr";
 import path from "path";
+import browserslist from 'browserslist';
+import { browserslistToTargets } from "lightningcss";
 
 export default defineConfig({
   server: {
@@ -15,6 +17,11 @@ export default defineConfig({
     strictPort: true,
   },
   css: {
+    transformer: "lightningcss",
+    lightningcss: {
+      cssModules: true,
+      targets: browserslistToTargets(browserslist(">= 0.25%")),
+    },
     modules: {
       // Generate scoped class names in both dev and prod
       generateScopedName: "[name]__[local]___[hash:base64:5]",
@@ -45,6 +52,7 @@ export default defineConfig({
     ],
   },
   build: {
+    cssMinify: "lightningcss",
     cssCodeSplit: true,
     rollupOptions: {
       output: {
