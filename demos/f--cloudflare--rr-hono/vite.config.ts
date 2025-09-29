@@ -22,7 +22,7 @@ export default defineConfig({
       localsConvention: "camelCaseOnly",
     },
     // Enable CSS sourcemaps in development
-    devSourcemap: true,
+    //devSourcemap: true,
   },
   plugins: [
     cloudflare({
@@ -45,22 +45,22 @@ export default defineConfig({
     ],
   },
   build: {
-    cssCodeSplit: true,
-    rollupOptions: {
-      output: {
-        manualChunks: (id) => {
-          if (id.includes("node_modules")) {
-            return "vendor";
-          }
-          if (id.includes("routes/")) {
-            const fileName = id.split("/").pop()?.split(".")[0];
-            if (fileName) return `route-${fileName}`;
-          }
-        },
-        chunkFileNames: "assets/[name]-[hash].js",
-        entryFileNames: "assets/[name]-[hash].js",
-        assetFileNames: "assets/[name]-[hash][extname]",
-      },
-    },
+    //cssCodeSplit: true,
+    // rollupOptions: {
+    //   output: {
+    //     manualChunks: (id) => {
+    //       if (id.includes("node_modules")) {
+    //         return "vendor";
+    //       }
+    //       if (id.includes("routes/")) {
+    //         const fileName = id.split("/").pop()?.split(".")[0];
+    //         if (fileName) return `route-${fileName}`;
+    //       }
+    //     },
+    //     chunkFileNames: "assets/[name]-[hash].js",
+    //     entryFileNames: "assets/[name]-[hash].js",
+    //     assetFileNames: "assets/[name]-[hash][extname]",
+    //   },
+    // },
   },
 });
