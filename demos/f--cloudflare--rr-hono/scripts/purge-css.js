@@ -107,7 +107,14 @@ async function purgeCSSFromBuild() {
                 safelist: {
                     standard: [/^:/, /^::/, /^data-/, /^aria-/],
                     deep: [/^:/, /^::/, /^data-/, /^aria-/],
-                    greedy: [/^:/, /^::/, /^data-/, /^aria-/, /rt-BaseButton/],
+                    greedy: [
+                        /^:/, /^::/, /^data-/, /^aria-/,
+                        /^rt-BaseButton/,
+                        /^rt-reset/,
+                        /^rt-r-size-.*/,
+                        /^rt-variant-.*/,
+                        /^rt-IconButton/,
+                    ],
                 },
                 // Add any specific selectors you want to keep
                 // safelist: ['specific-class-to-keep', /^specific-prefix-.*$/]
