@@ -39,12 +39,14 @@
     "browserslist": "^4.23.0",
     "cross-env": "^10.0.0",
     "jsonc-parser": "^3.3.1",
+    "lightningcss": "^1.23.0",
     "typescript": "5.8.3",
     "vite": "^6.0.0",
+    "vite-plugin-purgecss": "^0.2.13",
+    "vite-plugin-purgecss-updated-v5": "^1.2.6",
     "vite-plugin-svgr": "^4.3.0",
     "vite-tsconfig-paths": "5.1.4",
-    "wrangler": "^4.28.1",
-    "lightningcss": "^1.23.0"
+    "wrangler": "^4.28.1"
   },
   "scripts": {
     "build": "react-router build",

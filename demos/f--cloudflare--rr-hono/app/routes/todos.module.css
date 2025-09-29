@@ -274,13 +274,13 @@ li.pendingDelete {
   position: fixed;
   bottom: var(--space-4);
   right: var(--space-4);
-  
+
   /* Layout */
   display: flex;
   flex-direction: column-reverse;
   gap: var(--space-3);
   width: min(var(--max-width-toast), calc(100vw - var(--space-8)));
-  
+
   /* Styling */
   margin: 0;
   padding: 0;
@@ -292,23 +292,23 @@ li.pendingDelete {
   /* Variables */
   --toast-bg: var(--color-panel);
   --toast-border: var(--gray-6);
-  
+
   /* Layout */
   position: relative;
   display: grid;
   grid-template: 'title action' 'description action' / 1fr auto;
   gap: var(--space-2);
   align-items: center;
-  
+
   /* Styling */
   background-color: var(--toast-bg);
   border: 1px solid var(--toast-border);
   box-shadow: var(--shadow-2);
   border-radius: var(--radius-3);
   padding: var(--space-3);
-  
+
   /* Animations */
-  animation: 
+  animation:
     toastSlideIn var(--duration-200) var(--ease-in-out),
     fadeIn var(--duration-200) var(--ease-out);
 }
@@ -325,7 +325,7 @@ li.pendingDelete {
 }
 
 .toastRoot[data-state='closed'] {
-  animation: 
+  animation:
     toastSlideOut var(--duration-200) var(--ease-in),
     fadeOut var(--duration-200) var(--ease-in);
 }
@@ -372,4 +372,12 @@ li.pendingDelete {
   position: absolute;
   width: 1px;
   white-space: nowrap;
+}
+
+.testclass {
+  color: red;
+}
+
+.testclass2 {
+  color: purple;
 }
