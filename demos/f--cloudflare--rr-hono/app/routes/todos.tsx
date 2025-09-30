@@ -80,7 +80,6 @@ export default function TodosPage() {
   const editInputRef = useRef<HTMLInputElement>(null);
   const { addToast } = useToast();
 
-
   const handleAddTodo = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!newTodoTitle.trim()) return;

@@ -8,6 +8,8 @@ import { fileURLToPath } from 'url';
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const projectRoot = path.resolve(__dirname, '..');
 const buildDir = path.join(projectRoot, 'build');
+const clientBuildDir = path.join(buildDir, 'client');
+const serverBuildDir = path.join(buildDir, 'server');
 
 // Get all HTML files from the build directory
 const getHtmlFiles = (dir) => {
@@ -66,71 +68,126 @@ const getJsFiles = (dir) => {
     return results;
 };
 
+/**
+ * Process CSS files in a specific directory
+ */
+async function processCssInDirectory(dirPath) {
+    // Extract directory name from path
+    const dirName = path.basename(dirPath);
+    console.log(`\n=== Processing ${dirName} CSS files ===`);
+
+    // Get all HTML, CSS, and JS files
+    const htmlFiles = getHtmlFiles(dirPath);
+    const cssFiles = getCssFiles(dirPath);
+    const jsFiles = getJsFiles(dirPath);
+
+    console.log(`Found ${htmlFiles.length} HTML files, ${cssFiles.length} CSS files, and ${jsFiles.length} JS files in ${dirName}`);
+
+    if (cssFiles.length === 0) {
+        console.log(`No CSS files found to purge in ${dirName}`);
+        return;
+    }
+
+    // Content to analyze for CSS selectors
+    const content = [...htmlFiles, ...jsFiles];
+
+    // If no content files found, we need to use JS files at minimum
+    if (content.length === 0) {
+        console.error(`No content files found to analyze CSS against in ${dirName}`);
+        return;
+    }
+
+    // Calculate total original size of all CSS files
+    let totalOriginalSize = 0;
+    for (const cssFile of cssFiles) {
+        totalOriginalSize += fs.statSync(cssFile).size;
+    }
+
+    console.log(`${dirName} CSS size before purging: ${(totalOriginalSize / 1024).toFixed(2)} KB`);
+
+    // Process all CSS files at once
+    const results = await new PurgeCSS().purge({
+        content: content,
+        css: cssFiles,
+        safelist: {
+            standard: [
+                /^:/,
+                /^::/,
+                /^data-/,
+                /^aria-/,
+                /^rt-reset/,
+                /^rt-BaseButton/,
+                /^rt-r-size-.*/,
+                /^rt-variant-.*/,
+                /^rt-Button/,
+                // deep: [/^:/, /^::/, /^data-/, /^aria-/],
+                // greedy: [
+            ],
+        },
+    });
+
+    // Write results back to files
+    results.forEach((result, index) => {
+        const cssFile = cssFiles[index];
+        if (result.css) {
+            fs.writeFileSync(cssFile, result.css);
+        }
+    });
+
+    // Calculate total size after purging
+    let totalNewSize = 0;
+    for (const cssFile of cssFiles) {
+        totalNewSize += fs.statSync(cssFile).size;
+    }
+
+    console.log(`${dirName} CSS size after purging: ${(totalNewSize / 1024).toFixed(2)} KB`);
+    console.log(`${dirName} reduction: ${((totalOriginalSize - totalNewSize) / 1024).toFixed(2)} KB (${((totalOriginalSize - totalNewSize) / totalOriginalSize * 100).toFixed(2)}%)`);
+    console.log(`Processed ${cssFiles.length} CSS files in ${dirName}`);
+
+    return {
+        originalSize: totalOriginalSize,
+        newSize: totalNewSize,
+        fileCount: cssFiles.length
+    };
+}
+
 async function purgeCSSFromBuild() {
     console.log('Starting PurgeCSS on build directory...');
 
     try {
-        // Get all HTML, CSS, and JS files
-        const htmlFiles = getHtmlFiles(buildDir);
-        const cssFiles = getCssFiles(buildDir);
-        const jsFiles = getJsFiles(buildDir);
+        // Check if build directories exist
+        const clientExists = fs.existsSync(clientBuildDir);
+        const serverExists = fs.existsSync(serverBuildDir);
 
-        console.log(`Found ${htmlFiles.length} HTML files, ${cssFiles.length} CSS files, and ${jsFiles.length} JS files`);
-
-        if (cssFiles.length === 0) {
-            console.log('No CSS files found to purge');
+        if (!clientExists && !serverExists) {
+            console.error('Neither client nor server build directories found');
             return;
         }
 
-        // Content to analyze for CSS selectors
-        const content = [...htmlFiles, ...jsFiles];
+        let clientStats = null;
+        let serverStats = null;
 
-        // If no HTML files found, we need to use JS files at minimum
-        if (content.length === 0) {
-            console.error('No content files found to analyze CSS against');
-            return;
+        // Process client CSS files
+        if (clientExists) {
+            clientStats = await processCssInDirectory(clientBuildDir);
         }
 
-        // Process each CSS file
-        for (const cssFile of cssFiles) {
-            console.log(`Processing ${path.relative(projectRoot, cssFile)}`);
+        // Process server CSS files
+        if (serverExists) {
+            serverStats = await processCssInDirectory(serverBuildDir);
+        }
 
-            const originalSize = fs.statSync(cssFile).size;
+        // Show total stats if both directories were processed
+        if (clientStats && serverStats) {
+            const totalOriginalSize = clientStats.originalSize + serverStats.originalSize;
+            const totalNewSize = clientStats.newSize + serverStats.newSize;
+            const totalFileCount = clientStats.fileCount + serverStats.fileCount;
 
-            // Get file size before purging
-            console.log(`Original size: ${(originalSize / 1024).toFixed(2)} KB`);
-
-            // Run PurgeCSS
-            const result = await new PurgeCSS().purge({
-                content: content,
-                css: [cssFile],
-                safelist: {
-                    standard: [/^:/, /^::/, /^data-/, /^aria-/],
-                    deep: [/^:/, /^::/, /^data-/, /^aria-/],
-                    greedy: [
-                        /^:/, /^::/, /^data-/, /^aria-/,
-                        /^rt-BaseButton/,
-                        /^rt-reset/,
-                        /^rt-r-size-.*/,
-                        /^rt-variant-.*/,
-                        /^rt-IconButton/,
-                    ],
-                },
-                // Add any specific selectors you want to keep
-                // safelist: ['specific-class-to-keep', /^specific-prefix-.*$/]
-            });
-
-            if (result.length > 0 && result[0].css) {
-                // Write the purged CSS back to the file
-                fs.writeFileSync(cssFile, result[0].css);
-
-                // Get file size after purging
-                const newSize = fs.statSync(cssFile).size;
-                console.log(`New size: ${(newSize / 1024).toFixed(2)} KB`);
-                console.log(`Reduced by: ${((originalSize - newSize) / 1024).toFixed(2)} KB (${((originalSize - newSize) / originalSize * 100).toFixed(2)}%)`);
-            } else {
-                console.log(`No changes made to ${cssFile}`);
-            }
+            console.log('\n=== Total Stats ===');
+            console.log(`Total CSS size before purging: ${(totalOriginalSize / 1024).toFixed(2)} KB`);
+            console.log(`Total CSS size after purging: ${(totalNewSize / 1024).toFixed(2)} KB`);
+            console.log(`Total reduction: ${((totalOriginalSize - totalNewSize) / 1024).toFixed(2)} KB (${((totalOriginalSize - totalNewSize) / totalOriginalSize * 100).toFixed(2)}%)`);
+            console.log(`Processed ${totalFileCount} CSS files total`);
         }
 
         console.log('PurgeCSS completed successfully!');

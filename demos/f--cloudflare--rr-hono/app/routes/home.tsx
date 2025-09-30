@@ -32,7 +32,10 @@ export default function Home({
         <Link to="/todos" className={styles.linkButton}>
           Go to Todo List
         </Link>
-        <Link to="/weather" className={`${styles.linkButton} ${styles.weatherLink}`}>
+        <Link
+          to="/weather"
+          className={`${styles.linkButton} ${styles.weatherLink}`}
+        >
           Check Weather
         </Link>
       </nav>
