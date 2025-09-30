@@ -1,6 +1,6 @@
-import * as Select from '@radix-ui/react-select';
-import { ChevronDownIcon } from '@radix-ui/react-icons';
-import styles from './city-selector.module.css';
+import * as Select from "@radix-ui/react-select";
+import { ChevronDownIcon } from "@radix-ui/react-icons";
+import styles from "./city-selector.module.css";
 
 interface City {
   name: string;
@@ -16,15 +16,22 @@ interface CitySelectorProps {
   cities: City[];
 }
 
-export function CitySelector({ value, onValueChange, cities }: CitySelectorProps) {
-
-  const displayValue = value ? `${value.split(',')[0]}, ${value.split(',')[1]}` : '';
+export function CitySelector({
+  value,
+  onValueChange,
+  cities,
+}: CitySelectorProps) {
+  const displayValue = value
+    ? `${value.split(",")[0]}, ${value.split(",")[1]}`
+    : "";
 
   return (
     <Select.Root value={value} onValueChange={onValueChange}>
       <Select.Trigger className={styles.trigger}>
         <Select.Value asChild>
-          <span className={styles.value}>{displayValue || 'Select city...'}</span>
+          <span className={styles.value}>
+            {displayValue || "Select city..."}
+          </span>
         </Select.Value>
         <Select.Icon className={styles.icon}>
           <ChevronDownIcon />
@@ -35,12 +42,14 @@ export function CitySelector({ value, onValueChange, cities }: CitySelectorProps
         <Select.Content className={styles.content} position="popper">
           <Select.Viewport className={styles.viewport}>
             {cities.map((city) => (
-              <Select.Item 
-                key={`${city.name}-${city.country}`} 
+              <Select.Item
+                key={`${city.name}-${city.country}`}
                 value={`${city.name},${city.country}`}
                 className={styles.item}
               >
-                <Select.ItemText>{city.name}, {city.country}</Select.ItemText>
+                <Select.ItemText>
+                  {city.name}, {city.country}
+                </Select.ItemText>
               </Select.Item>
             ))}
           </Select.Viewport>

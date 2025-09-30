@@ -50,7 +50,10 @@ function ToastWithTimer({
           {toast.duration && <time className={styles.timer}>{timeLeft}s</time>}
         </header>
         {toast.description && (
-          <ToastPrimitive.Description className={styles.toastDescription} asChild>
+          <ToastPrimitive.Description
+            className={styles.toastDescription}
+            asChild
+          >
             <p>{toast.description}</p>
           </ToastPrimitive.Description>
         )}

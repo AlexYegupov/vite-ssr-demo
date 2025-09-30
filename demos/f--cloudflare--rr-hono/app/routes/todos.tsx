@@ -7,7 +7,7 @@ import {
   type KeyboardEvent,
 } from "react";
 import { Button, TextField, IconButton } from "@radix-ui/themes";
-import { Pencil1Icon, Cross2Icon, CheckIcon } from "@radix-ui/react-icons";
+import { Pencil1Icon, Cross2Icon, CheckIcon, TrashIcon } from "@radix-ui/react-icons";
 import * as Checkbox from "@radix-ui/react-checkbox";
 import { useToast } from "../context/toast-context";
 import styles from "./todos.module.css";
@@ -400,7 +400,7 @@ export default function TodosPage() {
                       size="3"
                       aria-label="Delete todo"
                     >
-                      <Cross2Icon width="24" height="24" />
+                      <TrashIcon width="24" height="24" />
                     </IconButton>
                   </>
                 )}
