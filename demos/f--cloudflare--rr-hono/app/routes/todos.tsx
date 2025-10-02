@@ -5,7 +5,8 @@ import {
   useActionData,
   useNavigation,
   useSubmit,
-  Form,} from "react-router";
+  Form,
+} from "react-router";
 import {
   useState,
   useRef,
@@ -102,6 +103,8 @@ export async function action({
         const updates: any = { id };
         if (title !== null) updates.title = title;
         if (completed !== null) updates.completed = completed === "true";
+
+        console.log("action update", formData);
 
         const response = await context.fetchInternal(`/api/todos/${id}`, {
           method: "PUT",
