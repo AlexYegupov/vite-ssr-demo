@@ -1,4 +1,11 @@
-import { Link, useFetcher, useLoaderData } from "react-router";
+import {
+  Link,
+  useFetcher,
+  useLoaderData,
+  useActionData,
+  useNavigation,
+  useSubmit,
+  Form,} from "react-router";
 import {
   useState,
   useRef,
@@ -42,33 +49,90 @@ export async function loader({
   request: Request;
   context: any;
 }) {
-  console.log("loader");
   try {
-    const url = new URL("/api/todos", request.url);
-
-    // Use context.fetch instead of global fetch for internal requests
     const response = await context.fetchInternal("/api/todos");
-
-    if (!response.ok) {
-      console.error("Failed to load todos:", {
-        status: response.status,
-        statusText: response.statusText,
-      });
-
-      // Try to get error details from response
-      const errorText = await response.text();
-      console.error("Error response:", errorText);
-
-      throw new Error(
-        `Failed to load todos: ${response.status} ${response.statusText}`
-      );
-    }
-
+    if (!response.ok) throw new Error("Failed to load todos");
     const todos = await response.json();
     return { todos };
   } catch (error) {
     console.error("Error in todos loader:", error);
     throw error;
+  }
+}
+
+export async function action({
+  request,
+  context,
+}: {
+  request: Request;
+  context: any;
+}) {
+  const formData = await request.formData();
+  const intent = formData.get("intent");
+
+  try {
+    switch (intent) {
+      case "create": {
+        const title = formData.get("title")?.toString().trim();
+        if (!title) throw new Error("Title is required");
+
+        const newTodo = {
+          title,
+          completed: false,
+          createdAt: new Date().toISOString(),
+        };
+
+        const response = await context.fetchInternal("/api/todos", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(newTodo),
+        });
+
+        if (!response.ok) throw new Error("Failed to create todo");
+        return await response.json();
+      }
+
+      case "update": {
+        const id = formData.get("id")?.toString();
+        const title = formData.get("title")?.toString();
+        const completed = formData.get("completed");
+
+        if (!id) throw new Error("Todo ID is required");
+
+        const updates: any = { id };
+        if (title !== null) updates.title = title;
+        if (completed !== null) updates.completed = completed === "true";
+
+        const response = await context.fetchInternal(`/api/todos/${id}`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(updates),
+        });
+
+        if (!response.ok) throw new Error("Failed to update todo");
+        return await response.json();
+      }
+
+      case "delete": {
+        const id = formData.get("id")?.toString();
+        if (!id) throw new Error("Todo ID is required");
+
+        const response = await context.fetchInternal(`/api/todos/${id}`, {
+          method: "DELETE",
+        });
+
+        if (!response.ok) throw new Error("Failed to delete todo");
+        return { id };
+      }
+
+      default:
+        throw new Error(`Unknown intent: ${intent}`);
+    }
+  } catch (error) {
+    console.error(`Error in todo action (${intent}):`, error);
+    return {
+      error: error instanceof Error ? error.message : "An error occurred",
+    };
   }
 }
 
@@ -79,63 +143,58 @@ interface LoaderData {
 export default function TodosPage() {
   const { todos: initialTodos } = useLoaderData<{ todos: Todo[] }>();
   const [todos, setTodos] = useState<Todo[]>(initialTodos);
-  const fetcher = useFetcher();
+  const actionData = useActionData<{
+    error?: string;
+    id?: string;
+    title?: string;
+    completed?: boolean;
+  }>();
+  const navigation = useNavigation();
+  const submit = useSubmit();
+  const formRef = useRef<HTMLFormElement>(null);
   const [newTodoTitle, setNewTodoTitle] = useState("");
   const [editingTodoId, setEditingTodoId] = useState<string | null>(null);
   const [editTodoTitle, setEditTodoTitle] = useState("");
   const editInputRef = useRef<HTMLInputElement>(null);
   const { addToast } = useToast();
 
-  const handleAddTodo = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!newTodoTitle.trim()) return;
-
-    try {
-      // Use absolute URL for API requests
-      const url = new URL("/api/todos", window.location.origin);
-      const response = await fetch(url.toString(), {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          title: newTodoTitle,
-          completed: false,
-        }),
-      });
-
-      if (!response.ok) throw new Error("Failed to create todo");
-
-      const newTodo = await response.json();
-      setTodos([...todos, newTodo]);
-      setNewTodoTitle("");
-    } catch (error) {
-      console.error("Error creating todo:", error);
+  // Handle action responses
+  useEffect(() => {
+    if (actionData?.error) {
       addToast({
         title: "Error",
-        description: "Failed to create todo",
+        description: actionData.error,
         duration: 3000,
       });
     }
+  }, [actionData, addToast]);
+
+  // Reset form after successful submission
+  useEffect(() => {
+    if (navigation.state === "idle" && formRef.current) {
+      formRef.current.reset();
+      setNewTodoTitle("");
+    }
+  }, [navigation.state]);
+
+  const handleAddTodo = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newTodoTitle.trim()) return;
+
+    const formData = new FormData();
+    formData.append("intent", "create");
+    formData.append("title", newTodoTitle);
+
+    submit(formData, { method: "post", action: "/todos" });
   };
 
-  const handleToggleComplete = async (id: string, completed: boolean) => {
-    try {
-      const url = new URL(`/api/todos/${id}`, window.location.origin);
-      const response = await fetch(url.toString(), {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ completed: !completed }),
-      });
+  const handleToggleComplete = (id: string, completed: boolean) => {
+    const formData = new FormData();
+    formData.append("intent", "update");
+    formData.append("id", id);
+    formData.append("completed", String(!completed));
 
-      if (!response.ok) throw new Error("Failed to update todo");
-
-      setTodos(
-        todos.map((todo) =>
-          todo.id === id ? { ...todo, completed: !completed } : todo
-        )
-      );
-    } catch (error) {
-      console.error("Error updating todo:", error);
-    }
+    submit(formData, { method: "post", action: "/todos" });
   };
 
   const handleEditTodo = (todo: Todo) => {
@@ -146,36 +205,22 @@ export default function TodosPage() {
     }, 0);
   };
 
-  const handleSaveEdit = async () => {
+  const handleSaveEdit = () => {
     if (!editingTodoId || !editTodoTitle.trim()) return;
 
-    try {
-      const url = new URL(
-        `/api/todos/${editingTodoId}`,
-        window.location.origin
-      );
-      const response = await fetch(url.toString(), {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ title: editTodoTitle }),
-      });
+    const formData = new FormData();
+    formData.append("intent", "update");
+    formData.append("id", editingTodoId);
+    formData.append("title", editTodoTitle);
 
-      if (!response.ok) throw new Error("Failed to update todo");
-
-      const updatedTodo = await response.json();
-      setTodos(
-        todos.map((todo) => (todo.id === editingTodoId ? updatedTodo : todo))
-      );
-      setEditingTodoId(null);
-      setEditTodoTitle("");
-    } catch (error) {
-      console.error("Error updating todo:", error);
-      addToast({
-        title: "Error",
-        description: "Failed to update todo",
-        duration: 3000,
-      });
-    }
+    submit(formData, {
+      method: "post",
+      action: "/todos",
+      onSuccess: () => {
+        setEditingTodoId(null);
+        setEditTodoTitle("");
+      },
+    });
   };
 
   const handleCancelEdit = () => {
@@ -185,55 +230,49 @@ export default function TodosPage() {
 
   const handleDeleteTodo = (id: string) => {
     const todoToDelete = todos.find((t) => t.id === id);
-    if (todoToDelete) {
-      // Mark todo as pending deletion for visual feedback
-      setTodos(
-        todos.map((todo) =>
-          todo.id === id ? { ...todo, pendingDeletion: true } : todo
-        )
-      );
+    if (!todoToDelete) return;
 
-      // Create a unique ID for this toast
-      const toastId = `todo-delete-${id}`;
+    // Mark todo as pending deletion for visual feedback
+    setTodos(
+      todos.map((todo) =>
+        todo.id === id ? { ...todo, pendingDeletion: true } : todo
+      )
+    );
 
-      // Add toast with onDismiss callback
-      addToast({
-        id: toastId,
-        title: "Todo deleted",
-        description: `"${todoToDelete.title}" is about to be removed`,
-        action: {
-          label: "Undo",
-          onClick: () => handleUndoDelete(id),
-        },
-        duration: 3000, // 3 seconds to undo
-        onDismiss: async () => {
-          console.log("onDismiss called for todo:", id);
-          try {
-            // Make API request to delete the todo
-            const url = new URL(`/api/todos/${id}`, window.location.origin);
-            const response = await fetch(url.toString(), {
-              method: "DELETE",
-              headers: { "Content-Type": "application/json" },
-            });
+    // Create a unique ID for this toast
+    const toastId = `todo-delete-${id}`;
 
-            if (!response.ok) throw new Error("Failed to delete todo");
+    // Add toast with onDismiss callback
+    addToast({
+      id: toastId,
+      title: "Todo deleted",
+      description: `"${todoToDelete.title}" is about to be removed`,
+      action: {
+        label: "Undo",
+        onClick: () => handleUndoDelete(id),
+      },
+      duration: 3000, // 3 seconds to undo
+      onDismiss: () => {
+        const formData = new FormData();
+        formData.append("intent", "delete");
+        formData.append("id", id);
 
-            // Remove the todo from local state after successful API call
-            setTodos((currentTodos) => {
-              console.log("Removing todo:", id, "from todos");
-              return currentTodos.filter((t) => t.id !== id);
-            });
-          } catch (error) {
-            console.error("Error deleting todo:", error);
+        submit(formData, {
+          method: "post",
+          action: "/todos",
+          onSuccess: () => {
+            setTodos((todos) => todos.filter((t) => t.id !== id));
+          },
+          onError: () => {
             addToast({
               title: "Error",
               description: "Failed to delete todo from server",
               duration: 3000,
             });
-          }
-        },
-      });
-    }
+          },
+        });
+      },
+    });
   };
 
   const { removeToastById } = useToast();
@@ -267,7 +306,13 @@ export default function TodosPage() {
         <h2 id="add-todo-heading" className={styles.visuallyHidden}>
           Add New Todo
         </h2>
-        <form onSubmit={handleAddTodo} className={styles.todoForm}>
+        <Form
+          method="post"
+          action="/todos"
+          onSubmit={handleAddTodo}
+          className={styles.todoForm}
+          ref={formRef}
+        >
           <fieldset className={styles.todoFormContent}>
             <legend className={styles.visuallyHidden}>
               New Todo Information
@@ -276,21 +321,29 @@ export default function TodosPage() {
               <label htmlFor="new-todo-input" className={styles.visuallyHidden}>
                 Todo title
               </label>
+              <input type="hidden" name="intent" value="create" />
               <TextField.Root
                 id="new-todo-input"
+                name="title"
                 value={newTodoTitle}
                 onChange={(e: ChangeEvent<HTMLInputElement>) =>
                   setNewTodoTitle(e.target.value)
                 }
                 placeholder="Add a new todo..."
                 size="3"
+                disabled={navigation.state === "submitting"}
               />
             </div>
-            <Button type="submit" size="3" variant="solid">
-              Add
+            <Button
+              type="submit"
+              size="3"
+              variant="solid"
+              disabled={navigation.state === "submitting"}
+            >
+              {navigation.state === "submitting" ? "Adding..." : "Add"}
             </Button>
           </fieldset>
-        </form>
+        </Form>
       </section>
 
       <section aria-labelledby="todo-list-heading">
