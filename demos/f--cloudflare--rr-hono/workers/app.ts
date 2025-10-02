@@ -37,7 +37,7 @@ const mockDataModules = import.meta.glob("../mock-data/*.json", {
 
 // Load mock data from files
 async function loadMockData(c: AppContext, filename: string): Promise<any> {
-  console.log("Environment variables:", c.env);
+  //console.log("Environment variables:", c.env);
 
   // Check if mock API is enabled
   if (c.env.MOCK_API !== true) {
@@ -59,16 +59,17 @@ async function loadMockData(c: AppContext, filename: string): Promise<any> {
     // Try to fetch from assets first (production)
     if (c.env.ASSETS) {
       const url = new URL(`/mock-data/${normalizedFilename}`, c.req.url);
-      const response = await c.env.ASSETS.fetch(
-        new Request(url.toString())
-      );
+      const response = await c.env.ASSETS.fetch(new Request(url.toString()));
       if (response.ok) {
         return await response.json();
       }
     }
 
     // Use preloaded modules in development
-    if (mockDataModules[filePath] && typeof mockDataModules[filePath] === 'string') {
+    if (
+      mockDataModules[filePath] &&
+      typeof mockDataModules[filePath] === "string"
+    ) {
       return JSON.parse(mockDataModules[filePath] as string);
     }
 
@@ -85,7 +86,7 @@ const todos = new Hono<{ Bindings: Env }>();
 // Get all TODOs
 todos.get("/", async (c) => {
   try {
-    console.log("Environment variables:", c.env);
+    //console.log("Environment variables:", c.env);
 
     console.log("KV Namespace Details:", {
       binding: "TODOS_KV",
@@ -226,7 +227,7 @@ const createFetchInternal =
   };
 
 // Handle all other routes with React Router
-app.get("*", (c: AppContext) => {
+app.all("*", (c: AppContext) => {
   const requestHandler = createRequestHandler(
     () => import("virtual:react-router/server-build"),
     import.meta.env.MODE

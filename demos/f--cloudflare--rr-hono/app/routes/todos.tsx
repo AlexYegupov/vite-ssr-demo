@@ -7,7 +7,12 @@ import {
   type KeyboardEvent,
 } from "react";
 import { Button, TextField, IconButton } from "@radix-ui/themes";
-import { Pencil1Icon, Cross2Icon, CheckIcon, TrashIcon } from "@radix-ui/react-icons";
+import {
+  Pencil1Icon,
+  Cross2Icon,
+  CheckIcon,
+  TrashIcon,
+} from "@radix-ui/react-icons";
 import * as Checkbox from "@radix-ui/react-checkbox";
 import { useToast } from "../context/toast-context";
 import styles from "./todos.module.css";
@@ -37,6 +42,7 @@ export async function loader({
   request: Request;
   context: any;
 }) {
+  console.log("loader");
   try {
     const url = new URL("/api/todos", request.url);
 
