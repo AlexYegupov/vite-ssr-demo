@@ -70,6 +70,28 @@ export async function action({
 }) {
   const formData = await request.formData();
   const intent = formData.get("intent");
+  
+  // Get the base URL for the API
+  const url = new URL(request.url);
+  const baseUrl = `${url.protocol}//${url.host}`;
+
+  // Create a fetch function that works in both server and client contexts
+  const fetchApi = async (path: string, options: RequestInit = {}) => {
+    if (context?.fetchInternal) {
+      // Use the internal fetch when available (server-side)
+      return context.fetchInternal(`/api${path}`, options);
+    }
+    
+    // Fallback to direct fetch (client-side)
+    const apiUrl = new URL(`/api${path}`, baseUrl).toString();
+    return fetch(apiUrl, {
+      ...options,
+      headers: {
+        'Content-Type': 'application/json',
+        ...options.headers,
+      },
+    });
+  };
 
   try {
     switch (intent) {
@@ -83,7 +105,7 @@ export async function action({
           createdAt: new Date().toISOString(),
         };
 
-        const response = await context.fetchInternal("/api/todos", {
+        const response = await fetchApi("/todos", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(newTodo),
@@ -104,23 +126,37 @@ export async function action({
         if (title !== null) updates.title = title;
         if (completed !== null) updates.completed = completed === "true";
 
-        console.log("action update", formData);
+        console.log("Update request data:", { id, updates });
 
-        const response = await context.fetchInternal(`/api/todos/${id}`, {
+const response = await fetchApi(`/todos/${id}`, {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(updates),
         });
 
-        if (!response.ok) throw new Error("Failed to update todo");
-        return await response.json();
+        console.log("Update response status:", response.status);
+        
+        if (!response.ok) {
+          const errorText = await response.text().catch(() => 'Failed to read error response');
+          console.error("Update failed with status:", response.status, errorText);
+          throw new Error(`Failed to update todo: ${response.status} ${response.statusText}`);
+        }
+        
+        try {
+          const result = await response.json();
+          console.log("Update successful, response:", result);
+          return result;
+        } catch (e) {
+          console.error("Failed to parse update response:", e);
+          throw new Error("Invalid response from server");
+        }
       }
 
       case "delete": {
         const id = formData.get("id")?.toString();
         if (!id) throw new Error("Todo ID is required");
 
-        const response = await context.fetchInternal(`/api/todos/${id}`, {
+const response = await fetchApi(`/todos/${id}`, {
           method: "DELETE",
         });
 
@@ -161,16 +197,29 @@ export default function TodosPage() {
   const editInputRef = useRef<HTMLInputElement>(null);
   const { addToast } = useToast();
 
-  // Handle action responses
+  // Handle action responses and errors
   useEffect(() => {
-    if (actionData?.error) {
-      addToast({
-        title: "Error",
-        description: actionData.error,
-        duration: 3000,
-      });
+    if (navigation.state === 'idle') {
+      if (actionData?.error) {
+        addToast({
+          title: "Error",
+          description: actionData.error,
+          duration: 3000,
+        });
+        // If there was an error and we have the original state, revert the optimistic update
+        if (initialTodos) {
+          setTodos(initialTodos);
+        }
+      } else if (actionData) {
+        // If the action was successful, update the todos from the server
+        setTodos(prevTodos => 
+          prevTodos.map(todo => 
+            todo.id === actionData.id ? { ...todo, ...actionData } : todo
+          )
+        );
+      }
     }
-  }, [actionData, addToast]);
+  }, [actionData, navigation.state, initialTodos, addToast]);
 
   // Reset form after successful submission
   useEffect(() => {
@@ -192,12 +241,25 @@ export default function TodosPage() {
   };
 
   const handleToggleComplete = (id: string, completed: boolean) => {
+    // Optimistically update the local state
+    const newCompleted = !completed;
+    setTodos(prevTodos =>
+      prevTodos.map(todo =>
+        todo.id === id ? { ...todo, completed: newCompleted } : todo
+      )
+    );
+
     const formData = new FormData();
     formData.append("intent", "update");
     formData.append("id", id);
-    formData.append("completed", String(!completed));
+    formData.append("completed", String(newCompleted));
 
-    submit(formData, { method: "post", action: "/todos" });
+    submit(formData, { 
+      method: "post", 
+      action: "/todos",
+      // Use navigation state to handle errors
+      replace: true
+    });
   };
 
   const handleEditTodo = (todo: Todo) => {

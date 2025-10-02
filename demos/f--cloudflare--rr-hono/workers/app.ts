@@ -218,13 +218,35 @@ const createFetchInternal =
     app: Hono<{ Bindings: Env }>,
     baseUrl: string,
     cf: IncomingRequestCfProperties,
-    env: Env
+    env: Env,
+    executionCtx?: ExecutionContext
   ) =>
-  async (path: string) => {
-    return await app.fetch(new Request(new URL(path, baseUrl)), {
-      ...env,
-      cf,
+  async (path: string, options: RequestInit = {}) => {
+    const url = new URL(path, baseUrl);
+    const request = new Request(url.toString(), {
+      ...options,
+      headers: {
+        'Content-Type': 'application/json',
+        ...options.headers,
+      },
     });
+    
+    try {
+      // Try to use the Hono app's fetch first
+      if (executionCtx) {
+        return await app.fetch(request, {
+          ...env,
+          cf,
+          executionCtx
+        });
+      }
+      
+      // Fallback to direct fetch if no execution context
+      return await fetch(request);
+    } catch (error) {
+      console.error('Error in fetchInternal:', error);
+      throw error;
+    }
   };
 
 // Handle all other routes with React Router
@@ -241,7 +263,8 @@ app.all("*", (c: AppContext) => {
       app,
       c.req.url,
       c.req.raw.cf as IncomingRequestCfProperties,
-      c.env
+      c.env,
+      c.executionCtx
     ),
   });
 });
