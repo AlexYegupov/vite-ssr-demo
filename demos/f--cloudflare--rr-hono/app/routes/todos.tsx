@@ -70,7 +70,7 @@ export async function action({
 }) {
   const formData = await request.formData();
   const intent = formData.get("intent");
-  
+
   // Get the base URL for the API
   const url = new URL(request.url);
   const baseUrl = `${url.protocol}//${url.host}`;
@@ -81,13 +81,13 @@ export async function action({
       // Use the internal fetch when available (server-side)
       return context.fetchInternal(`/api${path}`, options);
     }
-    
+
     // Fallback to direct fetch (client-side)
     const apiUrl = new URL(`/api${path}`, baseUrl).toString();
     return fetch(apiUrl, {
       ...options,
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
         ...options.headers,
       },
     });
@@ -128,20 +128,28 @@ export async function action({
 
         console.log("Update request data:", { id, updates });
 
-const response = await fetchApi(`/todos/${id}`, {
+        const response = await fetchApi(`/todos/${id}`, {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(updates),
         });
 
         console.log("Update response status:", response.status);
-        
+
         if (!response.ok) {
-          const errorText = await response.text().catch(() => 'Failed to read error response');
-          console.error("Update failed with status:", response.status, errorText);
-          throw new Error(`Failed to update todo: ${response.status} ${response.statusText}`);
+          const errorText = await response
+            .text()
+            .catch(() => "Failed to read error response");
+          console.error(
+            "Update failed with status:",
+            response.status,
+            errorText
+          );
+          throw new Error(
+            `Failed to update todo: ${response.status} ${response.statusText}`
+          );
         }
-        
+
         try {
           const result = await response.json();
           console.log("Update successful, response:", result);
@@ -156,7 +164,7 @@ const response = await fetchApi(`/todos/${id}`, {
         const id = formData.get("id")?.toString();
         if (!id) throw new Error("Todo ID is required");
 
-const response = await fetchApi(`/todos/${id}`, {
+        const response = await fetchApi(`/todos/${id}`, {
           method: "DELETE",
         });
 
@@ -199,7 +207,7 @@ export default function TodosPage() {
 
   // Handle action responses and errors
   useEffect(() => {
-    if (navigation.state === 'idle') {
+    if (navigation.state === "idle") {
       if (actionData?.error) {
         addToast({
           title: "Error",
@@ -212,8 +220,8 @@ export default function TodosPage() {
         }
       } else if (actionData) {
         // If the action was successful, update the todos from the server
-        setTodos(prevTodos => 
-          prevTodos.map(todo => 
+        setTodos((prevTodos) =>
+          prevTodos.map((todo) =>
             todo.id === actionData.id ? { ...todo, ...actionData } : todo
           )
         );
@@ -243,8 +251,8 @@ export default function TodosPage() {
   const handleToggleComplete = (id: string, completed: boolean) => {
     // Optimistically update the local state
     const newCompleted = !completed;
-    setTodos(prevTodos =>
-      prevTodos.map(todo =>
+    setTodos((prevTodos) =>
+      prevTodos.map((todo) =>
         todo.id === id ? { ...todo, completed: newCompleted } : todo
       )
     );
@@ -254,11 +262,11 @@ export default function TodosPage() {
     formData.append("id", id);
     formData.append("completed", String(newCompleted));
 
-    submit(formData, { 
-      method: "post", 
+    submit(formData, {
+      method: "post",
       action: "/todos",
       // Use navigation state to handle errors
-      replace: true
+      replace: true,
     });
   };
 
