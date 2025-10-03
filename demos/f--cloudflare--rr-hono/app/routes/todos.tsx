@@ -210,6 +210,7 @@ export default function TodosPage() {
   const editInputRef = useRef<HTMLInputElement>(null);
   const { addToast } = useToast();
 
+  console.log("ActionData", actionData);
   // Handle action responses and errors
   useEffect(() => {
     if (navigation.state === "idle") {
