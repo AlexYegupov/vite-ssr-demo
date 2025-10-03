@@ -210,7 +210,6 @@ export default function TodosPage() {
   const editInputRef = useRef<HTMLInputElement>(null);
   const { addToast } = useToast();
 
-  console.log("ActionData", actionData);
   // Handle action responses and errors
   useEffect(() => {
     if (navigation.state === "idle") {
@@ -224,7 +223,7 @@ export default function TodosPage() {
         if (initialTodos) {
           setTodos(initialTodos);
         }
-      } else if (actionData) {
+      } else if (actionData?.id) {
         // If the action was successful, update the todos from the server
         setTodos((prevTodos) =>
           prevTodos.map((todo) =>
@@ -284,21 +283,25 @@ export default function TodosPage() {
     }, 0);
   };
 
-  const handleSaveEdit = () => {
+  const handleSaveEdit = (e?: React.FormEvent) => {
+    e?.preventDefault();
     if (!editingTodoId || !editTodoTitle.trim()) return;
+    
+    // Only submit if the form was actually submitted (not just input change)
+    if (e && e.type !== 'submit') return;
 
     const formData = new FormData();
     formData.append("intent", "update");
     formData.append("id", editingTodoId);
     formData.append("title", editTodoTitle);
 
+    // Clear editing state
+    setEditingTodoId(null);
+    setEditTodoTitle("");
+
     submit(formData, {
       method: "post",
-      action: "/todos",
-      onSuccess: () => {
-        setEditingTodoId(null);
-        setEditTodoTitle("");
-      },
+      action: "/todos"
     });
   };
 
