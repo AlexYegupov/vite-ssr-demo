@@ -50,6 +50,7 @@ export async function loader({
   request: Request;
   context: any;
 }) {
+  console.log("loader (todos)");
   try {
     const response = await context.fetchInternal("/api/todos");
     if (!response.ok) throw new Error("Failed to load todos");
