@@ -71,6 +71,8 @@ export async function action({
   const formData = await request.formData();
   const intent = formData.get("intent");
 
+  console.log("action", request.url, formData);
+
   // Get the base URL for the API
   const url = new URL(request.url);
   const baseUrl = `${url.protocol}//${url.host}`;
@@ -78,10 +80,12 @@ export async function action({
   // Create a fetch function that works in both server and client contexts
   const fetchApi = async (path: string, options: RequestInit = {}) => {
     if (context?.fetchInternal) {
+      console.log("fetchApi:fetchInternal");
       // Use the internal fetch when available (server-side)
       return context.fetchInternal(`/api${path}`, options);
     }
 
+    console.log("fetchApi:fetch");
     // Fallback to direct fetch (client-side)
     const apiUrl = new URL(`/api${path}`, baseUrl).toString();
     return fetch(apiUrl, {
