@@ -13,6 +13,7 @@ import {
   useEffect,
   type ChangeEvent,
   type KeyboardEvent,
+  useCallback,
 } from "react";
 import { Button, TextField, IconButton } from "@radix-ui/themes";
 import {
@@ -43,6 +44,15 @@ interface Todo {
   deleteTimer?: number;
 }
 
+function getPreferredLocale(acceptLanguage: string | null): string {
+  if (!acceptLanguage) return "en-US";
+  // Get the first language from the Accept-Language header
+  const preferredLang = acceptLanguage.split(",")[0].trim().split("-");
+  const language = preferredLang[0];
+  const region = preferredLang[1] || language.toUpperCase();
+  return `${language}-${region}`;
+}
+
 export async function loader({
   request,
   context,
@@ -55,7 +65,12 @@ export async function loader({
     const response = await context.fetchInternal("/api/todos");
     if (!response.ok) throw new Error("Failed to load todos");
     const todos = await response.json();
-    return { todos };
+
+    // Get the preferred locale from the Accept-Language header
+    const acceptLanguage = request.headers.get("accept-language");
+    const locale = getPreferredLocale(acceptLanguage);
+
+    return { todos, locale };
   } catch (error) {
     console.error("Error in todos loader:", error);
     throw error;
@@ -190,10 +205,28 @@ export async function action({
 
 interface LoaderData {
   todos: Todo[];
+  locale: string;
 }
 
 export default function TodosPage() {
-  const { todos: initialTodos } = useLoaderData<{ todos: Todo[] }>();
+  const { todos: initialTodos, locale } = useLoaderData<{
+    todos: Todo[];
+    locale: string;
+  }>();
+
+  const dateFormatter = new Intl.DateTimeFormat(locale);
+
+  const formatDateTime = useCallback(
+    (date: Date | undefined): string => {
+      try {
+        return dateFormatter.format(date);
+      } catch (error) {
+        return "";
+      }
+    },
+    [dateFormatter]
+  );
+
   const [todos, setTodos] = useState<Todo[]>(initialTodos);
   const actionData = useActionData<{
     error?: string;
@@ -286,9 +319,9 @@ export default function TodosPage() {
   const handleSaveEdit = (e?: React.FormEvent) => {
     e?.preventDefault();
     if (!editingTodoId || !editTodoTitle.trim()) return;
-    
+
     // Only submit if the form was actually submitted (not just input change)
-    if (e && e.type !== 'submit') return;
+    if (e && e.type !== "submit") return;
 
     const formData = new FormData();
     formData.append("intent", "update");
@@ -301,7 +334,7 @@ export default function TodosPage() {
 
     submit(formData, {
       method: "post",
-      action: "/todos"
+      action: "/todos",
     });
   };
 
@@ -477,14 +510,14 @@ export default function TodosPage() {
                   <span>
                     Created:{" "}
                     <time dateTime={todo.createdAt}>
-                      {new Date(todo.createdAt).toLocaleString()}
+                      {formatDateTime(todo.createdAt)}
                     </time>
                   </span>
                   {todo.updatedAt && (
                     <span>
                       Updated:{" "}
                       <time dateTime={todo.updatedAt}>
-                        {new Date(todo.updatedAt).toLocaleString()}
+                        {formatDateTime(todo.updatedAt)}
                       </time>
                     </span>
                   )}
