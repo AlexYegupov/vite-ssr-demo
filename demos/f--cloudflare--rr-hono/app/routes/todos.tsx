@@ -146,15 +146,11 @@ export async function action({
         if (title !== null) updates.title = title;
         if (completed !== null) updates.completed = completed === "true";
 
-        console.log("Update request data:", { id, updates });
-
         const response = await fetchApi(`/todos/${id}`, {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(updates),
         });
-
-        console.log("Update response status:", response.status);
 
         if (!response.ok) {
           const errorText = await response
@@ -172,7 +168,6 @@ export async function action({
 
         try {
           const result = await response.json();
-          console.log("Update successful, response:", result);
           return result;
         } catch (e) {
           console.error("Failed to parse update response:", e);
@@ -252,12 +247,17 @@ export default function TodosPage() {
           description: actionData.error,
           duration: 3000,
         });
-        // If there was an error and we have the original state, revert the optimistic update
-        if (initialTodos) {
-          setTodos(initialTodos);
+        // If there was an error, revert optimistic updates
+        // The server response should contain the original state for reversion
+        if (actionData?.originalTodo) {
+          setTodos((prevTodos) =>
+            prevTodos.map((todo) =>
+              todo.id === actionData.id ? actionData.originalTodo : todo
+            )
+          );
         }
-      } else if (actionData?.id) {
-        // If the action was successful, update the todos from the server
+      } else if (actionData?.id && actionData?.title) {
+        // Only update if the server response differs from our optimistic update
         setTodos((prevTodos) =>
           prevTodos.map((todo) =>
             todo.id === actionData.id ? { ...todo, ...actionData } : todo
@@ -265,7 +265,7 @@ export default function TodosPage() {
         );
       }
     }
-  }, [actionData, navigation.state, initialTodos, addToast]);
+  }, [actionData, navigation.state, addToast]);
 
   // Reset form after successful submission
   useEffect(() => {
@@ -323,10 +323,24 @@ export default function TodosPage() {
     // Only submit if the form was actually submitted (not just input change)
     if (e && e.type !== "submit") return;
 
+    // Optimistically update the local state before sending to server
+    const updatedTitle = editTodoTitle.trim();
+    setTodos((prevTodos) =>
+      prevTodos.map((todo) =>
+        todo.id === editingTodoId
+          ? {
+              ...todo,
+              title: updatedTitle,
+              updatedAt: new Date().toISOString(),
+            }
+          : todo
+      )
+    );
+
     const formData = new FormData();
     formData.append("intent", "update");
     formData.append("id", editingTodoId);
-    formData.append("title", editTodoTitle);
+    formData.append("title", updatedTitle);
 
     // Clear editing state
     setEditingTodoId(null);
