@@ -41,6 +41,7 @@ interface Todo {
   updatedAt?: string;
   pendingDelete?: boolean;
   pendingDeletion?: boolean;
+  pendingUpdate?: boolean;
   deleteTimer?: number;
 }
 
@@ -237,6 +238,7 @@ export default function TodosPage() {
   const [editTodoTitle, setEditTodoTitle] = useState("");
   const editInputRef = useRef<HTMLInputElement>(null);
   const { addToast } = useToast();
+  const [pendingUpdates, setPendingUpdates] = useState<Set<string>>(new Set());
 
   // Handle action responses and errors
   useEffect(() => {
@@ -247,22 +249,21 @@ export default function TodosPage() {
           description: actionData.error,
           duration: 3000,
         });
-        // If there was an error, revert optimistic updates
-        // The server response should contain the original state for reversion
-        if (actionData?.originalTodo) {
-          setTodos((prevTodos) =>
-            prevTodos.map((todo) =>
-              todo.id === actionData.id ? actionData.originalTodo : todo
-            )
-          );
-        }
-      } else if (actionData?.id && actionData?.title) {
-        // Only update if the server response differs from our optimistic update
+      } else if (actionData?.id) {
+        // Update the todo with all returned data from the server
         setTodos((prevTodos) =>
           prevTodos.map((todo) =>
             todo.id === actionData.id ? { ...todo, ...actionData } : todo
           )
         );
+      }
+      // Clear pending update state
+      if (actionData?.id) {
+        setPendingUpdates((prev) => {
+          const newSet = new Set(prev);
+          newSet.delete(actionData.id);
+          return newSet;
+        });
       }
     }
   }, [actionData, navigation.state, addToast]);
@@ -287,13 +288,10 @@ export default function TodosPage() {
   };
 
   const handleToggleComplete = (id: string, completed: boolean) => {
-    // Optimistically update the local state
     const newCompleted = !completed;
-    setTodos((prevTodos) =>
-      prevTodos.map((todo) =>
-        todo.id === id ? { ...todo, completed: newCompleted } : todo
-      )
-    );
+    
+    // Mark todo as pending update
+    setPendingUpdates(prev => new Set(prev).add(id));
 
     const formData = new FormData();
     formData.append("intent", "update");
@@ -303,7 +301,6 @@ export default function TodosPage() {
     submit(formData, {
       method: "post",
       action: "/todos",
-      // Use navigation state to handle errors
       replace: true,
     });
   };
@@ -320,22 +317,12 @@ export default function TodosPage() {
     e?.preventDefault();
     if (!editingTodoId || !editTodoTitle.trim()) return;
 
-    // Only submit if the form was actually submitted (not just input change)
     if (e && e.type !== "submit") return;
 
-    // Optimistically update the local state before sending to server
     const updatedTitle = editTodoTitle.trim();
-    setTodos((prevTodos) =>
-      prevTodos.map((todo) =>
-        todo.id === editingTodoId
-          ? {
-              ...todo,
-              title: updatedTitle,
-              updatedAt: new Date().toISOString(),
-            }
-          : todo
-      )
-    );
+    
+    // Mark todo as pending update
+    setPendingUpdates((prev) => new Set(prev).add(editingTodoId));
 
     const formData = new FormData();
     formData.append("intent", "update");
@@ -485,7 +472,7 @@ export default function TodosPage() {
               key={todo.id}
               className={`${styles.todoItem} ${
                 todo.completed ? styles.completed : ""
-              }`}
+              } ${pendingUpdates.has(todo.id) ? styles.pendingUpdate : ""}`}
               data-pending-deletion={todo.pendingDeletion || false}
             >
               <article className={styles.todoContent}>

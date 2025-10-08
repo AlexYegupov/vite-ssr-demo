@@ -260,6 +260,39 @@ li.pendingDelete {
   pointer-events: none;
 }
 
+.pendingUpdate {
+  opacity: 0.7;
+  pointer-events: none;
+}
+
+.pendingUpdate::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: var(--color-overlay-light);
+  z-index: 1;
+}
+
+.pendingUpdate .todoText {
+  position: relative;
+}
+
+.pendingUpdate .todoText::after {
+  content: "Updating...";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: var(--color-background);
+  padding: var(--space-1) var(--space-2);
+  border-radius: var(--radius-2);
+  font-size: var(--font-size-1);
+  color: var(--color-text);
+}
+
 @keyframes pulse {
   from {
     opacity: 0.8;
