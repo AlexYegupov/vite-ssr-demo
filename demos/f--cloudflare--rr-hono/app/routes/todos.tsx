@@ -238,7 +238,7 @@ export default function TodosPage() {
   const [editTodoTitle, setEditTodoTitle] = useState("");
   const editInputRef = useRef<HTMLInputElement>(null);
   const { addToast } = useToast();
-  const [pendingUpdates, setPendingUpdates] = useState<Set<string>>(new Set());
+  const [updatingTodoId, setUpdatingTodoId] = useState<string | null>(null);
 
   // Handle action responses and errors
   useEffect(() => {
@@ -257,14 +257,7 @@ export default function TodosPage() {
           )
         );
       }
-      // Clear pending update state
-      if (actionData?.id) {
-        setPendingUpdates((prev) => {
-          const newSet = new Set(prev);
-          newSet.delete(actionData.id);
-          return newSet;
-        });
-      }
+      // Clear request in progress state
     }
   }, [actionData, navigation.state, addToast]);
 
@@ -278,20 +271,23 @@ export default function TodosPage() {
 
   const handleAddTodo = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!newTodoTitle.trim()) return;
+    if (!newTodoTitle.trim() || updatingTodoId) return;
 
     const formData = new FormData();
     formData.append("intent", "create");
     formData.append("title", newTodoTitle);
 
-    submit(formData, { method: "post", action: "/todos" });
+    submit(formData, { 
+      method: "post", 
+      action: "/todos",
+    });
   };
 
   const handleToggleComplete = (id: string, completed: boolean) => {
-    const newCompleted = !completed;
+    if (updatingTodoId) return;
     
-    // Mark todo as pending update
-    setPendingUpdates(prev => new Set(prev).add(id));
+    setUpdatingTodoId(id);
+    const newCompleted = !completed;
 
     const formData = new FormData();
     formData.append("intent", "update");
@@ -302,6 +298,8 @@ export default function TodosPage() {
       method: "post",
       action: "/todos",
       replace: true,
+    }).finally(() => {
+      setUpdatingTodoId(null);
     });
   };
 
@@ -315,14 +313,12 @@ export default function TodosPage() {
 
   const handleSaveEdit = (e?: React.FormEvent) => {
     e?.preventDefault();
-    if (!editingTodoId || !editTodoTitle.trim()) return;
+    if (!editingTodoId || !editTodoTitle.trim() || updatingTodoId) return;
 
     if (e && e.type !== "submit") return;
 
+    setUpdatingTodoId(editingTodoId);
     const updatedTitle = editTodoTitle.trim();
-    
-    // Mark todo as pending update
-    setPendingUpdates((prev) => new Set(prev).add(editingTodoId));
 
     const formData = new FormData();
     formData.append("intent", "update");
@@ -336,6 +332,8 @@ export default function TodosPage() {
     submit(formData, {
       method: "post",
       action: "/todos",
+    }).finally(() => {
+      setUpdatingTodoId(null);
     });
   };
 
@@ -345,6 +343,7 @@ export default function TodosPage() {
   };
 
   const handleDeleteTodo = (id: string) => {
+    if (updatingTodoId) return;
     const todoToDelete = todos.find((t) => t.id === id);
     if (!todoToDelete) return;
 
@@ -356,37 +355,39 @@ export default function TodosPage() {
     );
 
     // Create a unique ID for this toast
-    const toastId = `todo-delete-${id}`;
+    const toastId = `delete-${id}-${Date.now()}`;
 
-    // Add toast with onDismiss callback
+    // Show toast with undo action
     addToast({
       id: toastId,
-      title: "Todo deleted",
-      description: `"${todoToDelete.title}" is about to be removed`,
+      title: "Todo Deleted",
+      description: "Todo has been deleted. Click to undo.",
+      duration: 5000,
+      onDismiss: () => {
+        // If toast is dismissed without clicking undo, actually delete the todo
+        if (todos.some((t) => t.id === id && t.pendingDeletion)) {
+          setUpdatingTodoId(id);
+          const formData = new FormData();
+          formData.append("intent", "delete");
+          formData.append("id", id);
+          submit(formData, { 
+            method: "post", 
+            action: "/todos" 
+          }).finally(() => {
+            setUpdatingTodoId(null);
+          });
+        }
+      },
       action: {
         label: "Undo",
-        onClick: () => handleUndoDelete(id),
-      },
-      duration: 3000, // 3 seconds to undo
-      onDismiss: () => {
-        const formData = new FormData();
-        formData.append("intent", "delete");
-        formData.append("id", id);
-
-        submit(formData, {
-          method: "post",
-          action: "/todos",
-          onSuccess: () => {
-            setTodos((todos) => todos.filter((t) => t.id !== id));
-          },
-          onError: () => {
-            addToast({
-              title: "Error",
-              description: "Failed to delete todo from server",
-              duration: 3000,
-            });
-          },
-        });
+        onClick: () => {
+          // Remove pending deletion state if undo is clicked
+          setTodos((prev) =>
+            prev.map((todo) =>
+              todo.id === id ? { ...todo, pendingDeletion: false } : todo
+            )
+          );
+        },
       },
     });
   };
@@ -472,7 +473,7 @@ export default function TodosPage() {
               key={todo.id}
               className={`${styles.todoItem} ${
                 todo.completed ? styles.completed : ""
-              } ${pendingUpdates.has(todo.id) ? styles.pendingUpdate : ""}`}
+              } ${updatingTodoId === todo.id ? styles.updating : ""}`}
               data-pending-deletion={todo.pendingDeletion || false}
             >
               <article className={styles.todoContent}>
@@ -483,6 +484,7 @@ export default function TodosPage() {
                   }
                   className={styles.todoCheckbox}
                   id={`todo-${todo.id}`}
+                  disabled={!!updatingTodoId}
                 >
                   <Checkbox.Indicator className={styles.checkboxIndicator}>
                     ✓
@@ -505,7 +507,9 @@ export default function TodosPage() {
                     />
                   </div>
                 ) : (
-                  <span className={styles.todoText}>{todo.title}</span>
+                  <span className={styles.todoText}>
+                    {todo.title}
+                  </span>
                 )}
                 <footer className={styles.todoDates}>
                   <span>
@@ -554,26 +558,32 @@ export default function TodosPage() {
                   <>
                     <IconButton
                       onClick={(e: React.MouseEvent) => {
-                        e.stopPropagation();
-                        handleEditTodo(todo);
+                        if (!updatingTodoId) {
+                          e.stopPropagation();
+                          handleEditTodo(todo);
+                        }
                       }}
                       color="blue"
                       variant="ghost"
                       size="3"
                       className={styles.editActionButton}
                       aria-label="Edit todo"
+                      disabled={!!updatingTodoId}
                     >
                       <Pencil1Icon width="24" height="24" />
                     </IconButton>
                     <IconButton
                       onClick={(e: React.MouseEvent) => {
-                        e.stopPropagation();
-                        handleDeleteTodo(todo.id);
+                        if (!updatingTodoId) {
+                          e.stopPropagation();
+                          handleDeleteTodo(todo.id);
+                        }
                       }}
                       color="red"
                       variant="ghost"
                       size="3"
                       aria-label="Delete todo"
+                      disabled={!!updatingTodoId}
                     >
                       <TrashIcon width="24" height="24" />
                     </IconButton>
