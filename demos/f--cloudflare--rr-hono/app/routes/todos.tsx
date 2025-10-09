@@ -242,12 +242,7 @@ export default function TodosPage() {
   const { addToast } = useToast();
   const [updatingTodoId, setUpdatingTodoId] = useState<string | null>(null);
   const [deletingTodoId, setDeletingTodoId] = useState<string | null>(null);
-  const deletedTodoIdRef = useRef<string | null>(null);
-
-  // keep ref updated with latest value
-  useEffect(() => {
-    deletedTodoIdRef.current = deletingTodoId;
-  }, [deletingTodoId]);
+  const deletingTodoIdRef = useRef<string | null>(null);
 
   // Handle action responses and errors
   useEffect(() => {
@@ -259,11 +254,12 @@ export default function TodosPage() {
           duration: 3000,
         });
       } else if (actionData?.intent === "delete") {
-        console.log("DD");
+        console.log("DD", actionData);
         setTodos((prevTodos) =>
           prevTodos.filter((todo) => todo.id !== actionData.data.id)
         );
         setDeletingTodoId(null);
+        deletingTodoIdRef.current = null;
       } else if (actionData?.intent === "update") {
         console.log("uu");
         setTodos((prevTodos) =>
@@ -276,10 +272,12 @@ export default function TodosPage() {
         setUpdatingTodoId(null);
       } else if (actionData?.intent === "create") {
         console.log("create response", actionData.data);
-        setTodos((prevTodos) => [...prevTodos, ...actionData.data]);
+        setTodos((prevTodos) => [...prevTodos, actionData.data]);
       }
     }
   }, [actionData, navigation.state, addToast]);
+
+  
 
   // Reset form after successful submission
   useEffect(() => {
@@ -369,6 +367,10 @@ export default function TodosPage() {
   };
 
   const handleDeleteTodo = (id: string) => {
+    if (deletingTodoId) return;
+
+    deletingTodoIdRef.current = id;
+
     // Set the todo being deleted for visual feedback
     console.log("handleDeleteTodo", id);
     setDeletingTodoId(id);
@@ -390,12 +392,12 @@ export default function TodosPage() {
         },
       },
       onDismiss: async () => {
-        console.log("Toast dismissed for todo:", id, deletedTodoIdRef.current);
+        console.log("Toast dismissed for todo:", id, deletingTodoIdRef.current);
 
-        if (deletedTodoIdRef.current) {
+        if (deletingTodoIdRef.current === id) {
           const formData = new FormData();
           formData.append("intent", "delete");
-          formData.append("id", deletedTodoIdRef.current);
+          formData.append("id", id);
 
           await submit(formData, {
             method: "post",
@@ -409,7 +411,7 @@ export default function TodosPage() {
   const { removeToastById } = useToast();
 
   const handleUndoDelete = (id: string) => {
-    deletedTodoIdRef.current = null;
+    deletingTodoIdRef.current = null;
     console.log("Undo delete for todo:", id);
     // Clear the deleting state
     setDeletingTodoId(null);
