@@ -270,6 +270,7 @@ export default function TodosPage() {
           )
         );
         setUpdatingTodoId(null);
+        setEditingTodoId(null);
       } else if (actionData?.intent === "create") {
         console.log("create response", actionData.data);
         setTodos((prevTodos) => [...prevTodos, actionData.data]);
@@ -348,10 +349,6 @@ export default function TodosPage() {
     formData.append("intent", "update");
     formData.append("id", editingTodoId);
     formData.append("title", updatedTitle);
-
-    // Clear editing state
-    setEditingTodoId(null);
-    setEditTodoTitle("");
 
     submit(formData, {
       method: "post",
