@@ -277,17 +277,12 @@ h1 {
   justify-content: center;
 }
 
-li.pendingDelete {
-  background-color: unset;
-  transition: background-color 5s ease-out;
-}
-
 .todoItem {
   position: relative;
   transition: opacity 0.2s ease, transform 0.2s ease;
 }
 
-.todoItem[data-pending-deletion="true"] {
+.pendingDelete {
   opacity: 0.5;
   transform: translateX(-10px);
   pointer-events: none;

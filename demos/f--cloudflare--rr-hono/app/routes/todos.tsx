@@ -133,7 +133,7 @@ export async function action({
         });
 
         if (!response.ok) throw new Error("Failed to create todo");
-        return await response.json();
+        return { intent: "create", data: await response.json() };
       }
 
       case "update": {
@@ -169,7 +169,7 @@ export async function action({
 
         try {
           const result = await response.json();
-          return result;
+          return { intent: "update", data: result };
         } catch (e) {
           console.error("Failed to parse update response:", e);
           throw new Error("Invalid response from server");
@@ -177,6 +177,7 @@ export async function action({
       }
 
       case "delete": {
+        console.log("Deleting todo", formData);
         const id = formData.get("id")?.toString();
         if (!id) throw new Error("Todo ID is required");
 
@@ -185,7 +186,7 @@ export async function action({
         });
 
         if (!response.ok) throw new Error("Failed to delete todo");
-        return { id };
+        return { intent: "delete", data: { id } };
       }
 
       default:
@@ -194,10 +195,19 @@ export async function action({
   } catch (error) {
     console.error(`Error in todo action (${intent}):`, error);
     return {
-      error: error instanceof Error ? error.message : "An error occurred",
+      intent: "error",
+      data: {
+        error: error instanceof Error ? error.message : "An error occurred",
+      },
     };
   }
 }
+
+type ActionData =
+  | { intent: "create"; data: Todo }
+  | { intent: "update"; data: Todo }
+  | { intent: "delete"; data: { id: string } }
+  | { intent: "error"; data: { error: string } };
 
 interface LoaderData {
   todos: Todo[];
@@ -205,10 +215,7 @@ interface LoaderData {
 }
 
 export default function TodosPage() {
-  const { todos: initialTodos, locale } = useLoaderData<{
-    todos: Todo[];
-    locale: string;
-  }>();
+  const { todos: initialTodos, locale } = useLoaderData<LoaderData>();
 
   const dateFormatter = new Intl.DateTimeFormat(locale);
 
@@ -224,12 +231,7 @@ export default function TodosPage() {
   );
 
   const [todos, setTodos] = useState<Todo[]>(initialTodos);
-  const actionData = useActionData<{
-    error?: string;
-    id?: string;
-    title?: string;
-    completed?: boolean;
-  }>();
+  const actionData = useActionData<ActionData>();
   const navigation = useNavigation();
   const submit = useSubmit();
   const formRef = useRef<HTMLFormElement>(null);
@@ -239,25 +241,43 @@ export default function TodosPage() {
   const editInputRef = useRef<HTMLInputElement>(null);
   const { addToast } = useToast();
   const [updatingTodoId, setUpdatingTodoId] = useState<string | null>(null);
+  const [deletingTodoId, setDeletingTodoId] = useState<string | null>(null);
+  const deletedTodoIdRef = useRef<string | null>(null);
+
+  // keep ref updated with latest value
+  useEffect(() => {
+    deletedTodoIdRef.current = deletingTodoId;
+  }, [deletingTodoId]);
 
   // Handle action responses and errors
   useEffect(() => {
     if (navigation.state === "idle") {
-      if (actionData?.error) {
+      if (actionData?.intent === "error") {
         addToast({
           title: "Error",
-          description: actionData.error,
+          description: actionData.data.error,
           duration: 3000,
         });
-      } else if (actionData?.id) {
-        // Update the todo with all returned data from the server
+      } else if (actionData?.intent === "delete") {
+        console.log("DD");
+        setTodos((prevTodos) =>
+          prevTodos.filter((todo) => todo.id !== actionData.data.id)
+        );
+        setDeletingTodoId(null);
+      } else if (actionData?.intent === "update") {
+        console.log("uu");
         setTodos((prevTodos) =>
           prevTodos.map((todo) =>
-            todo.id === actionData.id ? { ...todo, ...actionData } : todo
+            todo.id === actionData.data.id
+              ? { ...todo, ...actionData.data }
+              : todo
           )
         );
+        setUpdatingTodoId(null);
+      } else if (actionData?.intent === "create") {
+        console.log("create response", actionData.data);
+        setTodos((prevTodos) => [...prevTodos, ...actionData.data]);
       }
-      // Clear request in progress state
     }
   }, [actionData, navigation.state, addToast]);
 
@@ -271,21 +291,31 @@ export default function TodosPage() {
 
   const handleAddTodo = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!newTodoTitle.trim() || updatingTodoId) return;
+    if (!newTodoTitle.trim() || navigation.state === "submitting") return;
+
+    const newTodo = {
+      title: newTodoTitle.trim(),
+      completed: false,
+      createdAt: new Date().toISOString(),
+    };
+
+    // Optimistically add the todo
+    setNewTodoTitle("");
 
     const formData = new FormData();
     formData.append("intent", "create");
-    formData.append("title", newTodoTitle);
+    formData.append("title", newTodo.title);
 
-    submit(formData, { 
-      method: "post", 
+    submit(formData, {
+      method: "post",
       action: "/todos",
+      replace: true,
     });
   };
 
   const handleToggleComplete = (id: string, completed: boolean) => {
     if (updatingTodoId) return;
-    
+
     setUpdatingTodoId(id);
     const newCompleted = !completed;
 
@@ -298,8 +328,6 @@ export default function TodosPage() {
       method: "post",
       action: "/todos",
       replace: true,
-    }).finally(() => {
-      setUpdatingTodoId(null);
     });
   };
 
@@ -332,8 +360,6 @@ export default function TodosPage() {
     submit(formData, {
       method: "post",
       action: "/todos",
-    }).finally(() => {
-      setUpdatingTodoId(null);
     });
   };
 
@@ -343,51 +369,39 @@ export default function TodosPage() {
   };
 
   const handleDeleteTodo = (id: string) => {
-    if (updatingTodoId) return;
-    const todoToDelete = todos.find((t) => t.id === id);
-    if (!todoToDelete) return;
-
-    // Mark todo as pending deletion for visual feedback
-    setTodos(
-      todos.map((todo) =>
-        todo.id === id ? { ...todo, pendingDeletion: true } : todo
-      )
-    );
+    // Set the todo being deleted for visual feedback
+    console.log("handleDeleteTodo", id);
+    setDeletingTodoId(id);
 
     // Create a unique ID for this toast
-    const toastId = `delete-${id}-${Date.now()}`;
+    const toastId = `todo-delete-${id}`;
 
     // Show toast with undo action
     addToast({
       id: toastId,
       title: "Todo Deleted",
       description: "Todo has been deleted. Click to undo.",
-      duration: 5000,
-      onDismiss: () => {
-        // If toast is dismissed without clicking undo, actually delete the todo
-        if (todos.some((t) => t.id === id && t.pendingDeletion)) {
-          setUpdatingTodoId(id);
-          const formData = new FormData();
-          formData.append("intent", "delete");
-          formData.append("id", id);
-          submit(formData, { 
-            method: "post", 
-            action: "/todos" 
-          }).finally(() => {
-            setUpdatingTodoId(null);
-          });
-        }
-      },
+      duration: 1000,
       action: {
         label: "Undo",
         onClick: () => {
-          // Remove pending deletion state if undo is clicked
-          setTodos((prev) =>
-            prev.map((todo) =>
-              todo.id === id ? { ...todo, pendingDeletion: false } : todo
-            )
-          );
+          handleUndoDelete(id);
+          // The toast will be removed by the handleUndoDelete function
         },
+      },
+      onDismiss: async () => {
+        console.log("Toast dismissed for todo:", id, deletedTodoIdRef.current);
+
+        if (deletedTodoIdRef.current) {
+          const formData = new FormData();
+          formData.append("intent", "delete");
+          formData.append("id", deletedTodoIdRef.current);
+
+          await submit(formData, {
+            method: "post",
+            action: "/todos",
+          });
+        }
       },
     });
   };
@@ -395,15 +409,10 @@ export default function TodosPage() {
   const { removeToastById } = useToast();
 
   const handleUndoDelete = (id: string) => {
+    deletedTodoIdRef.current = null;
     console.log("Undo delete for todo:", id);
-    // Clear the pendingDeletion flag to restore the todo
-    setTodos((prevTodos) => {
-      const updated = prevTodos.map((todo) =>
-        todo.id === id ? { ...todo, pendingDeletion: false } : todo
-      );
-      console.log("Updated todos after undo:", updated);
-      return updated;
-    });
+    // Clear the deleting state
+    setDeletingTodoId(null);
 
     // Find and remove the toast for this todo
     const toastId = `todo-delete-${id}`;
@@ -472,9 +481,10 @@ export default function TodosPage() {
             <li
               key={todo.id}
               className={`${styles.todoItem} ${
-                todo.completed ? styles.completed : ""
-              } ${updatingTodoId === todo.id ? styles.updating : ""}`}
-              data-pending-deletion={todo.pendingDeletion || false}
+                deletingTodoId === todo.id ? styles.pendingDelete : ""
+              } ${todo.completed ? styles.completed : ""} ${
+                updatingTodoId === todo.id ? styles.updating : ""
+              }`}
             >
               <article className={styles.todoContent}>
                 <Checkbox.Root
@@ -507,9 +517,7 @@ export default function TodosPage() {
                     />
                   </div>
                 ) : (
-                  <span className={styles.todoText}>
-                    {todo.title}
-                  </span>
+                  <span className={styles.todoText}>{todo.title}</span>
                 )}
                 <footer className={styles.todoDates}>
                   <span>
