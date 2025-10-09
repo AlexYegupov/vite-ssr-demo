@@ -254,7 +254,7 @@ export default function TodosPage() {
           duration: 3000,
         });
       } else if (actionData?.intent === "delete") {
-        console.log("DD", actionData);
+        console.log("DD", actionData, navigation.state);
         setTodos((prevTodos) =>
           prevTodos.filter((todo) => todo.id !== actionData.data.id)
         );
@@ -275,9 +275,7 @@ export default function TodosPage() {
         setTodos((prevTodos) => [...prevTodos, actionData.data]);
       }
     }
-  }, [actionData, navigation.state, addToast]);
-
-  
+  }, [actionData, navigation.state]);
 
   // Reset form after successful submission
   useEffect(() => {
