@@ -14,6 +14,7 @@ import {
   type ChangeEvent,
   type KeyboardEvent,
   useCallback,
+  useMemo,
 } from "react";
 import { Button, TextField, IconButton } from "@radix-ui/themes";
 import {
@@ -217,13 +218,23 @@ interface LoaderData {
 export default function TodosPage() {
   const { todos: initialTodos, locale } = useLoaderData<LoaderData>();
 
-  const dateFormatter = new Intl.DateTimeFormat(locale);
+  const dateFormatter = useMemo(
+    () =>
+      new Intl.DateTimeFormat(locale, {
+        dateStyle: "short",
+        timeStyle: "short",
+      }),
+    [locale]
+  );
+  console.log(locale);
 
   const formatDateTime = useCallback(
-    (date: Date | undefined): string => {
+    (date: Date | string): string => {
       try {
-        return dateFormatter.format(date);
+        const dateObj = new Date(date);
+        return dateFormatter.format(dateObj);
       } catch (error) {
+        console.error("Error formatting date:", error);
         return "";
       }
     },
