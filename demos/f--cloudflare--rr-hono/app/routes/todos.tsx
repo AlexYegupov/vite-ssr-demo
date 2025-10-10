@@ -283,6 +283,7 @@ export default function TodosPage() {
   const submit = useSubmit();
   const formRef = useRef<HTMLFormElement>(null);
   const [newTodoTitle, setNewTodoTitle] = useState("");
+  const newTodoInputRef = useRef<HTMLInputElement>(null);
   const [editingTodoId, setEditingTodoId] = useState<string | null>(null);
   const [editTodoTitle, setEditTodoTitle] = useState("");
   const editInputRef = useRef<HTMLInputElement>(null);
@@ -321,6 +322,7 @@ export default function TodosPage() {
       } else if (actionData?.intent === "create") {
         console.log("create response", actionData.data);
         setTodos((prevTodos) => [...prevTodos, actionData.data]);
+        newTodoInputRef.current?.focus();
       }
     }
   }, [actionData, navigation.state]);
@@ -500,6 +502,7 @@ export default function TodosPage() {
                 placeholder="Add a new todo..."
                 size="3"
                 disabled={navigation.state === "submitting"}
+                ref={newTodoInputRef}
               />
             </div>
             <Button
