@@ -267,23 +267,8 @@ export default function TodosPage() {
 
   const sortedTodos = useMemo(() => {
     return [...todos].sort((a, b) => {
-      // Use updatedAt if available, otherwise fallback to createdAt
-      const dateA = a.updatedAt
-        ? new Date(a.updatedAt).getTime()
-        : new Date(a.createdAt).getTime();
-      const dateB = b.updatedAt
-        ? new Date(b.updatedAt).getTime()
-        : new Date(b.createdAt).getTime();
-
-      // If the primary dates are the same, sort by createdAt as a tiebreaker
-      if (dateA === dateB) {
-        return (
-          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-        );
-      }
-
-      // Sort by the primary date (updatedAt or createdAt) in descending order
-      return dateB - dateA;
+      // Sort by createdAt in descending order (newest first)
+      return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
     });
   }, [todos]);
 
