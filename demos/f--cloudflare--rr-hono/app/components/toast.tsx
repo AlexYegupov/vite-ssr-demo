@@ -86,9 +86,7 @@ export function GlobalToast() {
   const { toasts, removeToast } = useToast();
 
   const handleDismiss = (toast: any) => {
-    console.log("Toast dismiss triggered for:", toast.id);
     if (toast.onDismiss) {
-      console.log("Calling onDismiss for toast:", toast.id);
       toast.onDismiss();
     }
     removeToast(toast.id);

@@ -33,11 +33,31 @@ export function meta() {
     { name: "description", content: "Manage your todos" },
   ];
 }
+interface ActionData {
+  shouldRevalidate?: boolean;
+}
+
+export function shouldRevalidate({
+  actionResult,
+  defaultShouldRevalidate,
+}: {
+  actionResult?: ActionData;
+  defaultShouldRevalidate: boolean;
+}) {
+  console.log("shouldRevalidate", actionResult, defaultShouldRevalidate);
+
+  if (actionResult?.shouldRevalidate === false) {
+    return false;
+  }
+
+  return defaultShouldRevalidate;
+}
 
 interface Todo {
   id: string;
   title: string;
   completed: boolean;
+  priority: number; // 1 = highest priority
   createdAt: string;
   updatedAt?: string;
   pendingDelete?: boolean;
@@ -134,7 +154,11 @@ export async function action({
         });
 
         if (!response.ok) throw new Error("Failed to create todo");
-        return { intent: "create", data: await response.json() };
+        return {
+          intent: "create",
+          data: await response.json(),
+          shouldRevalidate: false,
+        };
       }
 
       case "update": {
@@ -170,7 +194,7 @@ export async function action({
 
         try {
           const result = await response.json();
-          return { intent: "update", data: result };
+          return { intent: "update", data: result, shouldRevalidate: false };
         } catch (e) {
           console.error("Failed to parse update response:", e);
           throw new Error("Invalid response from server");
@@ -187,7 +211,7 @@ export async function action({
         });
 
         if (!response.ok) throw new Error("Failed to delete todo");
-        return { intent: "delete", data: { id } };
+        return { intent: "delete", data: { id }, shouldRevalidate: false };
       }
 
       default:
@@ -226,8 +250,6 @@ export default function TodosPage() {
       }),
     [locale]
   );
-  console.log(locale);
-
   const formatDateTime = useCallback(
     (date: Date | string): string => {
       try {
@@ -242,6 +264,35 @@ export default function TodosPage() {
   );
 
   const [todos, setTodos] = useState<Todo[]>(initialTodos);
+
+  const sortedTodos = useMemo(() => {
+    return [...todos].sort((a, b) => {
+      // Use updatedAt if available, otherwise fallback to createdAt
+      const dateA = a.updatedAt
+        ? new Date(a.updatedAt).getTime()
+        : new Date(a.createdAt).getTime();
+      const dateB = b.updatedAt
+        ? new Date(b.updatedAt).getTime()
+        : new Date(b.createdAt).getTime();
+
+      // If the primary dates are the same, sort by createdAt as a tiebreaker
+      if (dateA === dateB) {
+        return (
+          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+        );
+      }
+
+      // Sort by the primary date (updatedAt or createdAt) in descending order
+      return dateB - dateA;
+    });
+  }, [todos]);
+
+  // Update todos when initialTodos changes (e.g., after server actions)
+  useEffect(() => {
+    console.log("initialTodos changed");
+    setTodos(initialTodos);
+  }, [initialTodos]);
+
   const actionData = useActionData<ActionData>();
   const navigation = useNavigation();
   const submit = useSubmit();
@@ -398,8 +449,6 @@ export default function TodosPage() {
         },
       },
       onDismiss: async () => {
-        console.log("Toast dismissed for todo:", id, deletingTodoIdRef.current);
-
         if (deletingTodoIdRef.current === id) {
           const formData = new FormData();
           formData.append("intent", "delete");
@@ -485,7 +534,7 @@ export default function TodosPage() {
           Your Todos
         </h2>
         <ul className={styles.todoList} aria-label="Todo items">
-          {todos.map((todo) => (
+          {sortedTodos.map((todo) => (
             <li
               key={todo.id}
               className={`${styles.todoItem} ${
