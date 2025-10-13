@@ -85,7 +85,7 @@ export async function loader({
   console.log("loader (todos)");
   try {
     const response = await context.fetchInternal("/api/todos");
-    if (!response.ok) throw new Error("Failed to load todos");
+    if (!response.ok) throw new Error(`Failed to load todos (Status: ${response.status} ${response.statusText})`);
     const todos = await response.json();
 
     // Get the preferred locale from the Accept-Language header
@@ -153,7 +153,7 @@ export async function action({
           body: JSON.stringify(newTodo),
         });
 
-        if (!response.ok) throw new Error("Failed to create todo");
+        if (!response.ok) throw new Error(`Failed to create todo (Status: ${response.status} ${response.statusText})`);
         return {
           intent: "create",
           data: await response.json(),
@@ -179,17 +179,7 @@ export async function action({
         });
 
         if (!response.ok) {
-          const errorText = await response
-            .text()
-            .catch(() => "Failed to read error response");
-          console.error(
-            "Update failed with status:",
-            response.status,
-            errorText
-          );
-          throw new Error(
-            `Failed to update todo: ${response.status} ${response.statusText}`
-          );
+          throw new Error(`Failed to update todo (Status: ${response.status} ${response.statusText})`);
         }
 
         try {
@@ -210,7 +200,7 @@ export async function action({
           method: "DELETE",
         });
 
-        if (!response.ok) throw new Error("Failed to delete todo");
+        if (!response.ok) throw new Error(`Failed to delete todo (Status: ${response.status} ${response.statusText})`);
         return { intent: "delete", data: { id }, shouldRevalidate: false };
       }
 
