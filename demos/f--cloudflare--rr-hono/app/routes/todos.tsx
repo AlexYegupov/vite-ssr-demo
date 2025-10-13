@@ -92,7 +92,11 @@ export async function loader({
     const acceptLanguage = request.headers.get("accept-language");
     const locale = getPreferredLocale(acceptLanguage);
 
-    return { todos, locale, clientTimezone: Intl.DateTimeFormat().resolvedOptions().timeZone };
+    return {
+      todos,
+      locale,
+      clientTimezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+    };
   } catch (error) {
     console.error("Error in todos loader:", error);
     throw error;
@@ -239,7 +243,11 @@ interface LoaderData {
 }
 
 export default function TodosPage() {
-  const { todos: initialTodos, locale, clientTimezone } = useLoaderData<LoaderData>();
+  const {
+    todos: initialTodos,
+    locale,
+    clientTimezone,
+  } = useLoaderData<LoaderData>();
 
   const formatDateTime = useCallback(
     (date: Date | string): string => {
@@ -458,13 +466,7 @@ export default function TodosPage() {
           onSubmit={handleAddTodo}
           className={styles.todoForm}
         >
-          <fieldset
-            className={styles.todoFormContent}
-            disabled={navigation.state != "idle"}
-          >
-            <legend className={styles.visuallyHidden}>
-              New Todo Information
-            </legend>
+          <div className={styles.todoFormContent}>
             <div className={styles.todoInput}>
               <label htmlFor="new-todo-input" className={styles.visuallyHidden}>
                 Todo title
@@ -493,7 +495,7 @@ export default function TodosPage() {
             >
               Add
             </Button>
-          </fieldset>
+          </div>
         </Form>
       </section>
 
