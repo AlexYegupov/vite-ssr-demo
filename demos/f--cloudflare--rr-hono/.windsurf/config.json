@@ -1,0 +1,16 @@
+{
+  "memoryStorage": {
+    "type": "filesystem",
+    "path": ".windsurf/memories",
+    "format": "markdown",
+    "autoCreate": true
+  },
+  "rules": {
+    "path": ".windsurf/rules",
+    "autoLoad": true
+  },
+  "workflows": {
+    "path": ".windsurf/workflows",
+    "autoLoad": true
+  }
+}
