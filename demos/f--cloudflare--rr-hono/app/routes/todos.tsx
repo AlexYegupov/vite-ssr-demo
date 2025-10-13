@@ -280,7 +280,6 @@ export default function TodosPage() {
   const [editingTodoId, setEditingTodoId] = useState<string | null>(null);
   const [editTodoTitle, setEditTodoTitle] = useState("");
   const { addToast } = useToast();
-  const [updatingTodoId, setUpdatingTodoId] = useState<string | null>(null);
   const [deletingTodoId, setDeletingTodoId] = useState<string | null>(null);
   const deletingTodoIdRef = useRef<string | null>(null);
 
@@ -307,7 +306,6 @@ export default function TodosPage() {
               : todo
           )
         );
-        setUpdatingTodoId(null);
         setEditingTodoId(null);
       } else if (actionData?.intent === "create") {
         console.log("create response", actionData.data);
@@ -343,9 +341,8 @@ export default function TodosPage() {
   };
 
   const handleToggleComplete = (id: string, completed: boolean) => {
-    if (updatingTodoId) return;
+    if (navigation.state != "idle") return;
 
-    setUpdatingTodoId(id);
     const newCompleted = !completed;
 
     const formData = new FormData();
@@ -367,11 +364,10 @@ export default function TodosPage() {
 
   const handleSaveEdit = (e?: React.FormEvent) => {
     e?.preventDefault();
-    if (!editingTodoId || !editTodoTitle.trim() || updatingTodoId) return;
+    if (!editingTodoId || !editTodoTitle.trim() || navigation.state != "idle") return;
 
     if (e && e.type !== "submit") return;
 
-    setUpdatingTodoId(editingTodoId);
     const updatedTitle = editTodoTitle.trim();
 
     const formData = new FormData();
@@ -462,7 +458,10 @@ export default function TodosPage() {
           onSubmit={handleAddTodo}
           className={styles.todoForm}
         >
-          <fieldset className={styles.todoFormContent}>
+          <fieldset
+            className={styles.todoFormContent}
+            disabled={navigation.state != "idle"}
+          >
             <legend className={styles.visuallyHidden}>
               New Todo Information
             </legend>
@@ -480,7 +479,7 @@ export default function TodosPage() {
                 }
                 placeholder="Add a new todo..."
                 size="3"
-                disabled={navigation.state === "submitting"}
+                disabled={navigation.state != "idle"}
                 ref={newTodoInputRef}
               />
             </div>
@@ -488,9 +487,9 @@ export default function TodosPage() {
               type="submit"
               size="3"
               variant="solid"
-              disabled={navigation.state === "submitting"}
+              disabled={navigation.state != "idle"}
             >
-              {navigation.state === "submitting" ? "Adding..." : "Add"}
+              Add
             </Button>
           </fieldset>
         </Form>
@@ -506,9 +505,7 @@ export default function TodosPage() {
               key={todo.id}
               className={`${styles.todoItem} ${
                 deletingTodoId === todo.id ? styles.pendingDelete : ""
-              } ${todo.completed ? styles.completed : ""} ${
-                updatingTodoId === todo.id ? styles.updating : ""
-              }`}
+              } ${todo.completed ? styles.completed : ""}`}
             >
               <article className={styles.todoContent}>
                 <Checkbox.Root
@@ -518,7 +515,7 @@ export default function TodosPage() {
                   }
                   className={styles.todoCheckbox}
                   id={`todo-${todo.id}`}
-                  disabled={!!updatingTodoId}
+                  disabled={navigation.state != "idle"}
                 >
                   <Checkbox.Indicator className={styles.checkboxIndicator}>
                     ✓
@@ -529,6 +526,7 @@ export default function TodosPage() {
                   <div className={styles.todoEditInput}>
                     <TextField.Root
                       value={editTodoTitle}
+                      disabled={navigation.state != "idle"}
                       onChange={(e: ChangeEvent<HTMLInputElement>) =>
                         setEditTodoTitle(e.target.value)
                       }
@@ -567,6 +565,7 @@ export default function TodosPage() {
                 {editingTodoId === todo.id ? (
                   <>
                     <IconButton
+                      disabled={navigation.state != "idle"}
                       onClick={handleSaveEdit}
                       color="green"
                       variant="soft"
@@ -577,6 +576,7 @@ export default function TodosPage() {
                       <CheckIcon width="24" height="24" />
                     </IconButton>
                     <IconButton
+                      disabled={navigation.state != "idle"}
                       onClick={handleCancelEdit}
                       color="gray"
                       variant="soft"
@@ -589,33 +589,23 @@ export default function TodosPage() {
                 ) : (
                   <>
                     <IconButton
-                      onClick={(e: React.MouseEvent) => {
-                        if (!updatingTodoId) {
-                          e.stopPropagation();
-                          handleEditTodo(todo);
-                        }
-                      }}
+                      onClick={(e: React.MouseEvent) => handleEditTodo(todo)}
                       color="blue"
                       variant="ghost"
                       size="3"
                       className={styles.editActionButton}
                       aria-label="Edit todo"
-                      disabled={!!updatingTodoId}
+                      disabled={navigation.state != "idle"}
                     >
                       <Pencil1Icon width="24" height="24" />
                     </IconButton>
                     <IconButton
-                      onClick={(e: React.MouseEvent) => {
-                        if (!updatingTodoId) {
-                          e.stopPropagation();
-                          handleDeleteTodo(todo.id);
-                        }
-                      }}
+                      onClick={() =>  handleDeleteTodo(todo.id)}
                       color="red"
                       variant="ghost"
                       size="3"
                       aria-label="Delete todo"
-                      disabled={!!updatingTodoId}
+                      disabled={navigation.state != "idle"}
                     >
                       <TrashIcon width="24" height="24" />
                     </IconButton>
