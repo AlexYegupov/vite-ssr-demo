@@ -275,7 +275,6 @@ export default function TodosPage() {
   const actionData = useActionData<ActionData>();
   const navigation = useNavigation();
   const submit = useSubmit();
-  const formRef = useRef<HTMLFormElement>(null);
   const [newTodoTitle, setNewTodoTitle] = useState("");
   const newTodoInputRef = useRef<HTMLInputElement>(null);
   const [editingTodoId, setEditingTodoId] = useState<string | null>(null);
@@ -295,14 +294,12 @@ export default function TodosPage() {
           duration: 3000,
         });
       } else if (actionData?.intent === "delete") {
-        console.log("DD", actionData, navigation.state);
         setTodos((prevTodos) =>
           prevTodos.filter((todo) => todo.id !== actionData.data.id)
         );
         setDeletingTodoId(null);
         deletingTodoIdRef.current = null;
       } else if (actionData?.intent === "update") {
-        console.log("uu");
         setTodos((prevTodos) =>
           prevTodos.map((todo) =>
             todo.id === actionData.data.id
@@ -315,18 +312,11 @@ export default function TodosPage() {
       } else if (actionData?.intent === "create") {
         console.log("create response", actionData.data);
         setTodos((prevTodos) => [...prevTodos, actionData.data]);
+        setNewTodoTitle("");
         newTodoInputRef.current?.focus();
       }
     }
   }, [actionData, navigation.state]);
-
-  // Reset form after successful submission
-  useEffect(() => {
-    if (navigation.state === "idle" && formRef.current) {
-      formRef.current.reset();
-      setNewTodoTitle("");
-    }
-  }, [navigation.state]);
 
   const handleAddTodo = (e: React.FormEvent) => {
     e.preventDefault();
@@ -471,7 +461,6 @@ export default function TodosPage() {
           action="/todos"
           onSubmit={handleAddTodo}
           className={styles.todoForm}
-          ref={formRef}
         >
           <fieldset className={styles.todoFormContent}>
             <legend className={styles.visuallyHidden}>
