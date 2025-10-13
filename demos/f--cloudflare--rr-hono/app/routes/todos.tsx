@@ -248,12 +248,12 @@ export default function TodosPage() {
       try {
         const dateObj = new Date(date);
         return new Intl.DateTimeFormat(locale, {
-          dateStyle: "short",
+          dateStyle: "medium",
           timeStyle: "short",
         }).format(dateObj);
       } catch (error) {
         console.error("Error formatting date:", error);
-        return "";
+        return typeof date === "string" ? date : date.toLocaleString();
       }
     },
     [locale]
@@ -263,12 +263,10 @@ export default function TodosPage() {
 
   const sortedTodos = useMemo(() => {
     return [...todos].sort((a, b) => {
-      // Sort by createdAt in descending order (newest first)
       return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
     });
   }, [todos]);
 
-  // Update todos when initialTodos changes (e.g., after server actions)
   useEffect(() => {
     console.log("initialTodos changed");
     setTodos(initialTodos);
