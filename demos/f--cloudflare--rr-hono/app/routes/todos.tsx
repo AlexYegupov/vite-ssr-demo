@@ -232,25 +232,20 @@ interface LoaderData {
 export default function TodosPage() {
   const { todos: initialTodos, locale } = useLoaderData<LoaderData>();
 
-  const dateFormatter = useMemo(
-    () =>
-      new Intl.DateTimeFormat(locale, {
-        dateStyle: "short",
-        timeStyle: "short",
-      }),
-    [locale]
-  );
   const formatDateTime = useCallback(
     (date: Date | string): string => {
       try {
         const dateObj = new Date(date);
-        return dateFormatter.format(dateObj);
+        return new Intl.DateTimeFormat(locale, {
+          dateStyle: "short",
+          timeStyle: "short",
+        }).format(dateObj);
       } catch (error) {
         console.error("Error formatting date:", error);
         return "";
       }
     },
-    [dateFormatter]
+    [locale]
   );
 
   const [todos, setTodos] = useState<Todo[]>(initialTodos);
