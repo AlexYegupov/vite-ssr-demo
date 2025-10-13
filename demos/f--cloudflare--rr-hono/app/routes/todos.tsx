@@ -85,7 +85,10 @@ export async function loader({
   console.log("loader (todos)");
   try {
     const response = await context.fetchInternal("/api/todos");
-    if (!response.ok) throw new Error(`Failed to load todos (Status: ${response.status} ${response.statusText})`);
+    if (!response.ok)
+      throw new Error(
+        `Failed to load todos (Status: ${response.status} ${response.statusText})`
+      );
     const todos = await response.json();
 
     // Get the preferred locale from the Accept-Language header
@@ -153,7 +156,10 @@ export async function action({
           body: JSON.stringify(newTodo),
         });
 
-        if (!response.ok) throw new Error(`Failed to create todo (Status: ${response.status} ${response.statusText})`);
+        if (!response.ok)
+          throw new Error(
+            `Failed to create todo (Status: ${response.status} ${response.statusText})`
+          );
         return {
           intent: "create",
           data: await response.json(),
@@ -179,7 +185,9 @@ export async function action({
         });
 
         if (!response.ok) {
-          throw new Error(`Failed to update todo (Status: ${response.status} ${response.statusText})`);
+          throw new Error(
+            `Failed to update todo (Status: ${response.status} ${response.statusText})`
+          );
         }
 
         try {
@@ -200,7 +208,10 @@ export async function action({
           method: "DELETE",
         });
 
-        if (!response.ok) throw new Error(`Failed to delete todo (Status: ${response.status} ${response.statusText})`);
+        if (!response.ok)
+          throw new Error(
+            `Failed to delete todo (Status: ${response.status} ${response.statusText})`
+          );
         return { intent: "delete", data: { id }, shouldRevalidate: false };
       }
 
@@ -271,7 +282,6 @@ export default function TodosPage() {
   const newTodoInputRef = useRef<HTMLInputElement>(null);
   const [editingTodoId, setEditingTodoId] = useState<string | null>(null);
   const [editTodoTitle, setEditTodoTitle] = useState("");
-  const editInputRef = useRef<HTMLInputElement>(null);
   const { addToast } = useToast();
   const [updatingTodoId, setUpdatingTodoId] = useState<string | null>(null);
   const [deletingTodoId, setDeletingTodoId] = useState<string | null>(null);
@@ -365,9 +375,6 @@ export default function TodosPage() {
   const handleEditTodo = (todo: Todo) => {
     setEditingTodoId(todo.id);
     setEditTodoTitle(todo.title);
-    setTimeout(() => {
-      editInputRef.current?.focus();
-    }, 0);
   };
 
   const handleSaveEdit = (e?: React.FormEvent) => {
@@ -538,7 +545,7 @@ export default function TodosPage() {
                       onChange={(e: ChangeEvent<HTMLInputElement>) =>
                         setEditTodoTitle(e.target.value)
                       }
-                      ref={editInputRef}
+                      autoFocus={true}
                       onKeyDown={(e: KeyboardEvent<HTMLInputElement>) => {
                         if (e.key === "Enter") handleSaveEdit();
                         if (e.key === "Escape") handleCancelEdit();
