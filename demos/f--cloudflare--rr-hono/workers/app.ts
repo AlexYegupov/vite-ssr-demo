@@ -266,6 +266,7 @@ app.all("*", (c: AppContext) => {
       c.env,
       c.executionCtx
     ),
+    clientTimezone: c.req.raw.cf?.timezone,
   });
 });
 

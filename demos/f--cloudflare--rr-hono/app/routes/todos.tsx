@@ -92,7 +92,7 @@ export async function loader({
     const acceptLanguage = request.headers.get("accept-language");
     const locale = getPreferredLocale(acceptLanguage);
 
-    return { todos, locale };
+    return { todos, locale, clientTimezone: Intl.DateTimeFormat().resolvedOptions().timeZone };
   } catch (error) {
     console.error("Error in todos loader:", error);
     throw error;
@@ -235,10 +235,11 @@ type ActionData =
 interface LoaderData {
   todos: Todo[];
   locale: string;
+  clientTimezone: string;
 }
 
 export default function TodosPage() {
-  const { todos: initialTodos, locale } = useLoaderData<LoaderData>();
+  const { todos: initialTodos, locale, clientTimezone } = useLoaderData<LoaderData>();
 
   const formatDateTime = useCallback(
     (date: Date | string): string => {
@@ -247,13 +248,14 @@ export default function TodosPage() {
         return new Intl.DateTimeFormat(locale, {
           dateStyle: "medium",
           timeStyle: "short",
+          timeZone: clientTimezone || undefined,
         }).format(dateObj);
       } catch (error) {
         console.error("Error formatting date:", error);
         return typeof date === "string" ? date : date.toLocaleString();
       }
     },
-    [locale]
+    [locale, clientTimezone]
   );
 
   const [todos, setTodos] = useState<Todo[]>(initialTodos);
