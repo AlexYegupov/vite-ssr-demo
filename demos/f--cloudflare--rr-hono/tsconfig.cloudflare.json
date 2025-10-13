@@ -12,6 +12,7 @@
   "compilerOptions": {
     "composite": true,
     "strict": true,
+    "verbatimModuleSyntax": false,
     "lib": ["DOM", "DOM.Iterable", "ES2022"],
     "types": ["@cloudflare/workers-types", "vite/client", "node"],
     "target": "esnext",

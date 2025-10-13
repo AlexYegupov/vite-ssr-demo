@@ -33,15 +33,12 @@ export function meta() {
     { name: "description", content: "Manage your todos" },
   ];
 }
-interface ActionData {
-  shouldRevalidate?: boolean;
-}
 
 export function shouldRevalidate({
   actionResult,
   defaultShouldRevalidate,
 }: {
-  actionResult?: ActionData;
+  actionResult?: { shouldRevalidate?: boolean };
   defaultShouldRevalidate: boolean;
 }) {
   console.log("shouldRevalidate", actionResult, defaultShouldRevalidate);
@@ -285,34 +282,34 @@ export default function TodosPage() {
 
   // Handle action responses and errors
   useEffect(() => {
-    if (navigation.state === "idle") {
-      if (actionData?.intent === "error") {
-        addToast({
-          title: "Error",
-          description: actionData.data.error,
-          duration: 3000,
-        });
-      } else if (actionData?.intent === "delete") {
-        setTodos((prevTodos) =>
-          prevTodos.filter((todo) => todo.id !== actionData.data.id)
-        );
-        setDeletingTodoId(null);
-        deletingTodoIdRef.current = null;
-      } else if (actionData?.intent === "update") {
-        setTodos((prevTodos) =>
-          prevTodos.map((todo) =>
-            todo.id === actionData.data.id
-              ? { ...todo, ...actionData.data }
-              : todo
-          )
-        );
-        setEditingTodoId(null);
-      } else if (actionData?.intent === "create") {
-        console.log("create response", actionData.data);
-        setTodos((prevTodos) => [...prevTodos, actionData.data]);
-        setNewTodoTitle("");
-        newTodoInputRef.current?.focus();
-      }
+    if (navigation.state !== "idle") return;
+
+    if (actionData?.intent === "error") {
+      addToast({
+        title: "Error",
+        description: actionData.data.error,
+        duration: 3000,
+      });
+    } else if (actionData?.intent === "delete") {
+      setTodos((prevTodos) =>
+        prevTodos.filter((todo) => todo.id !== actionData.data.id)
+      );
+      setDeletingTodoId(null);
+      deletingTodoIdRef.current = null;
+    } else if (actionData?.intent === "update") {
+      setTodos((prevTodos) =>
+        prevTodos.map((todo) =>
+          todo.id === actionData.data.id
+            ? { ...todo, ...actionData.data }
+            : todo
+        )
+      );
+      setEditingTodoId(null);
+    } else if (actionData?.intent === "create") {
+      console.log("create response", actionData.data);
+      setTodos((prevTodos) => [...prevTodos, actionData.data]);
+      setNewTodoTitle("");
+      newTodoInputRef.current?.focus();
     }
   }, [actionData, navigation.state]);
 
@@ -364,7 +361,8 @@ export default function TodosPage() {
 
   const handleSaveEdit = (e?: React.FormEvent) => {
     e?.preventDefault();
-    if (!editingTodoId || !editTodoTitle.trim() || navigation.state != "idle") return;
+    if (!editingTodoId || !editTodoTitle.trim() || navigation.state != "idle")
+      return;
 
     if (e && e.type !== "submit") return;
 
@@ -487,7 +485,9 @@ export default function TodosPage() {
               type="submit"
               size="3"
               variant="solid"
-              disabled={navigation.state != "idle"}
+              disabled={
+                navigation.state != "idle" || newTodoTitle.trim() === ""
+              }
             >
               Add
             </Button>
@@ -600,7 +600,7 @@ export default function TodosPage() {
                       <Pencil1Icon width="24" height="24" />
                     </IconButton>
                     <IconButton
-                      onClick={() =>  handleDeleteTodo(todo.id)}
+                      onClick={() => handleDeleteTodo(todo.id)}
                       color="red"
                       variant="ghost"
                       size="3"
