@@ -1,0 +1,48 @@
+.navigationContainer {
+  width: 100%;
+  background-color: var(--gray-2);
+  border-bottom: 1px solid var(--gray-6);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.tabsRoot {
+  max-width: var(--max-width-lg);
+  margin: 0 auto;
+  padding: 0 var(--spacing-4);
+}
+
+.tabsList {
+  display: flex;
+  gap: var(--spacing-2);
+}
+
+.tabsTrigger {
+  all: unset;
+  padding: var(--spacing-4) var(--spacing-6);
+  font-size: var(--font-size-base);
+  font-weight: 500;
+  color: var(--gray-11);
+  cursor: pointer;
+  border-bottom: 3px solid transparent;
+  transition: all var(--transition-fast);
+  user-select: none;
+  position: relative;
+}
+
+.tabsTrigger:hover {
+  color: var(--accent-11);
+  background-color: var(--gray-3);
+}
+
+.tabsTrigger[data-state="active"] {
+  color: var(--accent-11);
+  border-bottom-color: var(--accent-9);
+  font-weight: 600;
+}
+
+.tabsTrigger:focus-visible {
+  outline: 2px solid var(--accent-8);
+  outline-offset: -2px;
+}

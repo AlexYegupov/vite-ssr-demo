@@ -152,10 +152,6 @@ export default function WeatherPage() {
 
   return (
     <div className={styles.container}>
-      <div className={styles.headerContainer}>
-        <Link to="/">Back to Home</Link>
-      </div>
-      
       <h1>Weather Information</h1>
       
       <div className={styles.citySelectorContainer}>

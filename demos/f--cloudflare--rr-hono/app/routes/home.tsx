@@ -1,7 +1,6 @@
 import { Link } from "react-router";
 import styles from "./home.module.css";
 import type { LoaderFunctionArgs } from "react-router";
-import { Button } from "@radix-ui/themes";
 
 export function meta() {
   return [
@@ -23,22 +22,27 @@ export default function Home({
   loaderData: { message: string };
 }) {
   console.log("<Home>", loaderData);
+
   return (
     <main className={styles.container}>
       <header>
         <h1>Welcome to the App</h1>
       </header>
-      <nav className={styles.linkContainer} aria-label="Main navigation">
-        <Link to="/todos" className={styles.linkButton}>
-          Go to Todo List
-        </Link>
-        <Link
-          to="/weather"
-          className={`${styles.linkButton} ${styles.weatherLink}`}
-        >
-          Check Weather
-        </Link>
-      </nav>
+      <section className={styles.content}>
+        <p className={styles.description}>
+          Use the navigation tabs above to explore different sections of the app.
+        </p>
+        <div className={styles.cardGrid}>
+          <Link to="/todos" className={styles.card}>
+            <h2>📝 Todo List</h2>
+            <p>Manage your daily tasks and stay organized</p>
+          </Link>
+          <Link to="/weather" className={styles.card}>
+            <h2>🌤️ Weather</h2>
+            <p>Check weather forecasts for cities worldwide</p>
+          </Link>
+        </div>
+      </section>
     </main>
   );
 }

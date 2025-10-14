@@ -429,9 +429,6 @@ export default function TodosPage() {
 
   return (
     <main className={styles.container}>
-      <nav className={styles.headerContainer}>
-        <Link to="/">Back to Home</Link>
-      </nav>
       <header>
         <h1>Todo List</h1>
       </header>

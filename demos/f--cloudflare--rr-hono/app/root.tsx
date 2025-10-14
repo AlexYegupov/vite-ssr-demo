@@ -10,6 +10,7 @@ import {
 import { Theme, ThemePanel } from "@radix-ui/themes";
 import { ToastProvider } from "./context/toast-context";
 import { GlobalToast } from "./components/toast";
+import { NavigationTabs } from "./components/navigation-tabs";
 
 import type { Route } from "./+types/root";
 import "@radix-ui/themes/styles.css";
@@ -57,7 +58,12 @@ export function Layout({ children }: { children: React.ReactNode }) {
 }
 
 export default function App() {
-  return <Outlet />;
+  return (
+    <>
+      <NavigationTabs />
+      <Outlet />
+    </>
+  );
 }
 
 export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {

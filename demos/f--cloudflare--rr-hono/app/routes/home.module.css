@@ -1,5 +1,5 @@
 .container {
-  max-width: var(--max-width-md);
+  max-width: var(--max-width-lg);
   margin: 0 auto;
   padding: var(--spacing-8);
   text-align: center;
@@ -7,45 +7,56 @@
 
 h1 {
   color: var(--gray-12);
-  margin-bottom: var(--spacing-8);
+  margin-bottom: var(--spacing-4);
   font-size: var(--font-size-3xl);
 }
 
-.linkContainer {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: var(--spacing-4);
+.content {
   margin-top: var(--spacing-8);
 }
 
-.linkButton {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: var(--spacing-3) var(--spacing-6);
-  background-color: var(--accent-9);
-  color: white !important;
+.description {
+  color: var(--gray-11);
+  font-size: var(--font-size-lg);
+  margin-bottom: var(--spacing-8);
+}
+
+.cardGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: var(--spacing-6);
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.card {
+  padding: var(--spacing-6);
+  background-color: var(--gray-3);
+  border: 1px solid var(--gray-6);
+  border-radius: var(--border-radius-lg);
   text-decoration: none;
-  border-radius: var(--border-radius-sm);
+  color: inherit;
   transition: all var(--transition-fast);
-  font-weight: 500;
-  width: 200px;
-  border: none;
   cursor: pointer;
 }
 
-.linkButton:hover {
-  background-color: var(--accent-10);
-  transform: translateY(-1px);
-  box-shadow: var(--shadow-sm);
-  text-decoration: none !important;
+.card:hover {
+  background-color: var(--gray-4);
+  border-color: var(--accent-8);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
 }
 
-.weatherLink {
-  background-color: var(--blue-9);
+.card h2 {
+  font-size: var(--font-size-xl);
+  font-weight: 600;
+  color: var(--gray-12);
+  margin: 0 0 var(--spacing-3) 0;
 }
 
-.weatherLink:hover {
-  background-color: var(--blue-10) !important;
+.card p {
+  font-size: var(--font-size-base);
+  color: var(--gray-11);
+  margin: 0;
+  line-height: var(--line-height-normal);
 }
