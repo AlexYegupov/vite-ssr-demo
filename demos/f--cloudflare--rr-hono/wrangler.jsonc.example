@@ -9,23 +9,21 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "f--cloudflare--rr-hono",
-  "account_id": "xxxxxxxxxx",
+  "account_id": "abcdefgh1234567890abcdefgh1234567890",
   "compatibility_date": "2025-04-01",
-  "compatibility_flags": [
-    //(nw for local fetch) "global_fetch_strictly_public"
-  ],
+  "compatibility_flags": [],
   "main": "./workers/app.ts",
 
   "kv_namespaces": [
     {
       "binding": "TODOS_KV",
-      "id": "xxxxxxxxxx",
-      "preview_id": "xxxxxxxxxx"
+      "id": "abcdefgh1234567890abcdefgh1234567890",
+      "preview_id": "abcdefgh1234567890abcdefgh1234567890",
+      "experimental_remote": false
     }
   ],
   "vars": {
-    "VALUE_FROM_CLOUDFLARE": "Hello from Hono/CF",
-    "MOCK_API": "false"
+    "VALUE_FROM_CLOUDFLARE": "Hello from Hono/CF"
   },
   "assets": {
     "binding": "ASSETS",

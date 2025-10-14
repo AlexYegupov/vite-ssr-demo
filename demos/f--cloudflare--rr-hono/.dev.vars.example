@@ -1,0 +1,5 @@
+# wrangler.jsonc -> vars dev overrides
+KV_IMPORT_TOKEN=EKsdfalkjdfasjfdaslkdfhsadjfsakjhdsaf
+KV_EXPORT_TOKEN=EKlkjasdfldaskjdfaslkfdsaadsffdedfdfd
+
+MOCK_API=False
