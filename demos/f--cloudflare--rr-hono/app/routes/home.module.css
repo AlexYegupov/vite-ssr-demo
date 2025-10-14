@@ -1,55 +1,121 @@
 .container {
-  max-width: var(--max-width-lg);
+  max-width: var(--max-width-xl);
   margin: 0 auto;
   padding: var(--space-8);
+}
+
+/* Header Section */
+.header {
+  text-align: center;
+  margin-bottom: var(--space-9);
+  padding: var(--space-8) 0;
+  border-bottom: 1px solid var(--gray-6);
+}
+
+.header h1 {
+  color: var(--gray-12);
+  font-size: var(--font-size-8);
+  font-weight: var(--font-weight-bold);
+  margin: 0 0 var(--space-3) 0;
+  letter-spacing: -0.02em;
+}
+
+.subtitle {
+  color: var(--gray-11);
+  font-size: var(--font-size-5);
+  margin: 0;
+  font-weight: var(--font-weight-normal);
+}
+
+/* Section Styling */
+.techSection,
+.demoSection,
+.roadmapSection {
+  margin-bottom: var(--space-9);
+}
+
+.sectionTitle {
+  color: var(--gray-12);
+  font-size: var(--font-size-6);
+  font-weight: var(--font-weight-bold);
+  margin: 0 0 var(--space-6) 0;
   text-align: center;
 }
 
-h1 {
-  color: var(--gray-12);
-  margin-bottom: var(--space-4);
-  font-size: var(--font-size-7);
-}
-
-.content {
-  margin-top: var(--space-8);
-}
-
-.description {
-  color: var(--gray-11);
-  font-size: var(--font-size-4);
-  margin-bottom: var(--space-8);
-}
-
-.cardGrid {
+/* Technology Grid */
+.techGrid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
   gap: var(--space-6);
-  max-width: 800px;
+  margin-bottom: var(--space-4);
+}
+
+.techCategory {
+  background-color: var(--gray-2);
+  border: 1px solid var(--gray-6);
+  border-radius: var(--radius-4);
+  padding: var(--space-6);
+}
+
+.techCategory h3 {
+  color: var(--gray-12);
+  font-size: var(--font-size-5);
+  font-weight: var(--font-weight-medium);
+  margin: 0 0 var(--space-4) 0;
+}
+
+.techCategory ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.techCategory li {
+  color: var(--gray-11);
+  font-size: var(--font-size-3);
+  padding: var(--space-2) 0;
+  line-height: var(--line-height-normal);
+}
+
+.techCategory li::before {
+  content: "▸ ";
+  color: var(--accent-9);
+  font-weight: var(--font-weight-bold);
+  margin-right: var(--space-2);
+}
+
+/* Demo Cards */
+.cardGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: var(--space-6);
+  max-width: 900px;
   margin: 0 auto;
 }
 
 .card {
-  padding: var(--space-6);
+  padding: var(--space-7);
   background-color: var(--gray-3);
-  border: 1px solid var(--gray-6);
+  border: 2px solid var(--gray-6);
   border-radius: var(--radius-4);
   text-decoration: none;
   color: inherit;
   transition: all var(--transition-fast);
   cursor: pointer;
+  display: flex;
+  flex-direction: column;
 }
 
 .card:hover {
   background-color: var(--gray-4);
-  border-color: var(--accent-8);
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-md);
+  border-color: var(--accent-9);
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
 }
 
-.card h2 {
+.card h3 {
   font-size: var(--font-size-5);
-  font-weight: var(--font-weight-medium);
+  font-weight: var(--font-weight-bold);
   color: var(--gray-12);
   margin: 0 0 var(--space-3) 0;
 }
@@ -58,5 +124,67 @@ h1 {
   font-size: var(--font-size-3);
   color: var(--gray-11);
   margin: 0;
+  line-height: var(--line-height-relaxed);
+}
+
+/* Roadmap Section */
+.roadmapGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: var(--space-5);
+}
+
+.roadmapColumn {
+  background-color: var(--gray-2);
+  border: 1px solid var(--gray-5);
+  border-radius: var(--radius-3);
+  padding: var(--space-5);
+}
+
+.roadmapColumn h3 {
+  color: var(--gray-12);
+  font-size: var(--font-size-4);
+  font-weight: var(--font-weight-medium);
+  margin: 0 0 var(--space-3) 0;
+  padding-bottom: var(--space-3);
+  border-bottom: 1px solid var(--gray-6);
+}
+
+.roadmapColumn ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.roadmapColumn li {
+  color: var(--gray-11);
+  font-size: var(--font-size-2);
+  padding: var(--space-2) 0;
   line-height: var(--line-height-normal);
+}
+
+.roadmapColumn li::before {
+  content: "□ ";
+  color: var(--gray-9);
+  margin-right: var(--space-2);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .container {
+    padding: var(--space-5);
+  }
+
+  .header h1 {
+    font-size: var(--font-size-7);
+  }
+
+  .subtitle {
+    font-size: var(--font-size-4);
+  }
+
+  .techGrid,
+  .roadmapGrid {
+    grid-template-columns: 1fr;
+  }
 }

@@ -4,8 +4,8 @@ import type { LoaderFunctionArgs } from "react-router";
 
 export function meta() {
   return [
-    { title: "The todolist" },
-    { name: "description", content: "Welcome to React Router!" },
+    { title: "Full-Stack Demo Application" },
+    { name: "description", content: "Modern full-stack application built with Cloudflare Workers, React Router 7, and cutting-edge web technologies" },
   ];
 }
 
@@ -25,22 +25,95 @@ export default function Home({
 
   return (
     <main className={styles.container}>
-      <header>
-        <h1>Welcome to the App</h1>
-      </header>
-      <section className={styles.content}>
-        <p className={styles.description}>
-          Use the navigation tabs above to explore different sections of the app.
+      <header className={styles.header}>
+        <h1>Full-Stack Demo Application</h1>
+        <p className={styles.subtitle}>
+          A production-ready showcase of modern web development practices
         </p>
+      </header>
+
+      <section className={styles.techSection}>
+        <h2 className={styles.sectionTitle}>Technologies & Architecture</h2>
+        <div className={styles.techGrid}>
+          <div className={styles.techCategory}>
+            <h3>🚀 Infrastructure</h3>
+            <ul>
+              <li>Cloudflare Workers (Edge Computing)</li>
+              <li>Cloudflare KV (Distributed Database)</li>
+              <li>Server-Side Rendering (SSR)</li>
+            </ul>
+          </div>
+          <div className={styles.techCategory}>
+            <h3>⚛️ Frontend</h3>
+            <ul>
+              <li>React 19</li>
+              <li>React Router v7 (Remix)</li>
+              <li>Radix UI Components & Themes</li>
+              <li>Pure CSS Modules</li>
+            </ul>
+          </div>
+          <div className={styles.techCategory}>
+            <h3>🔧 Backend & API</h3>
+            <ul>
+              <li>REST API Architecture</li>
+              <li>React Router Actions</li>
+              <li>Cloudflare KV Database</li>
+              <li>Async Toast Notifications</li>
+              <li>KV Import/Export Scripts</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <section className={styles.demoSection}>
+        <h2 className={styles.sectionTitle}>Interactive Demos</h2>
         <div className={styles.cardGrid}>
           <Link to="/todos" className={styles.card}>
-            <h2>📝 Todo List</h2>
-            <p>Manage your daily tasks and stay organized</p>
+            <h3>📝 Todo List</h3>
+            <p>Full CRUD operations with Cloudflare KV persistence, optimistic UI updates, and real-time validation</p>
           </Link>
           <Link to="/weather" className={styles.card}>
-            <h2>🌤️ Weather</h2>
-            <p>Check weather forecasts for cities worldwide</p>
+            <h3>🌤️ Weather Forecast</h3>
+            <p>Dynamic city selection with API integration and responsive data visualization</p>
           </Link>
+        </div>
+      </section>
+
+      <section className={styles.roadmapSection}>
+        <h2 className={styles.sectionTitle}>Roadmap & Planned Features</h2>
+        <div className={styles.roadmapGrid}>
+          <div className={styles.roadmapColumn}>
+            <h3>🎨 UI/UX Enhancements</h3>
+            <ul>
+              <li>Dark/Light theme toggle</li>
+              <li>Internationalization (i18n)</li>
+              <li>Advanced animations</li>
+            </ul>
+          </div>
+          <div className={styles.roadmapColumn}>
+            <h3>⚡ Performance</h3>
+            <ul>
+              <li>Server-side caching</li>
+              <li>Client API caching (SWR/TanStack Query)</li>
+              <li>Pagination & infinite scroll</li>
+            </ul>
+          </div>
+          <div className={styles.roadmapColumn}>
+            <h3>🏗️ Architecture</h3>
+            <ul>
+              <li>Zustand state management</li>
+              <li>Zod schema validation</li>
+              <li>Headless CMS integration</li>
+            </ul>
+          </div>
+          <div className={styles.roadmapColumn}>
+            <h3>🚢 DevOps</h3>
+            <ul>
+              <li>Git-based CI/CD pipeline</li>
+              <li>Staging environment</li>
+              <li>Automated testing</li>
+            </ul>
+          </div>
         </div>
       </section>
     </main>
