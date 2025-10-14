@@ -9,7 +9,7 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "f--cloudflare--rr-hono",
-  "account_id": "abcdefgh1234567890abcdefgh1234567890",
+  "account_id": "<ACCOUNT_ID>",
   "compatibility_date": "2025-04-01",
   "compatibility_flags": [],
   "main": "./workers/app.ts",
@@ -17,8 +17,8 @@
   "kv_namespaces": [
     {
       "binding": "TODOS_KV",
-      "id": "abcdefgh1234567890abcdefgh1234567890",
-      "preview_id": "abcdefgh1234567890abcdefgh1234567890",
+      "id": "<KV_ID>",
+      "preview_id": "<PREVIEW_KV_ID>",
       "experimental_remote": false
     }
   ],
