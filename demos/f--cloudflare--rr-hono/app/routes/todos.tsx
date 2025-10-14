@@ -41,8 +41,6 @@ export function shouldRevalidate({
   actionResult?: { shouldRevalidate?: boolean };
   defaultShouldRevalidate: boolean;
 }) {
-  console.log("shouldRevalidate", actionResult, defaultShouldRevalidate);
-
   if (actionResult?.shouldRevalidate === false) {
     return false;
   }
@@ -79,7 +77,6 @@ export async function loader({
   request: Request;
   context: any;
 }) {
-  console.log("loader (todos)");
   try {
     const response = await context.fetchInternal("/api/todos");
     if (!response.ok)
@@ -113,8 +110,6 @@ export async function action({
   const formData = await request.formData();
   const intent = formData.get("intent");
 
-  console.log("action", request.url, formData);
-
   // Get the base URL for the API
   const url = new URL(request.url);
   const baseUrl = `${url.protocol}//${url.host}`;
@@ -122,12 +117,10 @@ export async function action({
   // Create a fetch function that works in both server and client contexts
   const fetchApi = async (path: string, options: RequestInit = {}) => {
     if (context?.fetchInternal) {
-      console.log("fetchApi:fetchInternal");
       // Use the internal fetch when available (server-side)
       return context.fetchInternal(`/api${path}`, options);
     }
 
-    console.log("fetchApi:fetch");
     // Fallback to direct fetch (client-side)
     const apiUrl = new URL(`/api${path}`, baseUrl).toString();
     return fetch(apiUrl, {
@@ -201,7 +194,6 @@ export async function action({
       }
 
       case "delete": {
-        console.log("Deleting todo", formData);
         const id = formData.get("id")?.toString();
         if (!id) throw new Error("Todo ID is required");
 
@@ -275,7 +267,6 @@ export default function TodosPage() {
   }, [todos]);
 
   useEffect(() => {
-    console.log("initialTodos changed");
     setTodos(initialTodos);
   }, [initialTodos]);
 
@@ -316,7 +307,6 @@ export default function TodosPage() {
       );
       setEditingTodoId(null);
     } else if (actionData?.intent === "create") {
-      console.log("create response", actionData.data);
       setTodos((prevTodos) => [...prevTodos, actionData.data]);
       setNewTodoTitle("");
       newTodoInputRef.current?.focus();
@@ -398,15 +388,9 @@ export default function TodosPage() {
     if (deletingTodoId) return;
 
     deletingTodoIdRef.current = id;
-
-    // Set the todo being deleted for visual feedback
-    console.log("handleDeleteTodo", id);
     setDeletingTodoId(id);
-
-    // Create a unique ID for this toast
     const toastId = `todo-delete-${id}`;
 
-    // Show toast with undo action
     addToast({
       id: toastId,
       title: "Todo Deleted",
@@ -438,11 +422,7 @@ export default function TodosPage() {
 
   const handleUndoDelete = (id: string) => {
     deletingTodoIdRef.current = null;
-    console.log("Undo delete for todo:", id);
-    // Clear the deleting state
     setDeletingTodoId(null);
-
-    // Find and remove the toast for this todo
     const toastId = `todo-delete-${id}`;
     removeToastById(toastId);
   };
