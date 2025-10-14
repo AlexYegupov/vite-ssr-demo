@@ -23,7 +23,7 @@
 
 ## Ant Design Requirements
 
-- **MANDATORY**: DONT use ant design at all
+- **MANDATORY**: DONT use ant design at all and skip this section
 - **MANDATORY**: Implement webpages using Ant Design components and patterns
 - **PROHIBITED**: NEVER use antd Space (use Flex instead)
 - **PROHIBITED**: NEVER use antd Grid
@@ -51,7 +51,6 @@
 - **MANDATORY**: ALWAYS use CSS variables for colors, spacing, font-weight etc, NEVER use magic numbers
 - **MANDATORY**: use camelCase for CSS classnames
   Why: to make easy jump to sourse. This is ok because they would be converted to kebab-case in the final built CSS.
-
 
 ## React requirements
 
