@@ -37,8 +37,6 @@ const mockDataModules = import.meta.glob("../mock-data/*.json", {
 
 // Load mock data from files
 async function loadMockData(c: AppContext, filename: string): Promise<any> {
-  //console.log("Environment variables:", c.env);
-
   // Check if mock API is enabled
   if (c.env.MOCK_API !== true) {
     throw new Error("Mock API is disabled");
@@ -86,18 +84,7 @@ const todos = new Hono<{ Bindings: Env }>();
 // Get all TODOs
 todos.get("/", async (c) => {
   try {
-    //console.log("Environment variables:", c.env);
-
-    // console.log("KV Namespace Details:", {
-    //   binding: "TODOS_KV",
-    //   availableMethods: Object.keys(c.env.TODOS_KV).filter(
-    //     (k) => typeof c.env.TODOS_KV[k as keyof KVNamespace] === "function"
-    //   ),
-    // });
-
     const keys = await c.env.TODOS_KV.list();
-    //console.log(`KV keys:`, keys);
-    //console.log(`KV contains ${keys.keys.length} items`);
     const todos = await Promise.all(
       keys.keys.map(async (key) => {
         const value = await c.env.TODOS_KV.get<Todo>(key.name, "json");
@@ -132,7 +119,6 @@ todos.post("/", async (c) => {
 
 // Update a TODO
 todos.put("/:id", async (c) => {
-  console.log("api todos.put", c.req.param());
   try {
     const { id } = c.req.param();
     const updates = await c.req.json();
@@ -226,25 +212,25 @@ const createFetchInternal =
     const request = new Request(url.toString(), {
       ...options,
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
         ...options.headers,
       },
     });
-    
+
     try {
       // Try to use the Hono app's fetch first
       if (executionCtx) {
         return await app.fetch(request, {
           ...env,
           cf,
-          executionCtx
+          executionCtx,
         });
       }
-      
+
       // Fallback to direct fetch if no execution context
       return await fetch(request);
     } catch (error) {
-      console.error('Error in fetchInternal:', error);
+      console.error("Error in fetchInternal:", error);
       throw error;
     }
   };
