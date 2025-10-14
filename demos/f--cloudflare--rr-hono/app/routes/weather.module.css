@@ -44,7 +44,7 @@
 
 .location {
   font-size: var(--font-size-4);
-  font-weight: var(--font-weight-semibold);
+  font-weight: var(--font-weight-bold);
   color: var(--gray-12);
   margin-bottom: var(--space-3);
 }

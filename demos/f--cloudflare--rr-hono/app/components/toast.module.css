@@ -1,12 +1,12 @@
 .toastRoot {
   background: var(--gray-2);
   border: 1px solid var(--gray-6);
-  border-radius: var(--border-radius-md);
+  border-radius: var(--radius-3);
   box-shadow: var(--shadow-lg);
-  padding: var(--spacing-3) var(--spacing-4);
+  padding: var(--space-3) var(--space-4);
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-2);
+  gap: var(--space-2);
   min-width: var(--max-width-xs);
   max-width: var(--max-width-sm);
 }
@@ -15,12 +15,12 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: var(--spacing-4);
-  margin-bottom: var(--spacing-1);
+  gap: var(--space-4);
+  margin-bottom: var(--space-1);
 }
 
 .timer {
-  font-size: var(--font-size-sm);
+  font-size: var(--font-size-2);
   color: var(--gray-11);
   min-width: 2rem;
   text-align: right;
@@ -75,15 +75,15 @@
 }
 
 .toastTitle {
-  font-weight: var(--font-weight-semibold);
+  font-weight: var(--font-weight-bold);
   color: var(--gray-12);
-  font-size: var(--font-size-sm);
+  font-size: var(--font-size-2);
   margin: 0;
 }
 
 .toastDescription {
   color: var(--gray-11);
-  font-size: var(--font-size-xs);
+  font-size: var(--font-size-1);
   margin: 0;
   line-height: var(--line-height-normal);
 }
@@ -94,16 +94,16 @@
 
 .toastActions {
   display: flex;
-  gap: var(--spacing-2);
+  gap: var(--space-2);
   justify-content: flex-end;
-  margin-top: var(--spacing-2);
+  margin-top: var(--space-2);
 }
 
 .toastButton {
   cursor: pointer;
-  padding: var(--spacing-1) var(--spacing-3);
-  border-radius: var(--border-radius-sm);
-  font-size: var(--font-size-xs);
+  padding: var(--space-1) var(--space-3);
+  border-radius: var(--radius-2);
+  font-size: var(--font-size-1);
   font-weight: var(--font-weight-medium);
   transition: all var(--transition-fast);
   border: 1px solid transparent;
@@ -133,13 +133,13 @@
 
 .toastViewport {
   position: fixed;
-  bottom: var(--spacing-6);
-  right: var(--spacing-6);
+  bottom: var(--space-6);
+  right: var(--space-6);
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-3);
+  gap: var(--space-3);
   width: var(--max-width-sm);
-  max-width: calc(100vw - var(--spacing-12));
+  max-width: calc(100vw - var(--space-9));
   margin: 0;
   padding: 0;
   list-style: none;

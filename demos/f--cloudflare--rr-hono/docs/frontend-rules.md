@@ -49,6 +49,7 @@
 - **PROHIBITED**: NEVER use inline style attributes except in extreme cases
 - **CONDITIONAL**: Only when CSS styling cannot override antd styling, use :global selectors to target Ant Design component's internal elements
 - **MANDATORY**: ALWAYS use CSS variables for colors, spacing, font-weight etc, NEVER use magic numbers
+- **MANDATORY**: PREFER Radix UI theme variables over custom CSS variables when available. Reason: reduces duplication, ensures consistency with Radix UI components, and simplifies maintenance
 - **MANDATORY**: use camelCase for CSS classnames
   Why: to make easy jump to sourse. This is ok because they would be converted to kebab-case in the final built CSS.
 
