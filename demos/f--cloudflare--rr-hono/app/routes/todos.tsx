@@ -480,8 +480,17 @@ export default function TodosPage() {
         <h2 id="todo-list-heading" className={styles.visuallyHidden}>
           Your Todos
         </h2>
-        <ul className={styles.todoList} aria-label="Todo items">
-          {sortedTodos.map((todo) => (
+        {sortedTodos.length === 0 ? (
+          <div className={styles.emptyState}>
+            <div className={styles.emptyStateIcon}>📝</div>
+            <h3 className={styles.emptyStateTitle}>No todos yet</h3>
+            <p className={styles.emptyStateDescription}>
+              Start organizing your tasks by adding your first todo above.
+            </p>
+          </div>
+        ) : (
+          <ul className={styles.todoList} aria-label="Todo items">
+            {sortedTodos.map((todo) => (
             <li
               key={todo.id}
               className={`${styles.todoItem} ${
@@ -595,8 +604,9 @@ export default function TodosPage() {
               </aside>{" "}
               {/* End of todo actions */}
             </li>
-          ))}
-        </ul>
+            ))}
+          </ul>
+        )}
       </section>
     </main>
   );
