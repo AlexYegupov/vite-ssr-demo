@@ -205,23 +205,34 @@ export default function WeatherPage() {
 
   return (
     <div className={styles.container}>
-      <h1>Weather Information</h1>
+      <header>
+        <h1>Weather Information</h1>
+      </header>
 
-      <div className={styles.citySelectorContainer}>
-        <CitySelector
-          value={cityName}
-          onValueChange={handleCityChange}
-          cities={cities}
-        />
-      </div>
-
-      <div className={styles.weatherDisplay}>
-        <div className={styles.location}>{cityName}</div>
-        <div className={styles.weatherIcon}>{weatherIcon}</div>
-        <div className={styles.temperature}>
-          {weatherData.current.temperature_2m.toFixed(1)}°C
+      <section aria-labelledby="city-selector-heading">
+        <h2 id="city-selector-heading" className={styles.visuallyHidden}>
+          Select City
+        </h2>
+        <div className={styles.citySelectorContainer}>
+          <CitySelector
+            value={cityName}
+            onValueChange={handleCityChange}
+            cities={cities}
+          />
         </div>
-        <div className={styles.weatherDescription}>{weatherDescription}</div>
+      </section>
+
+      <section aria-labelledby="current-weather-heading">
+        <h2 id="current-weather-heading" className={styles.visuallyHidden}>
+          Current Weather
+        </h2>
+        <div className={styles.weatherDisplay} role="region" aria-label={`Weather for ${cityName}`}>
+          <div className={styles.location}>{cityName}</div>
+          <div className={styles.weatherIcon} role="img" aria-label={weatherDescription}>{weatherIcon}</div>
+          <div className={styles.temperature}>
+            {weatherData.current.temperature_2m.toFixed(1)}°C
+          </div>
+          <div className={styles.weatherDescription}>{weatherDescription}</div>
 
         <div className={styles.weatherDetails}>
           <div className={styles.detailItem}>
@@ -245,7 +256,8 @@ export default function WeatherPage() {
             </div>
           </div>
         </div>
-      </div>
+        </div>
+      </section>
     </div>
   );
 }

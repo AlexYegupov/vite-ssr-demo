@@ -178,3 +178,15 @@
   flex-wrap: wrap;
   justify-content: center;
 }
+
+.visuallyHidden {
+  border: 0;
+  clip: rect(0 0 0 0);
+  height: var(--space-1);
+  margin: calc(var(--space-1) * -1);
+  overflow: hidden;
+  padding: 0;
+  position: absolute;
+  width: var(--space-1);
+  white-space: nowrap;
+}

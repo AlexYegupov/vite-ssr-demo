@@ -282,6 +282,7 @@ export default function TodosPage() {
   const { addToast } = useToast();
   const [deletingTodoId, setDeletingTodoId] = useState<string | null>(null);
   const deletingTodoIdRef = useRef<string | null>(null);
+  const [srAnnouncement, setSrAnnouncement] = useState("");
 
   // Handle action responses and errors
   useEffect(() => {
@@ -293,25 +294,30 @@ export default function TodosPage() {
         description: actionData.data.error,
         duration: 3000,
       });
+      setSrAnnouncement(`Error: ${actionData.data.error}`);
     } else if (actionData?.intent === "delete") {
       setTodos((prevTodos) =>
         prevTodos.filter((todo) => todo.id !== actionData.data.id)
       );
       setDeletingTodoId(null);
       deletingTodoIdRef.current = null;
+      setSrAnnouncement("Todo deleted");
     } else if (actionData?.intent === "update") {
+      const updatedTodo = actionData.data;
       setTodos((prevTodos) =>
         prevTodos.map((todo) =>
-          todo.id === actionData.data.id
-            ? { ...todo, ...actionData.data }
+          todo.id === updatedTodo.id
+            ? { ...todo, ...updatedTodo }
             : todo
         )
       );
       setEditingTodoId(null);
+      setSrAnnouncement(`Todo "${updatedTodo.title}" updated`);
     } else if (actionData?.intent === "create") {
       setTodos((prevTodos) => [...prevTodos, actionData.data]);
       setNewTodoTitle("");
       newTodoInputRef.current?.focus();
+      setSrAnnouncement(`Todo "${actionData.data.title}" added`);
     }
   }, [actionData, navigation.state]);
 
@@ -431,6 +437,14 @@ export default function TodosPage() {
 
   return (
     <main className={styles.container}>
+      <div
+        role="status"
+        aria-live="polite"
+        aria-atomic="true"
+        className={styles.visuallyHidden}
+      >
+        {srAnnouncement}
+      </div>
       <header>
         <h1>Todo List</h1>
       </header>
@@ -471,6 +485,7 @@ export default function TodosPage() {
               disabled={
                 navigation.state != "idle" || newTodoTitle.trim() === ""
               }
+              aria-label="Add new todo"
             >
               Add
             </Button>
@@ -508,6 +523,7 @@ export default function TodosPage() {
                     className={styles.todoCheckbox}
                     id={`todo-${todo.id}`}
                     disabled={navigation.state != "idle"}
+                    aria-label={`Mark "${todo.title}" as ${todo.completed ? 'incomplete' : 'complete'}`}
                   >
                     <Checkbox.Indicator className={styles.checkboxIndicator}>
                       ✓
@@ -528,10 +544,13 @@ export default function TodosPage() {
                           if (e.key === "Escape") handleCancelEdit();
                         }}
                         size="3"
+                        aria-label="Edit todo title"
                       />
                     </div>
                   ) : (
-                    <span className={styles.todoText}>{todo.title}</span>
+                    <label htmlFor={`todo-${todo.id}`} className={styles.todoText}>
+                      {todo.title}
+                    </label>
                   )}
                   <footer className={styles.todoDates}>
                     <span>

@@ -30,6 +30,9 @@ export default function Home({
         <p className={styles.subtitle}>
           A production-ready showcase of modern web development practices
         </p>
+        <p className={styles.visuallyHidden}>
+          Use Tab key to navigate through interactive elements. Press Enter to activate links and buttons.
+        </p>
       </header>
 
       <section className={styles.techSection}>
