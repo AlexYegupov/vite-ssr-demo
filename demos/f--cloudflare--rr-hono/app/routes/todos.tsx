@@ -18,7 +18,7 @@ import {
   useCallback,
   useMemo,
 } from "react";
-import { Button, TextField, IconButton } from "@radix-ui/themes";
+import { Button, TextField, IconButton, Progress } from "@radix-ui/themes";
 import {
   Pencil1Icon,
   Cross2Icon,
@@ -306,9 +306,7 @@ export default function TodosPage() {
       const updatedTodo = actionData.data;
       setTodos((prevTodos) =>
         prevTodos.map((todo) =>
-          todo.id === updatedTodo.id
-            ? { ...todo, ...updatedTodo }
-            : todo
+          todo.id === updatedTodo.id ? { ...todo, ...updatedTodo } : todo
         )
       );
       setEditingTodoId(null);
@@ -435,6 +433,11 @@ export default function TodosPage() {
     removeToastById(toastId);
   };
 
+  const completedCount = todos.filter((todo) => todo.completed).length;
+  const totalCount = todos.length;
+  const completionPercentage =
+    totalCount > 0 ? Math.round((completedCount / totalCount) * 100) : 0;
+
   return (
     <main className={styles.container}>
       <div
@@ -445,8 +448,23 @@ export default function TodosPage() {
       >
         {srAnnouncement}
       </div>
-      <header>
+      <header className={styles.headerContainer}>
         <h1>Todo List</h1>
+        {totalCount > 0 && (
+          <div className={styles.statsContainer}>
+            <div className={styles.statsText}>
+              <span className={styles.completedCount}>{completedCount}</span>
+              <span className={styles.statseparator}>/</span>
+              <span className={styles.totalCount}>{totalCount}</span>
+              <span className={styles.statsLabel}>completed</span>
+            </div>
+            <Progress
+              value={completionPercentage}
+              max={100}
+              className={styles.progressBar}
+            />
+          </div>
+        )}
       </header>
 
       <section aria-labelledby="add-todo-heading">
@@ -523,7 +541,9 @@ export default function TodosPage() {
                     className={styles.todoCheckbox}
                     id={`todo-${todo.id}`}
                     disabled={navigation.state != "idle"}
-                    aria-label={`Mark "${todo.title}" as ${todo.completed ? 'incomplete' : 'complete'}`}
+                    aria-label={`Mark "${todo.title}" as ${
+                      todo.completed ? "incomplete" : "complete"
+                    }`}
                   >
                     <Checkbox.Indicator className={styles.checkboxIndicator}>
                       ✓
@@ -548,7 +568,10 @@ export default function TodosPage() {
                       />
                     </div>
                   ) : (
-                    <label htmlFor={`todo-${todo.id}`} className={styles.todoText}>
+                    <label
+                      htmlFor={`todo-${todo.id}`}
+                      className={styles.todoText}
+                    >
                       {todo.title}
                     </label>
                   )}
