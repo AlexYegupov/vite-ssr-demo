@@ -6,6 +6,7 @@ import {
   Outlet,
   Scripts,
   ScrollRestoration,
+  useNavigation,
 } from "react-router";
 import { Theme, ThemePanel } from "@radix-ui/themes";
 import { ToastProvider } from "./context/toast-context";

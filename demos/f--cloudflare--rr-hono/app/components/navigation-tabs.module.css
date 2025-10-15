@@ -5,17 +5,21 @@
   position: sticky;
   top: 0;
   z-index: 100;
+  display: flex;
+  justify-content: center;
 }
 
 .tabsRoot {
-  max-width: var(--max-width-lg);
-  margin: 0 auto;
+  width: 33.333%;
+  min-width: var(--space-9);
+  max-width: var(--max-width-sm);
   padding: 0 var(--space-4);
 }
 
 .tabsList {
   display: flex;
   gap: var(--space-2);
+  justify-content: center;
 }
 
 .tabsTrigger {
@@ -25,7 +29,7 @@
   font-weight: var(--font-weight-regular);
   color: var(--gray-11);
   cursor: pointer;
-  border-bottom: 3px solid transparent;
+  border-bottom: var(--space-1) solid transparent;
   transition: all var(--transition-fast);
   user-select: none;
   position: relative;
@@ -36,7 +40,8 @@
   background-color: var(--gray-3);
 }
 
-.tabsTrigger[data-state="active"] {
+.tabsTrigger[data-state="active"],
+.tabsTrigger.active {
   color: var(--accent-11);
   border-bottom-color: var(--accent-9);
   font-weight: var(--font-weight-medium);
@@ -44,5 +49,45 @@
 
 .tabsTrigger:focus-visible {
   outline: 2px solid var(--accent-8);
-  outline-offset: -2px;
+  outline-offset: calc(var(--space-1) * -1);
+}
+
+/* Loading Bar - Centered on Screen */
+.loadingBarCenter {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 33.333vw;
+  min-width: var(--space-9);
+  max-width: var(--max-width-sm);
+  height: var(--space-1);
+  background-color: var(--gray-4);
+  border-radius: var(--radius-2);
+  overflow: hidden;
+  box-shadow: var(--shadow-3);
+  z-index: 1000;
+}
+
+.loadingProgress {
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    var(--accent-9),
+    var(--accent-11),
+    var(--accent-9)
+  );
+  background-size: 200% 100%;
+  animation: loadingSlide 1.5s ease-in-out infinite;
+  width: 100%;
+  border-radius: var(--radius-2);
+}
+
+@keyframes loadingSlide {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
 }

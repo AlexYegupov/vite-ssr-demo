@@ -491,119 +491,119 @@ export default function TodosPage() {
         ) : (
           <ul className={styles.todoList} aria-label="Todo items">
             {sortedTodos.map((todo) => (
-            <li
-              key={todo.id}
-              className={`${styles.todoItem} ${
-                deletingTodoId === todo.id ? styles.pendingDelete : ""
-              } ${todo.completed ? styles.completed : ""}`}
-            >
-              <article className={styles.todoContent}>
-                <Checkbox.Root
-                  checked={todo.completed}
-                  onCheckedChange={() =>
-                    handleToggleComplete(todo.id, todo.completed)
-                  }
-                  className={styles.todoCheckbox}
-                  id={`todo-${todo.id}`}
-                  disabled={navigation.state != "idle"}
-                >
-                  <Checkbox.Indicator className={styles.checkboxIndicator}>
-                    ✓
-                  </Checkbox.Indicator>
-                </Checkbox.Root>
+              <li
+                key={todo.id}
+                className={`${styles.todoItem} ${
+                  deletingTodoId === todo.id ? styles.pendingDelete : ""
+                } ${todo.completed ? styles.completed : ""}`}
+              >
+                <article className={styles.todoContent}>
+                  <Checkbox.Root
+                    checked={todo.completed}
+                    onCheckedChange={() =>
+                      handleToggleComplete(todo.id, todo.completed)
+                    }
+                    className={styles.todoCheckbox}
+                    id={`todo-${todo.id}`}
+                    disabled={navigation.state != "idle"}
+                  >
+                    <Checkbox.Indicator className={styles.checkboxIndicator}>
+                      ✓
+                    </Checkbox.Indicator>
+                  </Checkbox.Root>
 
-                {editingTodoId === todo.id ? (
-                  <div className={styles.todoEditInput}>
-                    <TextField.Root
-                      value={editTodoTitle}
-                      disabled={navigation.state != "idle"}
-                      onChange={(e: ChangeEvent<HTMLInputElement>) =>
-                        setEditTodoTitle(e.target.value)
-                      }
-                      autoFocus={true}
-                      onKeyDown={(e: KeyboardEvent<HTMLInputElement>) => {
-                        if (e.key === "Enter") handleSaveEdit();
-                        if (e.key === "Escape") handleCancelEdit();
-                      }}
-                      size="3"
-                    />
-                  </div>
-                ) : (
-                  <span className={styles.todoText}>{todo.title}</span>
-                )}
-                <footer className={styles.todoDates}>
-                  <span>
-                    Created:{" "}
-                    <time dateTime={todo.createdAt}>
-                      {formatDateTime(todo.createdAt)}
-                    </time>
-                  </span>
-                  {todo.updatedAt && (
+                  {editingTodoId === todo.id ? (
+                    <div className={styles.todoEditInput}>
+                      <TextField.Root
+                        value={editTodoTitle}
+                        disabled={navigation.state != "idle"}
+                        onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                          setEditTodoTitle(e.target.value)
+                        }
+                        autoFocus={true}
+                        onKeyDown={(e: KeyboardEvent<HTMLInputElement>) => {
+                          if (e.key === "Enter") handleSaveEdit();
+                          if (e.key === "Escape") handleCancelEdit();
+                        }}
+                        size="3"
+                      />
+                    </div>
+                  ) : (
+                    <span className={styles.todoText}>{todo.title}</span>
+                  )}
+                  <footer className={styles.todoDates}>
                     <span>
-                      Updated:{" "}
-                      <time dateTime={todo.updatedAt}>
-                        {formatDateTime(todo.updatedAt)}
+                      Created:{" "}
+                      <time dateTime={todo.createdAt}>
+                        {formatDateTime(todo.createdAt)}
                       </time>
                     </span>
+                    {todo.updatedAt && (
+                      <span>
+                        Updated:{" "}
+                        <time dateTime={todo.updatedAt}>
+                          {formatDateTime(todo.updatedAt)}
+                        </time>
+                      </span>
+                    )}
+                  </footer>
+                </article>
+                <aside
+                  className={styles.todoActions}
+                  aria-label="Todo item actions"
+                >
+                  {editingTodoId === todo.id ? (
+                    <>
+                      <IconButton
+                        disabled={navigation.state != "idle"}
+                        onClick={handleSaveEdit}
+                        color="green"
+                        variant="soft"
+                        size="3"
+                        className={styles.saveEditButton}
+                        aria-label="Save edit"
+                      >
+                        <CheckIcon width="24" height="24" />
+                      </IconButton>
+                      <IconButton
+                        disabled={navigation.state != "idle"}
+                        onClick={handleCancelEdit}
+                        color="gray"
+                        variant="soft"
+                        size="3"
+                        aria-label="Cancel edit"
+                      >
+                        <Cross2Icon width="24" height="24" />
+                      </IconButton>
+                    </>
+                  ) : (
+                    <>
+                      <IconButton
+                        onClick={(e: React.MouseEvent) => handleEditTodo(todo)}
+                        color="blue"
+                        variant="ghost"
+                        size="3"
+                        className={styles.editActionButton}
+                        aria-label="Edit todo"
+                        disabled={navigation.state != "idle"}
+                      >
+                        <Pencil1Icon width="24" height="24" />
+                      </IconButton>
+                      <IconButton
+                        onClick={() => handleDeleteTodo(todo.id)}
+                        color="red"
+                        variant="ghost"
+                        size="3"
+                        aria-label="Delete todo"
+                        disabled={navigation.state != "idle"}
+                      >
+                        <TrashIcon width="24" height="24" />
+                      </IconButton>
+                    </>
                   )}
-                </footer>
-              </article>
-              <aside
-                className={styles.todoActions}
-                aria-label="Todo item actions"
-              >
-                {editingTodoId === todo.id ? (
-                  <>
-                    <IconButton
-                      disabled={navigation.state != "idle"}
-                      onClick={handleSaveEdit}
-                      color="green"
-                      variant="soft"
-                      size="3"
-                      className={styles.saveEditButton}
-                      aria-label="Save edit"
-                    >
-                      <CheckIcon width="24" height="24" />
-                    </IconButton>
-                    <IconButton
-                      disabled={navigation.state != "idle"}
-                      onClick={handleCancelEdit}
-                      color="gray"
-                      variant="soft"
-                      size="3"
-                      aria-label="Cancel edit"
-                    >
-                      <Cross2Icon width="24" height="24" />
-                    </IconButton>
-                  </>
-                ) : (
-                  <>
-                    <IconButton
-                      onClick={(e: React.MouseEvent) => handleEditTodo(todo)}
-                      color="blue"
-                      variant="ghost"
-                      size="3"
-                      className={styles.editActionButton}
-                      aria-label="Edit todo"
-                      disabled={navigation.state != "idle"}
-                    >
-                      <Pencil1Icon width="24" height="24" />
-                    </IconButton>
-                    <IconButton
-                      onClick={() => handleDeleteTodo(todo.id)}
-                      color="red"
-                      variant="ghost"
-                      size="3"
-                      aria-label="Delete todo"
-                      disabled={navigation.state != "idle"}
-                    >
-                      <TrashIcon width="24" height="24" />
-                    </IconButton>
-                  </>
-                )}
-              </aside>{" "}
-              {/* End of todo actions */}
-            </li>
+                </aside>{" "}
+                {/* End of todo actions */}
+              </li>
             ))}
           </ul>
         )}

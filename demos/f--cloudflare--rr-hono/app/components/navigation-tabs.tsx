@@ -1,10 +1,10 @@
-import { useLocation, useNavigate } from "react-router";
-import * as Tabs from "@radix-ui/react-tabs";
+import { useLocation, useNavigation, Link } from "react-router";
 import styles from "./navigation-tabs.module.css";
 
 export function NavigationTabs() {
   const location = useLocation();
-  const navigate = useNavigate();
+  const navigation = useNavigation();
+  const isNavigating = navigation.state === "loading";
 
   // Determine the active tab based on the current path
   const getActiveTab = () => {
@@ -13,35 +13,45 @@ export function NavigationTabs() {
     return "home";
   };
 
-  const handleTabChange = (value: string) => {
-    if (value === "home") {
-      navigate("/");
-    } else if (value === "todos") {
-      navigate("/todos");
-    } else if (value === "weather") {
-      navigate("/weather");
-    }
-  };
+  const activeTab = getActiveTab();
 
   return (
-    <nav className={styles.navigationContainer}>
-      <Tabs.Root
-        className={styles.tabsRoot}
-        value={getActiveTab()}
-        onValueChange={handleTabChange}
-      >
-        <Tabs.List className={styles.tabsList} aria-label="Main navigation">
-          <Tabs.Trigger className={styles.tabsTrigger} value="home">
-            Home
-          </Tabs.Trigger>
-          <Tabs.Trigger className={styles.tabsTrigger} value="todos">
-            Todo List
-          </Tabs.Trigger>
-          <Tabs.Trigger className={styles.tabsTrigger} value="weather">
-            Weather
-          </Tabs.Trigger>
-        </Tabs.List>
-      </Tabs.Root>
-    </nav>
+    <>
+      <nav className={styles.navigationContainer}>
+        <div className={styles.tabsRoot}>
+          <div className={styles.tabsList} role="tablist" aria-label="Main navigation">
+            <Link
+              to="/"
+              className={`${styles.tabsTrigger} ${activeTab === "home" ? styles.active : ""}`}
+              role="tab"
+              aria-selected={activeTab === "home"}
+            >
+              Home
+            </Link>
+            <Link
+              to="/todos"
+              className={`${styles.tabsTrigger} ${activeTab === "todos" ? styles.active : ""}`}
+              role="tab"
+              aria-selected={activeTab === "todos"}
+            >
+              Todo List
+            </Link>
+            <Link
+              to="/weather"
+              className={`${styles.tabsTrigger} ${activeTab === "weather" ? styles.active : ""}`}
+              role="tab"
+              aria-selected={activeTab === "weather"}
+            >
+              Weather
+            </Link>
+          </div>
+        </div>
+      </nav>
+      {isNavigating && (
+        <div className={styles.loadingBarCenter}>
+          <div className={styles.loadingProgress}></div>
+        </div>
+      )}
+    </>
   );
 }
