@@ -53,16 +53,29 @@ export default function Home({
               <li>React Router v7 (Remix)</li>
               <li>Radix UI Components & Themes</li>
               <li>Pure CSS Modules</li>
+              <li>Subtle CSS Animations</li>
+              <li>Page Loading Indicator</li>
             </ul>
           </div>
           <div className={styles.techCategory}>
             <h3>🔧 Backend & API</h3>
             <ul>
               <li>REST API Architecture</li>
+              <li>Swagger-Compatible API</li>
               <li>React Router Actions</li>
               <li>Cloudflare KV Database</li>
               <li>Async Toast Notifications</li>
               <li>KV Import/Export Scripts</li>
+            </ul>
+          </div>
+          <div className={styles.techCategory}>
+            <h3>♿ Accessibility & UX</h3>
+            <ul>
+              <li>Semantic HTML Structure</li>
+              <li>ARIA Labels & Roles</li>
+              <li>Keyboard Navigation Support</li>
+              <li>Mobile-Optimized Design</li>
+              <li>Touch-Friendly Interactions</li>
             </ul>
           </div>
         </div>
