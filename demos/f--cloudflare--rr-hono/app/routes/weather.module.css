@@ -315,6 +315,55 @@
 }
 
 @media (max-width: 768px) {
+  .container {
+    padding: var(--space-3);
+  }
+
+  .weatherDisplay {
+    padding: var(--space-4);
+  }
+
+  .location {
+    font-size: var(--font-size-4);
+  }
+
+  .weatherIcon {
+    font-size: var(--font-size-7);
+  }
+
+  .temperature {
+    font-size: var(--font-size-7);
+  }
+
+  .tempTrend {
+    font-size: var(--font-size-3);
+  }
+
+  .weatherDescription {
+    font-size: var(--font-size-3);
+  }
+
+  .weatherDetails {
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-2);
+  }
+
+  .detailItem {
+    padding: var(--space-2);
+  }
+
+  .detailLabel {
+    font-size: 10px;
+  }
+
+  .detailValue {
+    font-size: var(--font-size-2);
+  }
+
+  .forecastSection h2 {
+    font-size: var(--font-size-4);
+  }
+
   .forecastGrid {
     grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
     gap: var(--space-2);
@@ -324,7 +373,89 @@
     padding: var(--space-3);
   }
 
+  .forecastDay {
+    font-size: var(--font-size-2);
+  }
+
+  .forecastIcon {
+    font-size: var(--font-size-5);
+  }
+
+  .forecastTempMax {
+    font-size: var(--font-size-3);
+  }
+
+  .forecastTempMin {
+    font-size: var(--font-size-2);
+  }
+}
+
+@media (max-width: 480px) {
+  .container {
+    padding: var(--space-2);
+  }
+
+  .weatherDisplay {
+    padding: var(--space-3);
+  }
+
+  .location {
+    font-size: var(--font-size-3);
+  }
+
+  .weatherIcon {
+    font-size: var(--font-size-6);
+  }
+
+  .temperature {
+    font-size: var(--font-size-6);
+    flex-direction: column;
+    gap: var(--space-2);
+  }
+
+  .tempTrend {
+    font-size: var(--font-size-2);
+  }
+
+  .weatherDescription {
+    font-size: var(--font-size-2);
+  }
+
   .weatherDetails {
+    grid-template-columns: 1fr;
+  }
+
+  .forecastGrid {
     grid-template-columns: repeat(2, 1fr);
+  }
+
+  .forecastCard {
+    padding: var(--space-2);
+  }
+
+  .forecastDay {
+    font-size: var(--font-size-1);
+  }
+
+  .forecastIcon {
+    font-size: var(--font-size-4);
+    margin: var(--space-1) 0;
+  }
+
+  .forecastTemp {
+    gap: var(--space-1);
+  }
+
+  .forecastTempMax {
+    font-size: var(--font-size-2);
+  }
+
+  .forecastTempMin {
+    font-size: var(--font-size-1);
+  }
+
+  .forecastRain {
+    font-size: 10px;
+    padding: 2px var(--space-1);
   }
 }

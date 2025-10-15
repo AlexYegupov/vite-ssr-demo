@@ -365,12 +365,10 @@ export default function TodosPage() {
     setEditTodoTitle(todo.title);
   };
 
-  const handleSaveEdit = (e?: React.FormEvent) => {
+  const handleSaveEdit = (e?: React.FormEvent | React.MouseEvent) => {
     e?.preventDefault();
     if (!editingTodoId || !editTodoTitle.trim() || navigation.state != "idle")
       return;
-
-    if (e && e.type !== "submit") return;
 
     const updatedTitle = editTodoTitle.trim();
 
