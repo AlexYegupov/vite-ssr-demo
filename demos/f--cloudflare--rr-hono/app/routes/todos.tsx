@@ -6,6 +6,8 @@ import {
   useNavigation,
   useSubmit,
   Form,
+  useRouteError,
+  isRouteErrorResponse,
 } from "react-router";
 import {
   useState,
@@ -608,6 +610,49 @@ export default function TodosPage() {
           </ul>
         )}
       </section>
+    </main>
+  );
+}
+
+export function ErrorBoundary() {
+  const error = useRouteError();
+  const { addToast } = useToast();
+
+  let errorMessage = "An unexpected error occurred";
+  let errorStatus = 500;
+
+  if (isRouteErrorResponse(error)) {
+    errorMessage = error.data || error.statusText;
+    errorStatus = error.status;
+  } else if (error instanceof Error) {
+    errorMessage = error.message;
+  }
+
+  useEffect(() => {
+    addToast({
+      title: "Todo Error",
+      description: errorMessage,
+      duration: 5000,
+    });
+  }, [errorMessage, addToast]);
+
+  return (
+    <main className={styles.container}>
+      <div className={styles.errorContainer}>
+        <div className={styles.errorIcon}>⚠️</div>
+        <h1 className={styles.errorTitle}>
+          {errorStatus === 404 ? "Todos Not Found" : "Error Loading Todos"}
+        </h1>
+        <p className={styles.errorMessage}>{errorMessage}</p>
+        <div className={styles.errorActions}>
+          <Button asChild size="3">
+            <Link to="/todos">Try Again</Link>
+          </Button>
+          <Button asChild variant="soft" size="3">
+            <Link to="/">Go Home</Link>
+          </Button>
+        </div>
+      </div>
     </main>
   );
 }

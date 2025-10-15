@@ -1,10 +1,11 @@
-import { useLoaderData, useSearchParams } from "react-router";
+import { useLoaderData, useSearchParams, useRouteError, isRouteErrorResponse } from "react-router";
 import { Link } from "react-router";
 import { useState, useEffect } from "react";
 import styles from "./weather.module.css";
 import { CitySelector } from "../components/city-selector";
 import citiesData from "../../src/data/world-cities.json";
 import { useToast } from "../context/toast-context";
+import { Button } from "@radix-ui/themes";
 
 export function meta() {
   return [
@@ -40,40 +41,71 @@ interface City {
 // Get the first 10 cities directly from world-cities.json
 
 export async function loader({ request }: { request: Request }) {
-  const url = new URL(request.url);
-  const cityParam = url.searchParams.get("city");
+  try {
+    const url = new URL(request.url);
+    const cityParam = url.searchParams.get("city");
 
-  const cities = citiesData as City[];
-  const defaultCity = cities[0];
-  let latitude = defaultCity.latitude;
-  let longitude = defaultCity.longitude;
-  let cityName = `${defaultCity.name}, ${defaultCity.country}`;
-
-  if (cityParam) {
-    const [name, country] = cityParam.split(",");
-    const city = [...cities.slice(0, 10)].find(
-      (c) => c.name === name && c.country === country
-    );
-    if (city) {
-      latitude = city.latitude;
-      longitude = city.longitude;
-      cityName = `${city.name}, ${city.country}`;
+    const cities = citiesData as City[];
+    
+    if (!cities || cities.length === 0) {
+      throw new Error("No cities data available");
     }
+
+    const defaultCity = cities[0];
+    let latitude = defaultCity.latitude;
+    let longitude = defaultCity.longitude;
+    let cityName = `${defaultCity.name}, ${defaultCity.country}`;
+
+    if (cityParam) {
+      const [name, country] = cityParam.split(",");
+      const city = [...cities.slice(0, 10)].find(
+        (c) => c.name === name && c.country === country
+      );
+      if (city) {
+        latitude = city.latitude;
+        longitude = city.longitude;
+        cityName = `${city.name}, ${city.country}`;
+      }
+    }
+
+    const weatherUrl = `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current=temperature_2m,wind_speed_10m,weather_code,is_day&hourly=temperature_2m,relative_humidity_2m,wind_speed_10m&timezone=auto`;
+    
+    const response = await fetch(weatherUrl);
+
+    if (!response.ok) {
+      throw new Response(
+        `Failed to fetch weather data: ${response.statusText}`,
+        {
+          status: response.status,
+          statusText: response.statusText,
+        }
+      );
+    }
+
+    const weatherData: WeatherData = await response.json();
+    
+    // Validate weather data
+    if (!weatherData.current || !weatherData.hourly) {
+      throw new Error("Invalid weather data received from API");
+    }
+
+    return { 
+      weatherData, 
+      cityName, 
+      cities: (citiesData as City[]).slice(0, 10) 
+    };
+  } catch (error) {
+    console.error("Error in weather loader:", error);
+    
+    if (error instanceof Response) {
+      throw error;
+    }
+    
+    throw new Response(
+      error instanceof Error ? error.message : "Failed to load weather data",
+      { status: 500 }
+    );
   }
-
-  const response = await fetch(
-    `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current=temperature_2m,wind_speed_10m,weather_code,is_day&hourly=temperature_2m,relative_humidity_2m,wind_speed_10m&timezone=auto`
-  );
-
-  if (!response.ok) {
-    throw new Response(`Weather API error: ${response.status}`, {
-      status: response.status,
-    });
-  }
-
-  const weatherData: WeatherData = await response.json();
-  // Use first 10 cities from citiesData
-  return { weatherData, cityName, cities: (citiesData as City[]).slice(0, 10) };
 }
 
 function getWeatherIcon(weatherCode: number, isDay: number): string {
@@ -142,13 +174,25 @@ export default function WeatherPage() {
   const { addToast } = useToast();
 
   const handleCityChange = (cityValue: string) => {
-    const [cityName, country] = cityValue.split(",");
-    addToast({
-      title: "City Changed",
-      description: `Now showing weather for ${cityName}, ${country}`,
-      duration: 3000,
-    });
-    setSearchParams({ city: cityValue });
+    try {
+      const [cityName, country] = cityValue.split(",");
+      if (!cityName || !country) {
+        throw new Error("Invalid city format");
+      }
+      
+      addToast({
+        title: "City Changed",
+        description: `Now showing weather for ${cityName}, ${country}`,
+        duration: 3000,
+      });
+      setSearchParams({ city: cityValue });
+    } catch (error) {
+      addToast({
+        title: "Error",
+        description: error instanceof Error ? error.message : "Failed to change city",
+        duration: 3000,
+      });
+    }
   };
 
   const weatherIcon = getWeatherIcon(
@@ -200,6 +244,49 @@ export default function WeatherPage() {
               {weatherData.generationtime_ms.toFixed(1)}ms
             </div>
           </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export function ErrorBoundary() {
+  const error = useRouteError();
+  const { addToast } = useToast();
+
+  let errorMessage = "An unexpected error occurred";
+  let errorStatus = 500;
+
+  if (isRouteErrorResponse(error)) {
+    errorMessage = error.data || error.statusText;
+    errorStatus = error.status;
+  } else if (error instanceof Error) {
+    errorMessage = error.message;
+  }
+
+  useEffect(() => {
+    addToast({
+      title: "Weather Error",
+      description: errorMessage,
+      duration: 5000,
+    });
+  }, [errorMessage, addToast]);
+
+  return (
+    <div className={styles.container}>
+      <div className={styles.errorContainer}>
+        <div className={styles.errorIcon}>⚠️</div>
+        <h1 className={styles.errorTitle}>
+          {errorStatus === 404 ? "Weather Not Found" : "Weather Error"}
+        </h1>
+        <p className={styles.errorMessage}>{errorMessage}</p>
+        <div className={styles.errorActions}>
+          <Button asChild size="3">
+            <Link to="/weather">Try Again</Link>
+          </Button>
+          <Button asChild variant="soft" size="3">
+            <Link to="/">Go Home</Link>
+          </Button>
         </div>
       </div>
     </div>

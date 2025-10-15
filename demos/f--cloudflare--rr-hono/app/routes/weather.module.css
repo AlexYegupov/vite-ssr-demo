@@ -89,5 +89,54 @@
 .detailValue {
   font-size: var(--font-size-3);
   font-weight: var(--font-weight-medium);
-color: var(--gray-12);
+  color: var(--gray-12);
+}
+
+/* Error Boundary Styles */
+.errorContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 60vh;
+  text-align: center;
+  padding: var(--space-6);
+}
+
+.errorIcon {
+  font-size: var(--font-size-9);
+  margin-bottom: var(--space-4);
+  animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.8;
+    transform: scale(1.05);
+  }
+}
+
+.errorTitle {
+  font-size: var(--font-size-6);
+  font-weight: var(--font-weight-bold);
+  color: var(--red-11);
+  margin-bottom: var(--space-3);
+}
+
+.errorMessage {
+  font-size: var(--font-size-3);
+  color: var(--gray-11);
+  margin-bottom: var(--space-5);
+  max-width: var(--max-width-sm);
+}
+
+.errorActions {
+  display: flex;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+  justify-content: center;
 }
