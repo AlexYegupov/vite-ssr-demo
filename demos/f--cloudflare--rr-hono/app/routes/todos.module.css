@@ -19,12 +19,14 @@
 .headerContainer {
   margin-bottom: var(--space-6);
   display: flex;
-  flex-direction: column;
-  gap: var(--space-4);
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-6);
 }
 
 .headerContainer h1 {
   margin: 0;
+  flex-shrink: 0;
 }
 
 .headerContainer a {
@@ -51,10 +53,8 @@ h1 {
   display: flex;
   flex-direction: column;
   gap: var(--space-2);
-  padding: var(--space-4);
-  background-color: var(--gray-2);
-  border-radius: var(--radius-3);
-  border: 1px solid var(--gray-6);
+  flex: 1;
+  max-width: 400px;
 }
 
 .statsText {
