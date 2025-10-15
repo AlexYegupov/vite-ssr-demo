@@ -2,6 +2,18 @@
   max-width: var(--max-width-md);
   margin: 0 auto;
   padding: var(--space-4);
+  animation: fadeIn var(--transition-normal) ease-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(var(--space-3));
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .headerContainer {
@@ -95,7 +107,19 @@ h1 {
   background-color: var(--color-panel);
   border: 1px solid var(--gray-6);
   border-radius: var(--radius-4);
-  transition: background-color var(--transition-normal);
+  transition: all var(--transition-normal);
+  animation: slideIn var(--transition-normal) ease-out backwards;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateX(calc(var(--space-6) * -1));
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
 }
 
 .todoItem.updating {
@@ -106,7 +130,8 @@ h1 {
 
 .todoItem:hover {
   box-shadow: var(--shadow-lg);
-  transform: translateY(-1px);
+  transform: translateY(-2px);
+  border-color: var(--accent-7);
 }
 
 .todoContent {
@@ -252,12 +277,31 @@ h1 {
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-right: var(--space-2);
+  transition: all var(--transition-fast);
+  transform-origin: center;
+}
+
+.todoCheckbox:hover {
+  border-color: var(--accent-8);
+  transform: scale(1.1);
 }
 
 .todoCheckbox[data-state="checked"] {
   background-color: var(--accent-9);
   border-color: var(--accent-9);
+  animation: checkPop var(--transition-fast) ease-out;
+}
+
+@keyframes checkPop {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.2);
+  }
+  100% {
+    transform: scale(1);
+  }
 }
 
 .updatingLabel {

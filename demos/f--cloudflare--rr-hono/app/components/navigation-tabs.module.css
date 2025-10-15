@@ -48,8 +48,18 @@
 }
 
 .tabsTrigger:focus-visible {
-  outline: 2px solid var(--accent-8);
+  outline: 2px solid var(--accent-9);
   outline-offset: calc(var(--space-1) * -1);
+  animation: focusPulse 1s ease-in-out infinite;
+}
+
+@keyframes focusPulse {
+  0%, 100% {
+    outline-color: var(--accent-9);
+  }
+  50% {
+    outline-color: var(--accent-11);
+  }
 }
 
 /* Loading Bar - Top of Page */

@@ -68,11 +68,11 @@ export default function Home({
       <section className={styles.demoSection}>
         <h2 className={styles.sectionTitle}>Interactive Demos</h2>
         <div className={styles.cardGrid}>
-          <Link to="/todos" className={styles.card}>
+          <Link to="/todos" className={`${styles.card} ${styles.cardDelay1}`}>
             <h3>📝 Todo List</h3>
             <p>Full CRUD operations with Cloudflare KV persistence, optimistic UI updates, and real-time validation</p>
           </Link>
-          <Link to="/weather" className={styles.card}>
+          <Link to="/weather" className={`${styles.card} ${styles.cardDelay2}`}>
             <h3>🌤️ Weather Forecast</h3>
             <p>Dynamic city selection with API integration and responsive data visualization</p>
           </Link>
