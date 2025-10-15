@@ -98,7 +98,7 @@
   color: var(--gray-11);
   font-size: var(--font-size-3);
   padding: var(--space-2) 0;
-  line-height: var(--line-height-normal);
+  line-height: 1.5;
 }
 
 .techCategory li::before {
@@ -170,7 +170,7 @@
   font-size: var(--font-size-3);
   color: var(--gray-11);
   margin: 0;
-  line-height: var(--line-height-relaxed);
+  line-height: 1.75;
 }
 
 /* Roadmap Section */
@@ -206,7 +206,7 @@
   color: var(--gray-11);
   font-size: var(--font-size-2);
   padding: var(--space-2) 0;
-  line-height: var(--line-height-normal);
+  line-height: 1.5;
 }
 
 .roadmapColumn li::before {

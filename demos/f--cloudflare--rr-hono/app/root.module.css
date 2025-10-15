@@ -1,87 +1,30 @@
 /* Root layout styles */
 :root {
-  /* Colors - using Radix UI variables directly */
-  /* These will automatically change when the accent color changes */
-  --color-primary: var(--accent-9);
-  --color-primary-dark: var(--accent-10);
-  --color-primary-light: var(--accent-8);
-  
-  /* Text colors */
-  --color-text-primary: var(--gray-12);
-  --color-text-secondary: var(--gray-11);
-  --color-text-tertiary: var(--gray-10);
-  
-  /* Background colors */
-  --color-bg-primary: var(--gray-1);
-  --color-bg-secondary: var(--gray-2);
-  --color-bg-tertiary: var(--gray-3);
-  
-  /* Status colors - using Radix UI color scales */
-  --color-success: var(--green-9);
-  --color-warning: var(--amber-9);
-  --color-error: var(--red-9);
-  --color-info: var(--blue-9);
-  
-  /* Border colors */
-  --color-border: #e5e7eb;
-  --color-border-light: #f3f4f6;
-  
-  /* Typography - custom only */
+  /* Typography - custom only (Radix doesn't provide font-family) */
   --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
   
-  /* Transitions */
+  /* Transitions - custom (Radix doesn't provide transition durations) */
   --transition-fast: 150ms;
   --transition-normal: 250ms;
   --transition-slow: 350ms;
   
-  /* Layout */
+  /* Layout - custom max-widths (Radix doesn't provide these) */
   --max-width-xs: 300px;
   --max-width-sm: 500px;
   --max-width-md: 800px;
   --max-width-lg: 1200px;
   
-  /* Effects - using Radix UI shadows when possible */
-  --shadow-sm: var(--shadow-1);
-  --shadow-md: var(--shadow-2);
-  --shadow-lg: var(--shadow-3);
-  
-  /* Glass effect */
+  /* Glass effect - custom (not in Radix) */
   --color-bg-glass: rgba(255, 255, 255, 0.1);
   --color-border-glass: rgba(255, 255, 255, 0.2);
   --blur-sm: 4px;
   --blur-md: 10px;
   --blur-lg: 16px;
-  
-  
-  /* Line heights */
-  --line-height-tight: 1.25;
-  --line-height-normal: 1.5;
-  --line-height-loose: 1.75;
 }
 
-/* Dark mode overrides */
+/* Dark mode overrides for glass effect only */
 @media (prefers-color-scheme: dark) {
   :root {
-    /* Text colors */
-    --color-text-primary: var(--gray-12);
-    --color-text-secondary: var(--gray-11);
-    --color-text-tertiary: var(--gray-10);
-    
-    /* Background colors */
-    --color-bg-primary: var(--gray-1);
-    --color-bg-secondary: var(--gray-2);
-    --color-bg-tertiary: var(--gray-3);
-    
-    /* Border colors */
-    --color-border: #374151;
-    --color-border-light: #4b5563;
-    
-    /* Adjust other colors for dark mode */
-    --color-primary: #3b82f6;
-    --color-primary-dark: #2563eb;
-    --color-primary-light: #60a5fa;
-    
-    /* Dark mode glass effect */
     --color-bg-glass: rgba(0, 0, 0, 0.2);
     --color-border-glass: rgba(255, 255, 255, 0.1);
   }
@@ -90,9 +33,9 @@
 /* Base styles */
 html {
   font-family: var(--font-sans);
-  line-height: var(--line-height-normal);
-  color: var(--color-text-primary);
-  background-color: var(--color-bg-primary);
+  line-height: 1.5;
+  color: var(--gray-12);
+  background-color: var(--gray-1);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   /* Mobile optimizations */
@@ -129,29 +72,22 @@ body {
   font-size: var(--font-size-6);
   font-weight: var(--font-weight-medium);
   margin: 0 0 var(--space-4);
-  color: var(--color-text-primary);
+  color: var(--gray-12);
 }
 
 .errorBoundary p {
   margin: 0 0 var(--space-4);
-  color: var(--color-text-secondary);
+  color: var(--gray-11);
   font-size: var(--font-size-3);
 }
 
 .errorBoundary pre {
-  background-color: var(--color-bg-secondary);
+  background-color: var(--gray-2);
   border-radius: var(--radius-3);
   padding: var(--space-4);
   overflow-x: auto;
   font-size: var(--font-size-2);
-  line-height: var(--line-height-normal);
+  line-height: 1.5;
   margin: var(--space-4) 0;
-  border: 1px solid var(--color-border);
-}
-
-@media (prefers-color-scheme: dark) {
-  .errorBoundary pre {
-    background-color: var(--color-bg-secondary);
-    border-color: var(--color-border);
-  }
+  border: 1px solid var(--gray-6);
 }

@@ -109,11 +109,10 @@ Todo management with full CRUD operations, Cloudflare KV persistence, optimistic
 │  └────────────────────────────────────────────────────────────┘           │
 │                                                                            │
 └────────────────────────────────────────────────────────────────────────────┘
-```
 
 ### Weather
 
-Real-time weather data from Open-Meteo API with dynamic city selection, animated weather icon with bounce effect, scale-in animation for weather card, hover lift effect, and comprehensive error handling. Displays current temperature, wind speed, humidity, and API response time. Error boundary shows retry options on API failures.
+Real-time weather data from Open-Meteo API with dynamic city selection from top 10 world cities, animated weather icon with bounce effect, scale-in animation for weather card, hover lift effect, and comprehensive error handling. Displays current conditions including temperature with trend indicator, wind speed, humidity, sunrise/sunset times, UV index with color-coded severity levels, and precipitation probability. Features 7-day forecast with daily high/low temperatures, weather icons, and rain chances. Error boundary shows retry options on API failures with toast notifications.
 
 ```
 ┌────────────────────────────────────────────────────────────────────────────┐
@@ -128,12 +127,20 @@ Real-time weather data from Open-Meteo API with dynamic city selection, animated
 │  ┌──────────────────────────────────────────────────────────────────────┐ │
 │  │                    London, United Kingdom                             │ │
 │  │                           ☀️                                          │ │
-│  │                          15.2°C                                       │ │
+│  │                       15.2°C ↗ 2.1°                                   │ │
 │  │                       Clear sky                                       │ │
 │  │                                                                       │ │
-│  │  Wind Speed          Humidity            Response Time               │ │
-│  │  12.5 km/h           65%                 45.2ms                       │ │
+│  │  Wind Speed    Humidity    Sunrise      Sunset      UV Index  Rain   │ │
+│  │  12.5 km/h     65%         🌅 6:45 AM   🌇 8:30 PM  3.2-Mod   15%    │ │
 │  └──────────────────────────────────────────────────────────────────────┘ │
+│                                                                            │
+│  7-Day Forecast                                                            │
+│  ┌─────────┐ ┌─────────┐ ┌─────────┐ ┌─────────┐ ┌─────────┐            │
+│  │ Today   │ │Tomorrow │ │ Wed     │ │ Thu     │ │ Fri     │            │
+│  │   ☀️    │ │   ☁️    │ │   🌧️   │ │   ⛈️    │ │   ☀️    │            │
+│  │ 18° 12° │ │ 16° 11° │ │ 14° 10° │ │ 13°  9° │ │ 17° 11° │            │
+│  │         │ │ 💧 20%  │ │ 💧 60%  │ │ 💧 80%  │ │         │            │
+│  └─────────┘ └─────────┘ └─────────┘ └─────────┘ └─────────┘            │
 │                                                                            │
 │  ┌────────────────────────────────────────────────────────────┐           │
 │  │ 🔔 City Changed. Now showing weather for London, UK.    [✕]           │

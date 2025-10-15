@@ -392,7 +392,7 @@ h1 {
   left: 0;
   right: 0;
   bottom: 0;
-  background: var(--color-overlay-light);
+  background: var(--gray-a3);
   z-index: 1;
 }
 
@@ -406,11 +406,11 @@ h1 {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  background: var(--color-background);
+  background: var(--gray-1);
   padding: var(--space-1) var(--space-2);
   border-radius: var(--radius-2);
   font-size: var(--font-size-1);
-  color: var(--color-text);
+  color: var(--gray-12);
 }
 
 @keyframes pulse {
@@ -559,7 +559,7 @@ h1 {
   color: var(--gray-11);
   margin: 0;
   max-width: var(--max-width-sm);
-  line-height: var(--line-height-relaxed);
+  line-height: 1.75;
 }
 
 /* Error Boundary Styles */
