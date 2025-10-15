@@ -97,6 +97,25 @@
   font-weight: var(--font-weight-bold);
   margin-bottom: var(--space-1);
   color: var(--accent-11);
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  justify-content: center;
+}
+
+.tempTrend {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  font-size: var(--font-size-4);
+  padding: var(--space-1) var(--space-2);
+  background: var(--gray-a3);
+  border-radius: var(--radius-2);
+}
+
+.tempTrendText {
+  font-size: var(--font-size-2);
+  color: var(--gray-11);
 }
 
 .weatherDescription {
@@ -128,6 +147,35 @@
   font-size: var(--font-size-3);
   font-weight: var(--font-weight-medium);
   color: var(--gray-12);
+}
+
+.uvBadge {
+  display: inline-block;
+  padding: var(--space-1) var(--space-2);
+  border-radius: var(--radius-2);
+  font-size: var(--font-size-2);
+  font-weight: var(--font-weight-bold);
+  color: white;
+}
+
+.uvBadge[data-uv-level="low"] {
+  background-color: var(--green-9);
+}
+
+.uvBadge[data-uv-level="moderate"] {
+  background-color: var(--yellow-9);
+}
+
+.uvBadge[data-uv-level="high"] {
+  background-color: var(--orange-9);
+}
+
+.uvBadge[data-uv-level="very-high"] {
+  background-color: var(--red-9);
+}
+
+.uvBadge[data-uv-level="extreme"] {
+  background-color: var(--purple-9);
 }
 
 /* Error Boundary Styles */
@@ -189,4 +237,94 @@
   position: absolute;
   width: var(--space-1);
   white-space: nowrap;
+}
+
+/* 7-Day Forecast */
+.forecastSection {
+  margin-top: var(--space-6);
+}
+
+.forecastSection h2 {
+  font-size: var(--font-size-5);
+  font-weight: var(--font-weight-bold);
+  margin-bottom: var(--space-4);
+  color: var(--gray-12);
+}
+
+.forecastGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: var(--space-3);
+}
+
+.forecastCard {
+  background: var(--gray-2);
+  border: 1px solid var(--gray-6);
+  border-radius: var(--radius-3);
+  padding: var(--space-4);
+  text-align: center;
+  transition: all var(--transition-fast);
+  animation: scaleIn 0.3s ease-out;
+}
+
+.forecastCard:hover {
+  transform: translateY(calc(var(--space-1) * -1));
+  box-shadow: var(--shadow-3);
+  border-color: var(--accent-7);
+}
+
+.forecastDay {
+  font-size: var(--font-size-3);
+  font-weight: var(--font-weight-bold);
+  color: var(--gray-12);
+  margin-bottom: var(--space-2);
+}
+
+.forecastIcon {
+  font-size: var(--font-size-6);
+  margin: var(--space-2) 0;
+}
+
+.forecastTemp {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: var(--space-2);
+  margin-top: var(--space-2);
+}
+
+.forecastTempMax {
+  font-size: var(--font-size-4);
+  font-weight: var(--font-weight-bold);
+  color: var(--accent-11);
+}
+
+.forecastTempMin {
+  font-size: var(--font-size-3);
+  color: var(--gray-10);
+}
+
+.forecastRain {
+  margin-top: var(--space-2);
+  font-size: var(--font-size-2);
+  color: var(--blue-11);
+  background: var(--blue-a3);
+  padding: var(--space-1) var(--space-2);
+  border-radius: var(--radius-2);
+  display: inline-block;
+}
+
+@media (max-width: 768px) {
+  .forecastGrid {
+    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+    gap: var(--space-2);
+  }
+
+  .forecastCard {
+    padding: var(--space-3);
+  }
+
+  .weatherDetails {
+    grid-template-columns: repeat(2, 1fr);
+  }
 }

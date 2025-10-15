@@ -28,6 +28,16 @@ interface WeatherData {
     relative_humidity_2m: number[];
     wind_speed_10m: number[];
   };
+  daily: {
+    time: string[];
+    weather_code: number[];
+    temperature_2m_max: number[];
+    temperature_2m_min: number[];
+    sunrise: string[];
+    sunset: string[];
+    uv_index_max: number[];
+    precipitation_probability_max: number[];
+  };
 }
 
 interface City {
@@ -68,7 +78,7 @@ export async function loader({ request }: { request: Request }) {
       }
     }
 
-    const weatherUrl = `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current=temperature_2m,wind_speed_10m,weather_code,is_day&hourly=temperature_2m,relative_humidity_2m,wind_speed_10m&timezone=auto`;
+    const weatherUrl = `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current=temperature_2m,wind_speed_10m,weather_code,is_day&hourly=temperature_2m,relative_humidity_2m,wind_speed_10m&daily=weather_code,temperature_2m_max,temperature_2m_min,sunrise,sunset,uv_index_max,precipitation_probability_max&timezone=auto&forecast_days=7`;
     
     const response = await fetch(weatherUrl);
 
@@ -163,6 +173,30 @@ function getWeatherDescription(weatherCode: number): string {
   return weatherDescriptions[weatherCode] || "Unknown weather";
 }
 
+function formatTime(timeString: string): string {
+  const date = new Date(timeString);
+  return date.toLocaleTimeString("en-US", {
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: true,
+  });
+}
+
+function getUVIndexLevel(uvIndex: number): { level: string; color: string } {
+  if (uvIndex <= 2) return { level: "Low", color: "var(--green-9)" };
+  if (uvIndex <= 5) return { level: "Moderate", color: "var(--yellow-9)" };
+  if (uvIndex <= 7) return { level: "High", color: "var(--orange-9)" };
+  if (uvIndex <= 10) return { level: "Very High", color: "var(--red-9)" };
+  return { level: "Extreme", color: "var(--purple-9)" };
+}
+
+function getDayName(dateString: string, index: number): string {
+  if (index === 0) return "Today";
+  if (index === 1) return "Tomorrow";
+  const date = new Date(dateString);
+  return date.toLocaleDateString("en-US", { weekday: "short" });
+}
+
 export default function WeatherPage() {
   const { weatherData, cityName, cities } = useLoaderData() as {
     weatherData: WeatherData;
@@ -203,6 +237,18 @@ export default function WeatherPage() {
     weatherData.current.weather_code
   );
 
+  const todaySunrise = formatTime(weatherData.daily.sunrise[0]);
+  const todaySunset = formatTime(weatherData.daily.sunset[0]);
+  const todayUVIndex = weatherData.daily.uv_index_max[0];
+  const uvInfo = getUVIndexLevel(todayUVIndex);
+
+  // Calculate temperature trend (comparing today's max with tomorrow's max)
+  const tempTrend =
+    weatherData.daily.temperature_2m_max.length > 1
+      ? weatherData.daily.temperature_2m_max[1] -
+        weatherData.daily.temperature_2m_max[0]
+      : 0;
+
   return (
     <div className={styles.container}>
       <header>
@@ -231,31 +277,85 @@ export default function WeatherPage() {
           <div className={styles.weatherIcon} role="img" aria-label={weatherDescription}>{weatherIcon}</div>
           <div className={styles.temperature}>
             {weatherData.current.temperature_2m.toFixed(1)}°C
+            {tempTrend !== 0 && (
+              <span className={styles.tempTrend}>
+                {tempTrend > 0 ? "↗" : "↘"}
+                <span className={styles.tempTrendText}>
+                  {Math.abs(tempTrend).toFixed(1)}°
+                </span>
+              </span>
+            )}
           </div>
           <div className={styles.weatherDescription}>{weatherDescription}</div>
 
-        <div className={styles.weatherDetails}>
-          <div className={styles.detailItem}>
-            <div className={styles.detailLabel}>Wind Speed</div>
-            <div className={styles.detailValue}>
-              {weatherData.current.wind_speed_10m.toFixed(1)} km/h
+          <div className={styles.weatherDetails}>
+            <div className={styles.detailItem}>
+              <div className={styles.detailLabel}>Wind Speed</div>
+              <div className={styles.detailValue}>
+                {weatherData.current.wind_speed_10m.toFixed(1)} km/h
+              </div>
             </div>
-          </div>
 
-          <div className={styles.detailItem}>
-            <div className={styles.detailLabel}>Humidity</div>
-            <div className={styles.detailValue}>
-              {weatherData.hourly.relative_humidity_2m[0]}%
+            <div className={styles.detailItem}>
+              <div className={styles.detailLabel}>Humidity</div>
+              <div className={styles.detailValue}>
+                {weatherData.hourly.relative_humidity_2m[0]}%
+              </div>
             </div>
-          </div>
 
-          <div className={styles.detailItem}>
-            <div className={styles.detailLabel}>Response Time</div>
-            <div className={styles.detailValue}>
-              {weatherData.generationtime_ms.toFixed(1)}ms
+            <div className={styles.detailItem}>
+              <div className={styles.detailLabel}>Sunrise</div>
+              <div className={styles.detailValue}>🌅 {todaySunrise}</div>
+            </div>
+
+            <div className={styles.detailItem}>
+              <div className={styles.detailLabel}>Sunset</div>
+              <div className={styles.detailValue}>🌇 {todaySunset}</div>
+            </div>
+
+            <div className={styles.detailItem}>
+              <div className={styles.detailLabel}>UV Index</div>
+              <div className={styles.detailValue}>
+                <span className={styles.uvBadge} data-uv-level={uvInfo.level.toLowerCase().replace(" ", "-")}>
+                  {todayUVIndex.toFixed(1)} - {uvInfo.level}
+                </span>
+              </div>
+            </div>
+
+            <div className={styles.detailItem}>
+              <div className={styles.detailLabel}>Rain Chance</div>
+              <div className={styles.detailValue}>
+                {weatherData.daily.precipitation_probability_max[0]}%
+              </div>
             </div>
           </div>
         </div>
+      </section>
+
+      <section aria-labelledby="forecast-heading" className={styles.forecastSection}>
+        <h2 id="forecast-heading">7-Day Forecast</h2>
+        <div className={styles.forecastGrid}>
+          {weatherData.daily.time.map((date, index) => {
+            const dayIcon = getWeatherIcon(weatherData.daily.weather_code[index], 1);
+            const dayName = getDayName(date, index);
+            const maxTemp = weatherData.daily.temperature_2m_max[index];
+            const minTemp = weatherData.daily.temperature_2m_min[index];
+            const rainChance = weatherData.daily.precipitation_probability_max[index];
+
+            return (
+              <div key={date} className={styles.forecastCard}>
+                <div className={styles.forecastDay}>{dayName}</div>
+                <div className={styles.forecastIcon}>{dayIcon}</div>
+                <div className={styles.forecastTemp}>
+                  <span className={styles.forecastTempMax}>{maxTemp.toFixed(0)}°</span>
+                  <span className={styles.forecastTempMin}>{minTemp.toFixed(0)}°</span>
+                </div>
+                {rainChance > 0 && (
+                  <div className={styles.forecastRain}>💧 {rainChance}%</div>
+                )}
+              </div>
+            );
+          })}
         </div>
       </section>
     </div>
