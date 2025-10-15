@@ -1,51 +1,48 @@
-import { useLocation, useNavigation, Link } from "react-router";
+import { useLocation, useNavigate, useNavigation } from "react-router";
+import { useRef } from "react";
+import * as Tabs from "@radix-ui/react-tabs";
 import styles from "./navigation-tabs.module.css";
 
 export function NavigationTabs() {
   const location = useLocation();
+  const navigate = useNavigate();
   const navigation = useNavigation();
   const isNavigating = navigation.state === "loading";
+  const isNavigatingRef = useRef(false);
 
-  // Determine the active tab based on the current path
-  const getActiveTab = () => {
-    if (location.pathname === "/todos") return "todos";
-    if (location.pathname === "/weather") return "weather";
-    return "home";
+  const handleTabChange = (value: string) => {
+    // Prevent double navigation
+    if (isNavigatingRef.current) return;
+    isNavigatingRef.current = true;
+
+    navigate(value);
+
+    // Reset the flag after navigation starts
+    setTimeout(() => {
+      isNavigatingRef.current = false;
+    }, 100);
   };
-
-  const activeTab = getActiveTab();
 
   return (
     <>
       <nav className={styles.navigationContainer}>
-        <div className={styles.tabsRoot}>
-          <div className={styles.tabsList} role="tablist" aria-label="Main navigation">
-            <Link
-              to="/"
-              className={`${styles.tabsTrigger} ${activeTab === "home" ? styles.active : ""}`}
-              role="tab"
-              aria-selected={activeTab === "home"}
-            >
+        <Tabs.Root
+          className={styles.tabsRoot}
+          value={location.pathname}
+          onValueChange={handleTabChange}
+        >
+          <Tabs.List className={styles.tabsList} aria-label="Main navigation">
+            <Tabs.Trigger className={styles.tabsTrigger} value="/">
               Home
-            </Link>
-            <Link
-              to="/todos"
-              className={`${styles.tabsTrigger} ${activeTab === "todos" ? styles.active : ""}`}
-              role="tab"
-              aria-selected={activeTab === "todos"}
-            >
+            </Tabs.Trigger>
+            <Tabs.Trigger className={styles.tabsTrigger} value="/todos">
               Todo List
-            </Link>
-            <Link
-              to="/weather"
-              className={`${styles.tabsTrigger} ${activeTab === "weather" ? styles.active : ""}`}
-              role="tab"
-              aria-selected={activeTab === "weather"}
-            >
+            </Tabs.Trigger>
+            <Tabs.Trigger className={styles.tabsTrigger} value="/weather">
               Weather
-            </Link>
-          </div>
-        </div>
+            </Tabs.Trigger>
+          </Tabs.List>
+        </Tabs.Root>
       </nav>
       {isNavigating && (
         <div className={styles.loadingBarCenter}>
