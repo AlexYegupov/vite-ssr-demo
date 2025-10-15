@@ -574,20 +574,9 @@ export default function TodosPage() {
                     </label>
                   )}
                   <footer className={styles.todoDates}>
-                    <span>
-                      Created:{" "}
-                      <time dateTime={todo.createdAt}>
-                        {formatDateTime(todo.createdAt)}
-                      </time>
-                    </span>
-                    {todo.updatedAt && (
-                      <span>
-                        Updated:{" "}
-                        <time dateTime={todo.updatedAt}>
-                          {formatDateTime(todo.updatedAt)}
-                        </time>
-                      </span>
-                    )}
+                    <time dateTime={todo.updatedAt || todo.createdAt}>
+                      {formatDateTime(todo.updatedAt || todo.createdAt)}
+                    </time>
                   </footer>
                 </article>
                 <aside
