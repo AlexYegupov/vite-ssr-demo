@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import {
   isRouteErrorResponse,
   Links,
@@ -14,6 +14,7 @@ import { GlobalToast } from "./components/toast";
 import { NavigationTabs } from "./components/navigation-tabs";
 import { Logo } from "./components/logo";
 import { Favicon } from "./components/favicon";
+import { ThemeToggle } from "./components/theme-toggle";
 
 import type { Route } from "./+types/root";
 import "@radix-ui/themes/styles.css";
@@ -35,6 +36,28 @@ export const links: Route.LinksFunction = () => [
 
 export function Layout({ children }: { children: React.ReactNode }) {
   const isDev = import.meta.env.DEV;
+  const [appearance, setAppearance] = useState<"light" | "dark">("dark");
+
+  useEffect(() => {
+    // Get theme from localStorage on mount
+    const savedTheme = localStorage.getItem("theme") as "light" | "dark" | null;
+    if (savedTheme) {
+      setAppearance(savedTheme);
+    }
+
+    // Listen for theme changes
+    const handleThemeChange = (event: CustomEvent<"light" | "dark">) => {
+      setAppearance(event.detail);
+    };
+
+    window.addEventListener("themechange", handleThemeChange as EventListener);
+    return () => {
+      window.removeEventListener(
+        "themechange",
+        handleThemeChange as EventListener
+      );
+    };
+  }, []);
 
   return (
     <html lang="en">
@@ -57,8 +80,8 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <Links />
       </head>
       <body>
-        <Theme appearance="dark" accentColor="sky">
-          <ToastProvider>
+        <Theme appearance={appearance} accentColor="amber">
+          <ToastProvider>            
             {children}
             <GlobalToast />
             {isDev && <ThemePanel defaultOpen={false} />}
@@ -75,6 +98,7 @@ export default function App() {
   return (
     <>
       <NavigationTabs />
+      <ThemeToggle />
       <Outlet />
     </>
   );
