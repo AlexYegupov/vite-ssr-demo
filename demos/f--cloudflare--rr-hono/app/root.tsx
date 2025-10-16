@@ -13,6 +13,7 @@ import { ToastProvider } from "./context/toast-context";
 import { GlobalToast } from "./components/toast";
 import { NavigationTabs } from "./components/navigation-tabs";
 import { Logo } from "./components/logo";
+import { Favicon } from "./components/favicon";
 
 import type { Route } from "./+types/root";
 import "@radix-ui/themes/styles.css";
@@ -38,6 +39,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
       <head>
+        <Favicon />
         <meta charSet="utf-8" />
         <meta
           name="viewport"
