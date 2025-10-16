@@ -6,7 +6,11 @@ import { Hero } from "../components/hero";
 export function meta() {
   return [
     { title: "Full-Stack Demo Application" },
-    { name: "description", content: "Modern full-stack application built with Cloudflare Workers, React Router 7, and cutting-edge web technologies" },
+    {
+      name: "description",
+      content:
+        "Modern full-stack application built with Cloudflare Workers, React Router 7, and cutting-edge web technologies",
+    },
   ];
 }
 
@@ -27,9 +31,10 @@ export default function Home({
   return (
     <main className={styles.container}>
       <Hero />
-      
+
       <p className={styles.visuallyHidden}>
-        Use Tab key to navigate through interactive elements. Press Enter to activate links and buttons.
+        Use Tab key to navigate through interactive elements. Press Enter to
+        activate links and buttons.
       </p>
 
       <section className={styles.techSection}>
@@ -83,11 +88,17 @@ export default function Home({
         <div className={styles.cardGrid}>
           <Link to="/todos" className={`${styles.card} ${styles.cardDelay1}`}>
             <h3>📝 Todo List</h3>
-            <p>Full CRUD operations with Cloudflare KV persistence, optimistic UI updates, and real-time validation</p>
+            <p>
+              Full CRUD operations with Cloudflare KV persistence, optimistic UI
+              updates, and real-time validation
+            </p>
           </Link>
           <Link to="/weather" className={`${styles.card} ${styles.cardDelay2}`}>
             <h3>🌤️ Weather Forecast</h3>
-            <p>Dynamic city selection with API integration and responsive data visualization</p>
+            <p>
+              Dynamic city selection with API integration and responsive data
+              visualization
+            </p>
           </Link>
         </div>
       </section>
