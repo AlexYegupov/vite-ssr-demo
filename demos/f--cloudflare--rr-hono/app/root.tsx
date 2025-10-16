@@ -12,6 +12,7 @@ import { Theme, ThemePanel } from "@radix-ui/themes";
 import { ToastProvider } from "./context/toast-context";
 import { GlobalToast } from "./components/toast";
 import { NavigationTabs } from "./components/navigation-tabs";
+import { Logo } from "./components/logo";
 
 import type { Route } from "./+types/root";
 import "@radix-ui/themes/styles.css";
@@ -38,12 +39,18 @@ export function Layout({ children }: { children: React.ReactNode }) {
     <html lang="en">
       <head>
         <meta charSet="utf-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5, user-scalable=yes" />
+        <meta
+          name="viewport"
+          content="width=device-width, initial-scale=1, maximum-scale=5, user-scalable=yes"
+        />
         <meta name="color-scheme" content="light dark" />
         <meta name="theme-color" content="#0090ff" />
         <meta name="mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
-        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+        <meta
+          name="apple-mobile-web-app-status-bar-style"
+          content="black-translucent"
+        />
         <Meta />
         <Links />
       </head>

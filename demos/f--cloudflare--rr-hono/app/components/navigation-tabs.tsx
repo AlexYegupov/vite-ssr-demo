@@ -2,6 +2,7 @@ import { useLocation, useNavigate, useNavigation } from "react-router";
 import { useRef } from "react";
 import * as Tabs from "@radix-ui/react-tabs";
 import styles from "./navigation-tabs.module.css";
+import { Logo } from "./logo";
 
 export function NavigationTabs() {
   const location = useLocation();
@@ -32,8 +33,11 @@ export function NavigationTabs() {
           onValueChange={handleTabChange}
         >
           <Tabs.List className={styles.tabsList} aria-label="Main navigation">
-            <Tabs.Trigger className={styles.tabsTrigger} value="/">
-              Home
+            <Tabs.Trigger
+              className={`${styles.tabsTrigger} ${styles.tabHome}`}
+              value="/"
+            >
+              <Logo />
             </Tabs.Trigger>
             <Tabs.Trigger className={styles.tabsTrigger} value="/todos">
               Todo List
