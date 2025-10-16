@@ -7,7 +7,7 @@ export function Hero() {
       <div className={styles.heroContent}>
         <h1 className={styles.heroTitle}>Full-Stack Demo Application</h1>
         <p className={styles.heroSubtitle}>
-          A production-ready showcase of modern web development practices
+          A production-ready showcase of modern web development practices that could be used in your products
         </p>
         <p className={styles.heroDescription}>
           Experience the power of edge computing with React Router 7, Cloudflare
@@ -16,7 +16,7 @@ export function Hero() {
         </p>
         <div className={styles.heroActions}>
           <Link to="/todos" className={styles.heroPrimaryButton}>
-            Try Todo Demo
+            View TodoList
           </Link>
           <Link to="/weather" className={styles.heroSecondaryButton}>
             View Weather
