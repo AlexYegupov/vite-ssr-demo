@@ -1,6 +1,7 @@
 import { Link } from "react-router";
 import styles from "./home.module.css";
 import type { LoaderFunctionArgs } from "react-router";
+import { Hero } from "../components/hero";
 
 export function meta() {
   return [
@@ -25,15 +26,11 @@ export default function Home({
 
   return (
     <main className={styles.container}>
-      <header className={styles.header}>
-        <h1>Full-Stack Demo Application</h1>
-        <p className={styles.subtitle}>
-          A production-ready showcase of modern web development practices
-        </p>
-        <p className={styles.visuallyHidden}>
-          Use Tab key to navigate through interactive elements. Press Enter to activate links and buttons.
-        </p>
-      </header>
+      <Hero />
+      
+      <p className={styles.visuallyHidden}>
+        Use Tab key to navigate through interactive elements. Press Enter to activate links and buttons.
+      </p>
 
       <section className={styles.techSection}>
         <h2 className={styles.sectionTitle}>Technologies & Architecture</h2>
