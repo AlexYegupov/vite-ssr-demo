@@ -57,7 +57,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <Links />
       </head>
       <body>
-        <Theme appearance="dark" accentColor="sky">
+        <Theme appearance="dark" accentColor="amber">
           <ToastProvider>
             {children}
             <GlobalToast />
