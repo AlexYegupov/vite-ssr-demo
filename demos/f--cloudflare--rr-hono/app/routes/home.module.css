@@ -49,6 +49,9 @@
   font-size: var(--font-size-5);
   margin: 0;
   font-weight: var(--font-weight-normal);
+  text-align: center;
+  max-width: var(--max-width-md);
+  margin: 0 auto var(--space-3);
 }
 
 /* Section Styling */

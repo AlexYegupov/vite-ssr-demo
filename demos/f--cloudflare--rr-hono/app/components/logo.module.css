@@ -10,12 +10,17 @@
   font-size: var(--font-size-8);
   user-select: none;
   transition: all var(--transition-fast);
-  padding: 0;
-  margin: 0;
   text-shadow: 
     0 1px 0 var(--accent-9),
     0 2px 4px var(--gray-a5),
     0 4px 6px var(--gray-a3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
 }
 
 .logoContainer:hover .logoText {
