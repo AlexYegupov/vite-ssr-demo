@@ -57,7 +57,8 @@
 /* Section Styling */
 .techSection,
 .demoSection,
-.roadmapSection {
+.roadmapSection,
+.sourceSection {
   margin-bottom: var(--space-9);
   padding: 0 var(--space-8);  
 }
@@ -302,4 +303,72 @@
     width: 100%;
     justify-content: center;
   }
+}
+
+/* Source Section */
+.sourceLink {
+  text-align: center;
+  margin: var(--space-6) auto;
+}
+
+.githubLink {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-5) var(--space-7);
+  background-color: var(--gray-3);
+  border: 2px solid var(--gray-6);
+  border-radius: var(--radius-4);
+  color: var(--gray-12);
+  text-decoration: none;
+  font-size: var(--font-size-4);
+  font-weight: var(--font-weight-medium);
+  transition: all var(--transition-fast);
+}
+
+.githubLink:hover {
+  background-color: var(--accent-3);
+  border-color: var(--accent-8);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+}
+
+.githubLink:active {
+  transform: translateY(0);
+}
+
+.githubIcon {
+  font-size: var(--font-size-5);
+}
+
+/* Footer */
+.footer {
+  text-align: left;
+  padding: var(--space-8);
+  margin-top: var(--space-9);
+  border-top: 1px solid var(--gray-6);
+  background-color: var(--gray-1);
+}
+
+.footer p {
+  color: var(--gray-11);
+  font-size: var(--font-size-3);
+  margin: 0;
+  line-height: 1.6;
+}
+
+.emailLink {
+  color: var(--accent-11);
+  text-decoration: none;
+  transition: color var(--transition-fast);
+  font-weight: var(--font-weight-medium);
+}
+
+.emailLink:hover {
+  color: var(--accent-9);
+  text-decoration: underline;
+}
+
+.emailLink:active {
+  color: var(--accent-10);
 }

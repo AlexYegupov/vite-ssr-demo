@@ -136,6 +136,30 @@ export default function Home({
           </div>
         </div>
       </section>
+
+      <section className={styles.sourceSection}>
+        <h2 className={styles.sectionTitle}>This demo source code</h2>
+        <div className={styles.sourceLink}>
+          <a
+            href="https://github.com/Orga100/react-router-clouflare-ssr-demo/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className={styles.githubLink}
+          >
+            <span className={styles.githubIcon}>⚡</span>
+            View on GitHub
+          </a>
+        </div>
+      </section>
+
+      <footer className={styles.footer}>
+        <p>
+          © {new Date().getFullYear()} Alexey Yegupov •{" "}
+          <a href="mailto:yegupov@gmail.com" className={styles.emailLink}>
+            yegupov@gmail.com
+          </a>
+        </p>
+      </footer>
     </main>
   );
 }
