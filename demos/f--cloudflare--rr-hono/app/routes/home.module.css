@@ -21,7 +21,7 @@
   text-align: center;
   margin-bottom: var(--space-9);
   padding: var(--space-8) 0;
-  border-bottom: 1px solid var(--gray-6);
+  border-bottom: var(--border-width-thin) solid var(--gray-6);
 }
 
 .header h1 {
@@ -29,7 +29,7 @@
   font-size: var(--font-size-8);
   font-weight: var(--font-weight-bold);
   margin: 0 0 var(--space-3) 0;
-  letter-spacing: -0.02em;
+  letter-spacing: var(--letter-spacing-tight);
   animation: slideDown var(--transition-normal) ease-out;
 }
 
@@ -74,14 +74,14 @@
 /* Technology Grid */
 .techGrid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(var(--min-width-card-md), 1fr));
   gap: var(--space-6);
   margin-bottom: var(--space-4);
 }
 
 .techCategory {
   background-color: var(--gray-2);
-  border: 1px solid var(--gray-6);
+  border: var(--border-width-thin) solid var(--gray-6);
   border-radius: var(--radius-4);
   padding: var(--space-6);
 }
@@ -103,7 +103,7 @@
   color: var(--gray-11);
   font-size: var(--font-size-3);
   padding: var(--space-2) 0;
-  line-height: 1.5;
+  line-height: var(--line-height-normal);
 }
 
 .techCategory li::before {
@@ -116,7 +116,7 @@
 /* Demo Cards */
 .cardGrid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(var(--min-width-card-lg), 1fr));
   gap: var(--space-6);
   max-width: var(--max-width-md);
   margin: 0 auto;
@@ -125,7 +125,7 @@
 .card {
   padding: var(--space-7);
   background-color: var(--gray-3);
-  border: 2px solid var(--gray-6);
+  border: var(--border-width-medium) solid var(--gray-6);
   border-radius: var(--radius-4);
   text-decoration: none;
   color: inherit;
@@ -137,31 +137,31 @@
 @keyframes scaleIn {
   from {
     opacity: 0;
-    transform: scale(0.95);
+    transform: scale(var(--scale-95));
   }
   to {
     opacity: 1;
-    transform: scale(1);
+    transform: scale(var(--scale-100));
   }
 }
 
 .card:hover {
-  transform: translateY(-2px) scale(1.02);
+  transform: translateY(var(--transform-lift)) scale(var(--scale-102));
   box-shadow: var(--shadow-lg);
   border-color: var(--accent-8);
 }
 
 .card:active {
-  transform: translateY(0) scale(0.98);
+  transform: translateY(0) scale(var(--scale-98));
   transition-duration: calc(var(--transition-fast) / 2);
 }
 
 .cardDelay1 {
-  animation-delay: 100ms;
+  animation-delay: var(--delay-100);
 }
 
 .cardDelay2 {
-  animation-delay: 200ms;
+  animation-delay: var(--delay-200);
 }
 
 .card h3 {
@@ -175,19 +175,19 @@
   font-size: var(--font-size-3);
   color: var(--gray-11);
   margin: 0;
-  line-height: 1.75;
+  line-height: var(--line-height-loose);
 }
 
 /* Roadmap Section */
 .roadmapGrid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(var(--min-width-card-sm), 1fr));
   gap: var(--space-5);
 }
 
 .roadmapColumn {
   background-color: var(--gray-2);
-  border: 1px solid var(--gray-5);
+  border: var(--border-width-thin) solid var(--gray-5);
   border-radius: var(--radius-3);
   padding: var(--space-5);
 }
@@ -198,7 +198,7 @@
   font-weight: var(--font-weight-medium);
   margin: 0 0 var(--space-3) 0;
   padding-bottom: var(--space-3);
-  border-bottom: 1px solid var(--gray-6);
+  border-bottom: var(--border-width-thin) solid var(--gray-6);
 }
 
 .roadmapColumn ul {
@@ -211,7 +211,7 @@
   color: var(--gray-11);
   font-size: var(--font-size-2);
   padding: var(--space-2) 0;
-  line-height: 1.5;
+  line-height: var(--line-height-normal);
 }
 
 .roadmapColumn li::before {
@@ -233,7 +233,7 @@
 }
 
 /* Responsive Design */
-@media (max-width: 800px) {
+@media (max-width: var(--breakpoint-lg)) {
   .container {
     padding: var(--space-5);
   }
@@ -255,7 +255,7 @@
   }
 }
 
-@media (max-width: 480px) {
+@media (max-width: var(--breakpoint-md)) {
   .container {
     padding: var(--space-3);
   }
@@ -317,7 +317,7 @@
   gap: var(--space-3);
   padding: var(--space-5) var(--space-7);
   background-color: var(--gray-3);
-  border: 2px solid var(--gray-6);
+  border: var(--border-width-medium) solid var(--gray-6);
   border-radius: var(--radius-4);
   color: var(--gray-12);
   text-decoration: none;
@@ -329,7 +329,7 @@
 .githubLink:hover {
   background-color: var(--accent-3);
   border-color: var(--accent-8);
-  transform: translateY(-2px);
+  transform: translateY(var(--transform-lift));
   box-shadow: var(--shadow-lg);
 }
 
@@ -346,7 +346,7 @@
   text-align: left;
   padding: var(--space-8);
   margin-top: var(--space-9);
-  border-top: 1px solid var(--gray-6);
+  border-top: var(--border-width-thin) solid var(--gray-6);
   background-color: var(--gray-1);
 }
 
@@ -354,7 +354,7 @@
   color: var(--gray-11);
   font-size: var(--font-size-3);
   margin: 0;
-  line-height: 1.6;
+  line-height: var(--line-height-relaxed);
 }
 
 .emailLink {

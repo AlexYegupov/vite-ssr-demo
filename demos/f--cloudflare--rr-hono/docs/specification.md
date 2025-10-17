@@ -52,7 +52,7 @@ Metadata for the route including title and description
 
 ### Home
 
-Landing page showcasing technology stack, interactive demo cards with hover effects and staggered animations, and roadmap overview. Cards lift and scale on hover with smooth transitions.
+Landing page showcasing technology stack, interactive demo cards with hover effects and staggered animations, roadmap overview, source code link to GitHub repository, and footer with copyright information. Cards lift and scale on hover with smooth transitions. GitHub link opens in new tab with security attributes.
 
 ```
 ┌────────────────────────────────────────────────────────────────────────────┐
@@ -78,6 +78,13 @@ Landing page showcasing technology stack, interactive demo cards with hover effe
 │  │  Optimistic UI updates   │    │  API integration        │              │
 │  └─────────────────────────┘    └─────────────────────────┘              │
 │                                                                            │
+│  This demo source code                                                     │
+│  ┌──────────────────────────────────────┐                                 │
+│  │  ⚡ View on GitHub                    │                                 │
+│  └──────────────────────────────────────┘                                 │
+│                                                                            │
+├────────────────────────────────────────────────────────────────────────────┤
+│  © 2025 Alexey Yegupov • yegupov@gmail.com                                │
 └────────────────────────────────────────────────────────────────────────────┘
 ```
 
