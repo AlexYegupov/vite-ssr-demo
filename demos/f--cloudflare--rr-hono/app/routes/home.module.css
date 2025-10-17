@@ -21,7 +21,7 @@
   text-align: center;
   margin-bottom: var(--space-9);
   padding: var(--space-8) 0;
-  border-bottom: var(--border-width-thin) solid var(--gray-6);
+  border-bottom: 1px solid var(--gray-6);
 }
 
 .header h1 {
@@ -29,7 +29,7 @@
   font-size: var(--font-size-8);
   font-weight: var(--font-weight-bold);
   margin: 0 0 var(--space-3) 0;
-  letter-spacing: var(--letter-spacing-tight);
+  letter-spacing: var(--letter-spacing-8);
   animation: slideDown var(--transition-normal) ease-out;
 }
 
@@ -81,7 +81,7 @@
 
 .techCategory {
   background-color: var(--gray-2);
-  border: var(--border-width-thin) solid var(--gray-6);
+  border: 1px solid var(--gray-6);
   border-radius: var(--radius-4);
   padding: var(--space-6);
 }
@@ -103,7 +103,7 @@
   color: var(--gray-11);
   font-size: var(--font-size-3);
   padding: var(--space-2) 0;
-  line-height: var(--line-height-normal);
+  line-height: var(--line-height-3);
 }
 
 .techCategory li::before {
@@ -125,7 +125,7 @@
 .card {
   padding: var(--space-7);
   background-color: var(--gray-3);
-  border: var(--border-width-medium) solid var(--gray-6);
+  border: 2px solid var(--gray-6);
   border-radius: var(--radius-4);
   text-decoration: none;
   color: inherit;
@@ -175,7 +175,7 @@
   font-size: var(--font-size-3);
   color: var(--gray-11);
   margin: 0;
-  line-height: var(--line-height-loose);
+  line-height: var(--line-height-3);
 }
 
 /* Roadmap Section */
@@ -187,7 +187,7 @@
 
 .roadmapColumn {
   background-color: var(--gray-2);
-  border: var(--border-width-thin) solid var(--gray-5);
+  border: 1px solid var(--gray-5);
   border-radius: var(--radius-3);
   padding: var(--space-5);
 }
@@ -198,7 +198,7 @@
   font-weight: var(--font-weight-medium);
   margin: 0 0 var(--space-3) 0;
   padding-bottom: var(--space-3);
-  border-bottom: var(--border-width-thin) solid var(--gray-6);
+  border-bottom: 1px solid var(--gray-6);
 }
 
 .roadmapColumn ul {
@@ -211,7 +211,7 @@
   color: var(--gray-11);
   font-size: var(--font-size-2);
   padding: var(--space-2) 0;
-  line-height: var(--line-height-normal);
+  line-height: var(--line-height-2);
 }
 
 .roadmapColumn li::before {
@@ -317,7 +317,7 @@
   gap: var(--space-3);
   padding: var(--space-5) var(--space-7);
   background-color: var(--gray-3);
-  border: var(--border-width-medium) solid var(--gray-6);
+  border: 2px solid var(--gray-6);
   border-radius: var(--radius-4);
   color: var(--gray-12);
   text-decoration: none;
@@ -346,7 +346,7 @@
   text-align: left;
   padding: var(--space-8);
   margin-top: var(--space-9);
-  border-top: var(--border-width-thin) solid var(--gray-6);
+  border-top: 1px solid var(--gray-6);
   background-color: var(--gray-1);
 }
 
@@ -354,7 +354,7 @@
   color: var(--gray-11);
   font-size: var(--font-size-3);
   margin: 0;
-  line-height: var(--line-height-relaxed);
+  line-height: var(--line-height-3);
 }
 
 .emailLink {

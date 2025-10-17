@@ -21,23 +21,11 @@
   --max-width-lg: 1200px;
   --max-width-xl: 1400px;
   
-  /* Line heights - custom (Radix doesn't provide these) */
-  --line-height-normal: 1.5;
-  --line-height-relaxed: 1.6;
-  --line-height-loose: 1.75;
-  
-  /* Letter spacing - custom */
-  --letter-spacing-tight: -0.02em;
-  
-  /* Scale values - custom */
+  /* Scale values - custom (for transforms/animations) */
   --scale-95: 0.95;
   --scale-98: 0.98;
   --scale-100: 1;
   --scale-102: 1.02;
-  
-  /* Border widths - custom */
-  --border-width-thin: 1px;
-  --border-width-medium: 2px;
   
   /* Animation delays - custom */
   --delay-100: 100ms;
@@ -77,7 +65,7 @@
 /* Base styles */
 html {
   font-family: var(--font-sans);
-  line-height: var(--line-height-normal);
+  line-height: var(--line-height-3);
   color: var(--gray-12);
   background-color: var(--gray-1);
   -webkit-font-smoothing: antialiased;
@@ -134,7 +122,7 @@ body {
   padding: var(--space-4);
   overflow-x: auto;
   font-size: var(--font-size-2);
-  line-height: var(--line-height-normal);
+  line-height: var(--line-height-2);
   margin: var(--space-4) 0;
-  border: var(--border-width-thin) solid var(--gray-6);
+  border: 1px solid var(--gray-6);
 }
