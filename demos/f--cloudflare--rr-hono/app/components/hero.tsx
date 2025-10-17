@@ -24,16 +24,16 @@ export function Hero() {
         </div>
         <div className={styles.heroStats}>
           <div className={styles.heroStat}>
-            <div className={styles.heroStatValue}>{"<50ms"}</div>
-            <div className={styles.heroStatLabel}>Response Time</div>
+            <div className={styles.heroStatValue}>{"200ms"}</div>
+            <div className={styles.heroStatLabel}>Average Response Time</div>
           </div>
           <div className={styles.heroStat}>
             <div className={styles.heroStatValue}>300+</div>
             <div className={styles.heroStatLabel}>Edge Locations</div>
           </div>
           <div className={styles.heroStat}>
-            <div className={styles.heroStatValue}>100%</div>
-            <div className={styles.heroStatLabel}>TypeScript</div>
+            <div className={styles.heroStatValue}>SSR</div>
+            <div className={styles.heroStatLabel}>Server-Side Rendered</div>
           </div>
         </div>
       </div>

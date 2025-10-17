@@ -14,7 +14,7 @@ A professional demonstration of modern full-stack development with **server-side
 - 🌤️ **Weather Dashboard** - 7-day forecast with sunrise/sunset, UV index, and temperature trends
 - 🎨 **Modern UI** - Radix UI components with dark mode and responsive design
 - 📱 **Mobile Optimized** - Touch-friendly interface with responsive breakpoints
-- 🚀 **Edge Computing** - Sub-50ms response times globally via Cloudflare Workers
+- 🚀 **Edge Computing** - Fast response times globally via Cloudflare Workers
 - 📊 **API Documentation** - OpenAPI/Swagger spec with interactive documentation
 
 ## ✨ Key Technologies
@@ -134,7 +134,7 @@ npm run api
 
 ### Edge-First Design
 - **Server-Side Rendering** at Cloudflare's 300+ edge locations
-- **Sub-50ms response times** globally
+- **Fast response times** with edge computing
 - **No cold starts** - instant scaling
 - **Distributed database** with Cloudflare KV
 
