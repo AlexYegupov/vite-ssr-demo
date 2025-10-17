@@ -261,20 +261,7 @@ export default function TodosPage() {
   );
 
   const [todos, setTodos] = useState<Todo[]>(initialTodos);
-
-  const sortedTodos = useMemo(() => {
-    return [...todos].sort((a, b) => {
-      return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
-    });
-  }, [todos]);
-
-  useEffect(() => {
-    setTodos(initialTodos);
-  }, [initialTodos]);
-
-  const actionData = useActionData<ActionData>();
-  const navigation = useNavigation();
-  const submit = useSubmit();
+  const [filter, setFilter] = useState<"all" | "active" | "completed">("all");
   const [newTodoTitle, setNewTodoTitle] = useState("");
   const newTodoInputRef = useRef<HTMLInputElement>(null);
   const [editingTodoId, setEditingTodoId] = useState<string | null>(null);
@@ -283,6 +270,66 @@ export default function TodosPage() {
   const [deletingTodoId, setDeletingTodoId] = useState<string | null>(null);
   const deletingTodoIdRef = useRef<string | null>(null);
   const [srAnnouncement, setSrAnnouncement] = useState("");
+  const [animatingFilter, setAnimatingFilter] = useState<string | null>(null);
+  const prevCountsRef = useRef({ all: 0, active: 0, completed: 0 });
+
+  const sortedTodos = useMemo(() => {
+    return [...todos].sort((a, b) => {
+      return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+    });
+  }, [todos]);
+
+  const filteredTodos = useMemo(() => {
+    switch (filter) {
+      case "active":
+        return sortedTodos.filter((todo) => !todo.completed);
+      case "completed":
+        return sortedTodos.filter((todo) => todo.completed);
+      default:
+        return sortedTodos;
+    }
+  }, [sortedTodos, filter]);
+
+  useEffect(() => {
+    setTodos(initialTodos);
+  }, [initialTodos]);
+
+  // Track count changes and trigger animations based on active filter
+  useEffect(() => {
+    const currentCounts = {
+      all: sortedTodos.length,
+      active: sortedTodos.filter((t) => !t.completed).length,
+      completed: sortedTodos.filter((t) => t.completed).length,
+    };
+
+    const prevCounts = prevCountsRef.current;
+
+    // Skip animation on initial load
+    if (prevCounts.all !== 0) {
+      // When "completed" filter is active
+      if (filter === "completed") {
+        // New todo created OR todo unchecked -> highlight "active"
+        if (currentCounts.active > prevCounts.active) {
+          setAnimatingFilter("active");
+          setTimeout(() => setAnimatingFilter(null), 600);
+        }
+      }
+      // When "active" filter is active
+      else if (filter === "active") {
+        // Todo checked -> highlight "completed"
+        if (currentCounts.completed > prevCounts.completed) {
+          setAnimatingFilter("completed");
+          setTimeout(() => setAnimatingFilter(null), 600);
+        }
+      }
+    }
+
+    prevCountsRef.current = currentCounts;
+  }, [sortedTodos, filter]);
+
+  const actionData = useActionData<ActionData>();
+  const navigation = useNavigation();
+  const submit = useSubmit();
 
   // Handle action responses and errors
   useEffect(() => {
@@ -513,6 +560,48 @@ export default function TodosPage() {
         <h2 id="todo-list-heading" className={styles.visuallyHidden}>
           Your Todos
         </h2>
+        {sortedTodos.length > 0 && (
+          <div className={styles.filterContainer}>
+            <button
+              className={[
+                styles.filterButton,
+                filter === "all" && styles.filterActive,
+              ]
+                .filter(Boolean)
+                .join(" ")}
+              onClick={() => setFilter("all")}
+              aria-pressed={filter === "all"}
+            >
+              All ({sortedTodos.length})
+            </button>
+            <button
+              className={[
+                styles.filterButton,
+                filter === "active" && styles.filterActive,
+                animatingFilter === "active" && styles.filterAnimating,
+              ]
+                .filter(Boolean)
+                .join(" ")}
+              onClick={() => setFilter("active")}
+              aria-pressed={filter === "active"}
+            >
+              Active ({sortedTodos.filter((t) => !t.completed).length})
+            </button>
+            <button
+              className={[
+                styles.filterButton,
+                filter === "completed" && styles.filterActive,
+                animatingFilter === "completed" && styles.filterAnimating,
+              ]
+                .filter(Boolean)
+                .join(" ")}
+              onClick={() => setFilter("completed")}
+              aria-pressed={filter === "completed"}
+            >
+              Completed ({sortedTodos.filter((t) => t.completed).length})
+            </button>
+          </div>
+        )}
         {sortedTodos.length === 0 ? (
           <div className={styles.emptyState}>
             <div className={styles.emptyStateIcon}>📝</div>
@@ -521,9 +610,18 @@ export default function TodosPage() {
               Start organizing your tasks by adding your first todo above.
             </p>
           </div>
+        ) : filteredTodos.length === 0 ? (
+          <div className={styles.emptyState}>
+            <div className={styles.emptyStateIcon}>🔍</div>
+            <h3 className={styles.emptyStateTitle}>No {filter} todos</h3>
+            <p className={styles.emptyStateDescription}>
+              {filter === "active" && "All tasks are completed! Great job!"}
+              {filter === "completed" && "No completed tasks yet. Start checking off your todos!"}
+            </p>
+          </div>
         ) : (
           <ul className={styles.todoList} aria-label="Todo items">
-            {sortedTodos.map((todo) => (
+            {filteredTodos.map((todo) => (
               <li
                 key={todo.id}
                 className={`${styles.todoItem} ${

@@ -80,8 +80,8 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <Links />
       </head>
       <body>
-        <Theme appearance={appearance} accentColor="amber">
-          <ToastProvider>            
+        <Theme appearance={appearance} accentColor="orange">
+          <ToastProvider>
             {children}
             <GlobalToast />
             {isDev && <ThemePanel defaultOpen={false} />}
