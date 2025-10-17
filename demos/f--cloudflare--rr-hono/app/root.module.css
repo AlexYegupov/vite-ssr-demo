@@ -1,4 +1,10 @@
 /* Root layout styles */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
 :root {
   /* Typography - custom only (Radix doesn't provide font-family) */
   --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
@@ -42,6 +48,7 @@ html {
   -webkit-text-size-adjust: 100%;
   -webkit-tap-highlight-color: transparent;
   touch-action: manipulation;
+  overflow-x: hidden;
 }
 
 body {
@@ -49,6 +56,8 @@ body {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
+  overflow-x: hidden;
+  width: 100%;
 }
 
 /* Layout */
