@@ -15,7 +15,6 @@ export function meta() {
 }
 
 export async function loader({ context }: LoaderFunctionArgs) {
-  console.log("<loader> Home");
   return {
     message: context.cloudflare.env.VALUE_FROM_CLOUDFLARE,
   };
@@ -26,8 +25,6 @@ export default function Home({
 }: {
   loaderData: { message: string };
 }) {
-  console.log("<Home>", loaderData);
-
   return (
     <main className={styles.container}>
       <Hero />
@@ -55,7 +52,8 @@ export default function Home({
               <li>React Router v7 (Remix)</li>
               <li>Radix UI Components & Themes</li>
               <li>Pure CSS Modules</li>
-              <li>Subtle CSS Animations</li>
+              <li>Dark/Light Theme Toggle</li>
+              <li>Advanced Animations</li>
               <li>Page Loading Indicator</li>
             </ul>
           </div>
@@ -109,9 +107,7 @@ export default function Home({
           <div className={styles.roadmapColumn}>
             <h3>🎨 UI/UX Enhancements</h3>
             <ul>
-              <li>Dark/Light theme toggle</li>
               <li>Internationalization (i18n)</li>
-              <li>Advanced animations</li>
             </ul>
           </div>
           <div className={styles.roadmapColumn}>
