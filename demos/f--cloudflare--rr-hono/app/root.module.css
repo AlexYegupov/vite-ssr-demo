@@ -46,10 +46,10 @@
   --breakpoint-md: 480px;
   --breakpoint-lg: 800px;
   
-  /* Glass effect - custom (not in Radix) */
-  --color-bg-glass: rgba(255, 255, 255, 0.1);
-  --color-border-glass: rgba(255, 255, 255, 0.2);
-  --blur-sm: 4px;
+  /* Glass effect - using Radix alpha colors where possible */
+  --color-bg-glass: var(--white-a2); /* rgba(255, 255, 255, 0.1) */
+  --color-border-glass: var(--white-a4); /* rgba(255, 255, 255, 0.2) */
+  --blur-sm: 4px; /* custom - Radix doesn't provide blur values */
   --blur-md: 10px;
   --blur-lg: 16px;
 }
@@ -57,8 +57,8 @@
 /* Dark mode overrides for glass effect only */
 @media (prefers-color-scheme: dark) {
   :root {
-    --color-bg-glass: rgba(0, 0, 0, 0.2);
-    --color-border-glass: rgba(255, 255, 255, 0.1);
+    --color-bg-glass: var(--black-a4); /* rgba(0, 0, 0, 0.2) */
+    --color-border-glass: var(--white-a2); /* rgba(255, 255, 255, 0.1) */
   }
 }
 

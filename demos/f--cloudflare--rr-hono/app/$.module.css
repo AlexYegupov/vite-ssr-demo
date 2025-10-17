@@ -6,8 +6,8 @@
   min-height: 100vh;
   text-align: center;
   padding: var(--space-8);
-  color: var(--color-text-primary);
-  background-color: var(--color-bg-primary);
+  color: var(--gray-12); /* Radix: primary text color */
+  background-color: var(--gray-1); /* Radix: primary background */
 }
 
 h1 {
@@ -20,7 +20,7 @@ p {
   font-size: var(--font-size-5);
   margin-bottom: var(--space-8);
   max-width: var(--max-width-md);
-  color: var(--color-text-secondary);
+  color: var(--gray-11); /* Radix: secondary text color */
 }
 
 .link {
